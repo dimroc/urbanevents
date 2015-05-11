@@ -4,10 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/azr/anaconda"
+	"github.com/dimroc/geo-twitter-listener/flagvalidator"
 	"log"
 	"net/url"
-	//"io/ioutil"
-	//"net/http"
 )
 
 var (
@@ -15,29 +14,22 @@ var (
 	consumerSecret = flag.String("consumer-secret", "", "Twitter Consumer Key")
 	token          = flag.String("token", "", "Twitter Consumer Key")
 	tokenSecret    = flag.String("token-secret", "", "Twitter Consumer Key")
+	// Defaults to NYC
+	locations = flag.String("locations", "-74.3,40.462,-73.65,40.95", "Twitter geographic bounding box")
 )
 
 func main() {
 	flag.Parse()
+	flags := []string{"consumer-key", "consumer-secret", "token", "token-secret"}
+	flagvalidator.ValidateFlags(flags)
 
 	anaconda.SetConsumerKey(*consumerKey)
 	anaconda.SetConsumerSecret(*consumerSecret)
 	api := anaconda.NewTwitterApi(*token, *tokenSecret)
 	api.SetLogger(anaconda.BasicLogger)
 
-	searchResult, err := api.GetSearch("twitter", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// works
-	for _, tweet := range searchResult.Statuses {
-		fmt.Println(tweet.Text)
-	}
-
 	v := url.Values{}
-	v.Set("track", "tweet")
-	// Fails: Twitter streaming: leaving after an irremediable error: [401 Authorization Required]
+	v.Set("locations", *locations)
 	stream := api.PublicStreamFilter(v)
 
 	for {
