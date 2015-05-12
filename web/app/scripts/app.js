@@ -2,8 +2,10 @@ var React = window.React = require('react'),
     Router = require('react-router'),
     Timer = require("./ui/Timer"),
     PusherEvents = require("./components/PusherEvents"),
+    MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
 
+var DefaultRoute = Router.DefaultRoute;
 var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
 
@@ -18,7 +20,7 @@ var App = React.createClass({
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
-              <Button href="/#">Map</Button>
+              <Button href="/#/maps">Map</Button>
               <Button href="/#/events">Events</Button>
             </ButtonGroup>
           </div>
@@ -33,6 +35,8 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" handler={App} path="/">
+    <DefaultRoute handler={MappedEvents} />
+    <Route name="maps" handler={MappedEvents}/>
     <Route name="events" handler={PusherEvents}/>
   </Route>
 );

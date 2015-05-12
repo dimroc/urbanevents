@@ -5,6 +5,7 @@
     "jquery": "~2.1.1",
     "bootstrap-sass-official": ">=3.3.0",
     "modernizr": "^2.8.3",
-    "pusher": "~2.2.4"
+    "pusher": "~2.2.4",
+    "leaflet": "~0.7.3"
   }
 }
