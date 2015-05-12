@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/azr/anaconda"
 	"github.com/dimroc/geo-twitter-listener/flagvalidator"
+	"github.com/dimroc/geo-twitter-listener/geoevent"
 	"log"
 	"net/url"
 )
@@ -23,7 +24,8 @@ func tweetPusher() chan<- anaconda.Tweet { // return send only channel
 	outbox := make(chan anaconda.Tweet)
 	go func() {
 		for tweet := range outbox {
-			jsonOut, err := json.Marshal(tweet)
+			g := geoevent.NewFromTweet(tweet)
+			jsonOut, err := json.Marshal(g)
 			if err == nil {
 				fmt.Println(string(jsonOut))
 			}
