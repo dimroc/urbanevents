@@ -20,7 +20,7 @@ var (
 	locations = flag.String("locations", "-74.3,40.462,-73.65,40.95", "Twitter geographic bounding box")
 )
 
-func tweetPusher() chan<- anaconda.Tweet { // return send only channel
+func tweetWriter() chan<- anaconda.Tweet { // return send only channel
 	outbox := make(chan anaconda.Tweet)
 	go func() {
 		for tweet := range outbox {
@@ -44,7 +44,7 @@ func main() {
 	anaconda.SetConsumerSecret(*consumerSecret)
 	api := anaconda.NewTwitterApi(*token, *tokenSecret)
 
-	outbox := tweetPusher()
+	outbox := tweetWriter()
 
 	v := url.Values{}
 	v.Set("locations", *locations)
