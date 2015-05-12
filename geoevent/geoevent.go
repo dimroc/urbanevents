@@ -10,9 +10,7 @@ type geoEvent struct {
 	Payload string  `json:"payload"`
 }
 
-type geoJson interface {
-	GetType() string
-}
+type geoJson interface {}
 
 type point struct {
 	Coordinates [2]float64 `json:"coordinates"` // Coordinate always has to have exactly 2 values
@@ -22,14 +20,6 @@ type point struct {
 type boundingBox struct {
 	Coordinates [][][]float64 `json:"coordinates"`
 	Type        string        `json:"type"`
-}
-
-func (p point) GetType() string {
-	return p.Type
-}
-
-func (b boundingBox) GetType() string {
-	return b.Type
 }
 
 func geoJsonFromPoint(t anaconda.Tweet) geoJson {
