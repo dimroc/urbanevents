@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/azr/anaconda"
@@ -12,11 +13,25 @@ import (
 var (
 	consumerKey    = flag.String("consumer-key", "", "Twitter Consumer Key")
 	consumerSecret = flag.String("consumer-secret", "", "Twitter Consumer Key")
-	token          = flag.String("token", "", "Twitter Consumer Key")
-	tokenSecret    = flag.String("token-secret", "", "Twitter Consumer Key")
+	token          = flag.String("token", "", "Twitter Access Token")
+	tokenSecret    = flag.String("token-secret", "", "Twitter Token Secret")
 	// Defaults to NYC
 	locations = flag.String("locations", "-74.3,40.462,-73.65,40.95", "Twitter geographic bounding box")
 )
+
+func tweetPusher() chan<- anaconda.Tweet { // return send only channel
+	outbox := make(chan anaconda.Tweet)
+	go func() {
+		for tweet := range outbox {
+			jsonOut, err := json.Marshal(tweet)
+			if err == nil {
+				fmt.Println(string(jsonOut))
+			}
+		}
+	}()
+
+	return outbox
+}
 
 func main() {
 	flag.Parse()
@@ -26,7 +41,8 @@ func main() {
 	anaconda.SetConsumerKey(*consumerKey)
 	anaconda.SetConsumerSecret(*consumerSecret)
 	api := anaconda.NewTwitterApi(*token, *tokenSecret)
-	api.SetLogger(anaconda.BasicLogger)
+
+	outbox := tweetPusher()
 
 	v := url.Values{}
 	v.Set("locations", *locations)
@@ -37,7 +53,10 @@ func main() {
 		case <-stream.Quit:
 			log.Println("Quitting")
 		case elem := <-stream.C:
-			fmt.Println(elem)
+			t, ok := elem.(anaconda.Tweet)
+			if ok {
+				outbox <- t
+			}
 		}
 	}
 }
