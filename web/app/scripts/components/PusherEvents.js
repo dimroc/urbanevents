@@ -38,7 +38,7 @@ var PusherEvents = React.createClass({
   },
   render: function() {
     return (
-      <div>
+      <div className="container-fluid real-time">
         <h2>Real Time Events</h2>
         <PushedItems items={this.state.items} />
       </div>

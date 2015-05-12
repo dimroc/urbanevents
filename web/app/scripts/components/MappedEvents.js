@@ -4,7 +4,6 @@ var React = require('react');
 
 var MappedEvents = React.createClass({
   handlePush: function(data) {
-    console.log(data);
     if(data.geojson.type === "Point") {
       var circle = L.circle(data.geojson.coordinates.reverse(), 500, {
         color: 'red',
@@ -18,10 +17,12 @@ var MappedEvents = React.createClass({
     this.channel = pusher.subscribe('nyc');
     this.channel.bind('tweet', this.handlePush, this);
 
-    this.map = L.map('map').setView([40.7737, -73.9400], 12);
+    this.map = L.map('map')
+    //this.map = L.map('map', {scrollWheelZoom: false, zoomControl: false})
+    this.map.setView([40.7737, -73.9800], 12);
+    //this.map.dragging.disable()
     L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
       attribution: 'Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>',
-      maxZoom: 18
     }).addTo(this.map);
   },
   componentWillUnmount: function() {

@@ -23,11 +23,11 @@ var App = React.createClass({
     var isActive = function(key) { if (names.indexOf(key) >= 0) return 'active' }
 
     return (
-      <div>
+      <div className="holder">
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
-              <Button href="/#/maps" className={isActive('maps')}>Map</Button>
+              <Button href="/#/maps" className={isActive('maps') || isActive(undefined)}>Map</Button>
               <Button href="/#/events" className={isActive('events')}>Events</Button>
             </ButtonGroup>
           </div>
