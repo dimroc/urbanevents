@@ -18,9 +18,7 @@ var MappedEvents = React.createClass({
     this.channel.bind('tweet', this.handlePush, this);
 
     this.map = L.map('map')
-    //this.map = L.map('map', {scrollWheelZoom: false, zoomControl: false})
     this.map.setView([40.7737, -73.9800], 12);
-    //this.map.dragging.disable()
     L.tileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
       attribution: 'Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>',
     }).addTo(this.map);
