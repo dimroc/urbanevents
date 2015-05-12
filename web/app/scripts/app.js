@@ -14,14 +14,21 @@ var Button = require('react-bootstrap/lib/button');
 
 //http://getbootstrap.com/components/#btn-groups-justified
 var App = React.createClass({
+  mixins: [ Router.State ],
   render: function () {
+    var names = this.getRoutes().map(function(item) {
+      return item.name;
+    });
+
+    var isActive = function(key) { if (names.indexOf(key) >= 0) return 'active' }
+
     return (
       <div>
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
-              <Button href="/#/maps">Map</Button>
-              <Button href="/#/events">Events</Button>
+              <Button href="/#/maps" className={isActive('maps')}>Map</Button>
+              <Button href="/#/events" className={isActive('events')}>Events</Button>
             </ButtonGroup>
           </div>
         </header>
