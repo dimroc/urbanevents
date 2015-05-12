@@ -2,16 +2,13 @@ var React = window.React = require('react'),
     Router = require('react-router'),
     Timer = require("./ui/Timer"),
     PusherEvents = require("./components/PusherEvents"),
-    ReactBootstrap = require('react-bootstrap'),
     mountNode = document.getElementById("app");
 
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
 var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
 
-var ButtonGroup = ReactBootstrap.ButtonGroup;
-var Button = ReactBootstrap.Button;
+var ButtonGroup = require('react-bootstrap/lib/buttonGroup');
+var Button = require('react-bootstrap/lib/button');
 
 //http://getbootstrap.com/components/#btn-groups-justified
 var App = React.createClass({
