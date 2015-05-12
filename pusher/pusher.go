@@ -41,7 +41,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		} else {
-			client.Trigger("real-time", "tweet", objmap)
+			client.Trigger("nyc", "tweet", objmap)
 		}
 	}
 }
