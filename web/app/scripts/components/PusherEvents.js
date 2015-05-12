@@ -22,14 +22,19 @@ var PushedItems = React.createClass({
 
 var PusherEvents = React.createClass({
   getInitialState: function() {
-    var pusher = new Pusher('81be37a4f4ee0f471476');
-    var channel = pusher.subscribe('nyc');
-    channel.bind('tweet', function(data) {
-      var nextItems = [data].concat(this.state.items);
-      this.setState({items: nextItems});
-    }, this);
-
     return {items: []};
+  },
+  handlePush: function(data) {
+    var nextItems = [data].concat(this.state.items);
+    this.setState({items: nextItems});
+  },
+  componentDidMount: function() {
+    var pusher = new Pusher('81be37a4f4ee0f471476');
+    this.channel = pusher.subscribe('nyc');
+    this.channel.bind('tweet', this.handlePush, this, this);
+  },
+  componentWillUnmount: function() {
+    this.channel.unbind('tweet', this.handlePush, this, this);
   },
   render: function() {
     return (
