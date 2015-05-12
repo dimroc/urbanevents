@@ -35,7 +35,7 @@ func main() {
 			continue
 		}
 
-		var objmap map[string]*json.RawMessage
+		var objmap *json.RawMessage
 		err = json.Unmarshal(data, &objmap)
 
 		if err != nil {
