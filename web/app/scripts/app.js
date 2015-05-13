@@ -1,6 +1,5 @@
 var React = window.React = require('react'),
     Router = require('react-router'),
-    Timer = require("./ui/Timer"),
     PusherEvents = require("./components/PusherEvents"),
     MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
