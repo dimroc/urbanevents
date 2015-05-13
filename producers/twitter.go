@@ -24,7 +24,11 @@ func tweetWriter() chan<- anaconda.Tweet { // return send only channel
 	outbox := make(chan anaconda.Tweet)
 	go func() {
 		for tweet := range outbox {
-			g := geoevent.NewFromTweet(tweet)
+			g, err := geoevent.NewFromTweet(tweet)
+			if err != nil {
+				continue
+			}
+
 			jsonOut, err := json.Marshal(g)
 			if err == nil {
 				fmt.Println(string(jsonOut))
