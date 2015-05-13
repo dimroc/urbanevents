@@ -2,6 +2,9 @@
   "name": "urban-events",
   "version": "0.0.0",
   "dependencies": {
+    "flux": "^2.0.3",
+    "keymirror": "^0.1.1",
+    "object-assign": "^2.0.0",
     "react-bootstrap": "^0.21.2",
     "react-router": "^0.13.3"
   },

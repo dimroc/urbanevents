@@ -1,12 +1,13 @@
 'use strict';
 
 var React = require('react');
+var PusherStore = require('../stores/PusherStore');
 
 var PushedItems = React.createClass({
   render: function() {
     var createItem = function(geoevent) {
       return (
-        <li>
+        <li key={geoevent.id}>
           <span>{geoevent.payload}</span>
           <div className="location-info text text-muted">
             <span className="type">{geoevent.geojson.type}</span>
@@ -24,17 +25,15 @@ var PusherEvents = React.createClass({
   getInitialState: function() {
     return {items: []};
   },
-  handlePush: function(data) {
-    var nextItems = [data].concat(this.state.items);
-    this.setState({items: nextItems});
+  handlePush: function() {
+    this.setState({items: PusherStore.getAll()});
   },
   componentDidMount: function() {
-    var pusher = new Pusher('81be37a4f4ee0f471476');
-    this.channel = pusher.subscribe('nyc');
-    this.channel.bind('tweet', this.handlePush, this, this);
+    PusherStore.addChangeListener(this.handlePush);
+    this.setState({items: PusherStore.getAll()});
   },
   componentWillUnmount: function() {
-    this.channel.unbind('tweet', this.handlePush, this, this);
+    PusherStore.removeChangeListener(this.handlePush);
   },
   render: function() {
     return (

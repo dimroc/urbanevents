@@ -1,5 +1,6 @@
 var React = window.React = require('react'),
     Router = require('react-router'),
+    PusherActions = require("./actions/PusherActions"),
     PusherEvents = require("./components/PusherEvents"),
     MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
@@ -26,7 +27,7 @@ var App = React.createClass({
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
-              <Button href="/#/maps" className={isActive('maps') || isActive(undefined)}>Map</Button>
+              <Button href="/#/maps" className={isActive('maps') || isActive(undefined)}>Real-Time Map</Button>
               <Button href="/#/events" className={isActive('events')}>Events</Button>
             </ButtonGroup>
           </div>
@@ -50,3 +51,5 @@ var routes = (
 Router.run(routes, function (Handler) {
   React.render(<Handler/>, mountNode);
 });
+
+PusherActions.start();
