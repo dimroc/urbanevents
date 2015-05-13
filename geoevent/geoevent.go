@@ -7,6 +7,7 @@ import (
 
 type GeoEvent struct {
 	GeoJson      GeoJson `json:"geojson"`
+	Id           int64   `json:"id"`
 	LocationType string  `json:"locationType"`
 	Type         string  `json:"type"`
 	Payload      string  `json:"payload"`
@@ -41,6 +42,7 @@ func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
 func NewFromTweet(t anaconda.Tweet) (*GeoEvent, error) {
 	if t.Coordinates != nil {
 		return &GeoEvent{
+			Id:           t.Id,
 			GeoJson:      geoJsonFromPoint(t),
 			Type:         "tweet",
 			Payload:      t.Text,
@@ -48,6 +50,7 @@ func NewFromTweet(t anaconda.Tweet) (*GeoEvent, error) {
 		}, nil
 	} else if t.Place.PlaceType == "poi" {
 		return &GeoEvent{
+			Id:           t.Id,
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Type:         "tweet",
 			Payload:      t.Text,
