@@ -3,19 +3,19 @@
 var React = require('react');
 var PusherStore = require('../stores/PusherStore');
 
-var MappedEvents = React.createClass({
-  drawEvent: function(data) {
-    if(data.geojson.type === "Point") {
-      var circle = L.circle(data.geojson.coordinates.reverse(), 500, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5
-      }).addTo(this.map);
-    }
-  },
+var drawEvent = function(layer, data) {
+  if(data.geojson.type === "Point") {
+    var circle = L.circle(data.geojson.coordinates.reverse(), 500, {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5
+    }).addTo(layer);
+  }
+};
 
+var MappedEvents = React.createClass({
   handlePush: function() {
-    this.drawEvent(PusherStore.last());
+    drawEvent(this.map, PusherStore.last());
   },
 
   componentDidMount: function() {
@@ -26,7 +26,7 @@ var MappedEvents = React.createClass({
     }).addTo(this.map);
 
     PusherStore.getAll().forEach(function(data) {
-      this.drawEvent(data);
+      drawEvent(this.map, data);
     }, this);
 
     PusherStore.addChangeListener(this.handlePush);

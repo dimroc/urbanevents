@@ -23,14 +23,13 @@ var PushedItems = React.createClass({
 
 var PusherEvents = React.createClass({
   getInitialState: function() {
-    return {items: []};
+    return {items: PusherStore.getAll()};
   },
   handlePush: function() {
     this.setState({items: PusherStore.getAll()});
   },
   componentDidMount: function() {
     PusherStore.addChangeListener(this.handlePush);
-    this.setState({items: PusherStore.getAll()});
   },
   componentWillUnmount: function() {
     PusherStore.removeChangeListener(this.handlePush);
