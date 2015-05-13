@@ -9,6 +9,7 @@ var _geoevents = [];
 
 function addEvent(geoevent) {
   _geoevents.unshift(geoevent);
+  _geoevents = _geoevents.slice(0, 10000);
 }
 
 var PusherStore = assign({}, EventEmitter.prototype, {
