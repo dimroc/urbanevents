@@ -11,6 +11,9 @@ var Map = Leaflet.Map,
 var mapKey = 0;
 
 var MappedEvents = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function() {
     return {items: PusherStore.getAll(), key: mapKey++};
   },

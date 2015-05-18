@@ -1,6 +1,8 @@
 var React = window.React = require('react'),
     Router = require('react-router'),
     PusherActions = require("./actions/PusherActions"),
+    Cities = require("./components/Cities"),
+    CityHeader = require("./components/CityHeader"),
     PusherEvents = require("./components/PusherEvents"),
     MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
@@ -14,26 +16,9 @@ var Button = require('react-bootstrap/lib/button');
 
 //http://getbootstrap.com/components/#btn-groups-justified
 var App = React.createClass({
-  mixins: [ Router.State ],
   render: function () {
-    var names = this.getRoutes().map(function(item) {
-      return item.name;
-    });
-
-    var isActive = function(key) { if (names.indexOf(key) >= 0) return 'active' }
-
     return (
       <div className="holder">
-        <header className="row">
-          <div className="col-xs-12">
-            <ButtonGroup justified>
-              <Button href="/#/maps" className={isActive('maps') || isActive(undefined)}>Real-Time Map</Button>
-              <Button href="/#/events" className={isActive('events')}>Events</Button>
-            </ButtonGroup>
-          </div>
-        </header>
-
-        {/* this is the important part */}
         <RouteHandler/>
       </div>
     );
@@ -42,9 +27,12 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" handler={App} path="/">
-    <DefaultRoute handler={MappedEvents} />
-    <Route name="maps" handler={MappedEvents}/>
-    <Route name="events" handler={PusherEvents}/>
+    <DefaultRoute handler={Cities} />
+    <Route name="cities" path="/cities" handler={Cities}/>
+    <Route name="city" path="/cities/:cityId" handler={CityHeader}>
+      <Route name="map" path="map" handler={MappedEvents}/>
+      <Route name="events" path="events" handler={PusherEvents}/>
+    </Route>
   </Route>
 );
 
