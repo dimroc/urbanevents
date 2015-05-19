@@ -9,10 +9,6 @@ var PusherActions = {
       this.key = key;
       this.channel = pusher.subscribe(key);
       this.channel.bind('tweet', this.handlePush, this);
-
-      AppDispatcher.dispatch({
-        actionType: AppConstants.PUSHER_RESET_STORE
-      });
     }
   },
 

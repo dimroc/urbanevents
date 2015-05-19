@@ -3,34 +3,39 @@ var EventEmitter = require('events').EventEmitter;
 var AppConstants = require('../constants/AppConstants');
 var assign = require('object-assign');
 
-var CHANGE_EVENT = 'change';
-
-var _geoevents = [];
+var _geoevents = {};
 
 function addEvent(geoevent) {
-  _geoevents.unshift(geoevent);
-  _geoevents = _geoevents.slice(0, 1000);
+  _geoevents[geoevent.city] = _geoevents[geoevent.city] || [];
+  var arr = _geoevents[geoevent.city];
+
+  arr.unshift(geoevent);
+  arr = arr.slice(0, 1000);
 }
 
 var PusherStore = assign({}, EventEmitter.prototype, {
-  getAll: function() {
-    return _geoevents;
+  getAll: function(key) {
+    return _geoevents[key] || [];
   },
 
   last: function() {
-    return _geoevents[0];
+    if (_geoevents[key]) {
+      return _geoevents[key][0];
+    } else {
+      return null;
+    }
   },
 
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
+  emitChange: function(city) {
+    this.emit(city);
   },
 
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
+  addChangeListener: function(city, callback) {
+    this.on(city, callback);
   },
 
-  removeChangeListener: function(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+  removeChangeListener: function(city, callback) {
+    this.removeListener(city, callback);
   }
 });
 
@@ -39,10 +44,10 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case AppConstants.PUSHER_TWEET:
       addEvent(action.geoevent);
-      PusherStore.emitChange(CHANGE_EVENT);
+      PusherStore.emitChange(action.geoevent.city);
       break;
     case AppConstants.PUSHER_RESET_STORE:
-      _geoevents.length = 0;
+      _geoevents = {};
       break;
   }
 });

@@ -32,21 +32,21 @@ var PusherEvents = React.createClass({
     this.city = CityStore.get(cityId);
 
     PusherActions.listen(this.city.key);
-    return {items: PusherStore.getAll()};
+    return {items: PusherStore.getAll(this.city.key)};
   },
   handlePush: function() {
-    this.setState({items: PusherStore.getAll()});
+    this.setState({items: PusherStore.getAll(this.city.key)});
   },
   componentDidMount: function() {
-    PusherStore.addChangeListener(this.handlePush);
+    PusherStore.addChangeListener(this.city.key, this.handlePush);
   },
   componentWillUnmount: function() {
-    PusherStore.removeChangeListener(this.handlePush);
+    PusherStore.removeChangeListener(this.city.key, this.handlePush);
   },
   render: function() {
     return (
       <div className="container-fluid below">
-        <h2>Real Time Events</h2>
+        <h2>{this.city.display} Events</h2>
         <PushedItems items={this.state.items} />
       </div>
     );

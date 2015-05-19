@@ -5,6 +5,7 @@ var Router = require('react-router');
 var { Route, Redirect, RouteHandler, Link } = Router;
 var ButtonGroup = require('react-bootstrap/lib/buttonGroup');
 var Button = require('react-bootstrap/lib/button');
+var CityStore = require('../stores/CityStore');
 
 var CityHeader = React.createClass({
   mixins: [ Router.State ],
@@ -15,6 +16,7 @@ var CityHeader = React.createClass({
 
     var isActive = function(key) { if (names.indexOf(key) >= 0) return 'active' }
     var { cityId } = this.context.router.getCurrentParams();
+    this.city = CityStore.get(cityId);
 
     return (
       <div className="holder">
@@ -22,7 +24,7 @@ var CityHeader = React.createClass({
           <div className="col-xs-12">
             <ButtonGroup justified>
               <Button href={"/#/cities"}>Cities</Button>
-              <Button href={"/#/cities/" + cityId + "/map"} className={isActive('map')}>Real-Time Map</Button>
+              <Button href={"/#/cities/" + cityId + "/map"} className={isActive('map')}>{this.city.display} Map</Button>
               <Button href={"/#/cities/" + cityId + "/events"} className={isActive('events')}>Events</Button>
             </ButtonGroup>
           </div>
