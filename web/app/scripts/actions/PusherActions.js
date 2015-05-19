@@ -1,11 +1,19 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 var AppConstants = require('../constants/AppConstants');
 
+var pusher = new Pusher('81be37a4f4ee0f471476');
+
 var PusherActions = {
-  start: function() {
-    var pusher = new Pusher('81be37a4f4ee0f471476');
-    this.channel = pusher.subscribe('nyc');
-    this.channel.bind('tweet', this.handlePush, this);
+  listen: function(key) {
+    if (this.key != key) {
+      this.key = key;
+      this.channel = pusher.subscribe(key);
+      this.channel.bind('tweet', this.handlePush, this);
+
+      AppDispatcher.dispatch({
+        actionType: AppConstants.PUSHER_RESET_STORE
+      });
+    }
   },
 
   stop: function() {
@@ -15,7 +23,7 @@ var PusherActions = {
   handlePush: function(data) {
     if(data.geojson.type === "Point") {
       AppDispatcher.dispatch({
-        actionType: AppConstants.PUSHER_EVENT,
+        actionType: AppConstants.PUSHER_TWEET,
         geoevent: data
       });
     }

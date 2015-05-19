@@ -21,6 +21,7 @@ var CityHeader = React.createClass({
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
+              <Button href={"/#/cities"}>Cities</Button>
               <Button href={"/#/cities/" + cityId + "/map"} className={isActive('map')}>Real-Time Map</Button>
               <Button href={"/#/cities/" + cityId + "/events"} className={isActive('events')}>Events</Button>
             </ButtonGroup>

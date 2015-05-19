@@ -2,6 +2,8 @@
 
 var React = require('react');
 var PusherStore = require('../stores/PusherStore');
+var CityStore = require('../stores/CityStore');
+var PusherActions = require("../actions/PusherActions");
 
 var PushedItems = React.createClass({
   render: function() {
@@ -22,7 +24,14 @@ var PushedItems = React.createClass({
 });
 
 var PusherEvents = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function() {
+    var { cityId } = this.context.router.getCurrentParams();
+    this.city = CityStore.get(cityId);
+
+    PusherActions.listen(this.city.key);
     return {items: PusherStore.getAll()};
   },
   handlePush: function() {

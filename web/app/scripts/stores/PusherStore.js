@@ -9,7 +9,7 @@ var _geoevents = [];
 
 function addEvent(geoevent) {
   _geoevents.unshift(geoevent);
-  _geoevents = _geoevents.slice(0, 10000);
+  _geoevents = _geoevents.slice(0, 1000);
 }
 
 var PusherStore = assign({}, EventEmitter.prototype, {
@@ -37,9 +37,12 @@ var PusherStore = assign({}, EventEmitter.prototype, {
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
-    case AppConstants.PUSHER_EVENT:
+    case AppConstants.PUSHER_TWEET:
       addEvent(action.geoevent);
       PusherStore.emitChange(CHANGE_EVENT);
+      break;
+    case AppConstants.PUSHER_RESET_STORE:
+      _geoevents.length = 0;
       break;
   }
 });
