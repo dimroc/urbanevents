@@ -1,13 +1,11 @@
 package geoevent
 
-import (
-	"errors"
-	"github.com/azr/anaconda"
-)
+import ()
 
 type GeoEvent struct {
 	GeoJson      GeoJson `json:"geojson"`
 	Id           int64   `json:"id"`
+	City         string  `json:"city"`
 	LocationType string  `json:"locationType"`
 	Type         string  `json:"type"`
 	Payload      string  `json:"payload"`
@@ -23,40 +21,4 @@ type Point struct {
 type BoundingBox struct {
 	Coordinates [][][]float64 `json:"coordinates"`
 	Type        string        `json:"type"`
-}
-
-func geoJsonFromPoint(t anaconda.Tweet) GeoJson {
-	return &Point{
-		Coordinates: t.Coordinates.Coordinates,
-		Type:        t.Coordinates.Type,
-	}
-}
-
-func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
-	return &BoundingBox{
-		Coordinates: t.Place.BoundingBox.Coordinates,
-		Type:        t.Place.BoundingBox.Type,
-	}
-}
-
-func NewFromTweet(t anaconda.Tweet) (*GeoEvent, error) {
-	if t.Coordinates != nil {
-		return &GeoEvent{
-			Id:           t.Id,
-			GeoJson:      geoJsonFromPoint(t),
-			Type:         "tweet",
-			Payload:      t.Text,
-			LocationType: "coordinate",
-		}, nil
-	} else if t.Place.PlaceType == "poi" {
-		return &GeoEvent{
-			Id:           t.Id,
-			GeoJson:      geoJsonFromBoundingBox(t),
-			Type:         "tweet",
-			Payload:      t.Text,
-			LocationType: t.Place.PlaceType,
-		}, nil
-	} else {
-		return nil, errors.New("Tweet does not contain a coordinate or place of interest")
-	}
 }

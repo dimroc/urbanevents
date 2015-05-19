@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/azr/anaconda"
@@ -19,25 +20,6 @@ var (
 	// Defaults to NYC
 	locations = flag.String("locations", "-74.3,40.462,-73.65,40.95", "Twitter geographic bounding box")
 )
-
-func tweetWriter() chan<- anaconda.Tweet { // return send only channel
-	outbox := make(chan anaconda.Tweet)
-	go func() {
-		for tweet := range outbox {
-			g, err := geoevent.NewFromTweet(tweet)
-			if err != nil {
-				continue
-			}
-
-			jsonOut, err := json.Marshal(g)
-			if err == nil {
-				fmt.Println(string(jsonOut))
-			}
-		}
-	}()
-
-	return outbox
-}
 
 func main() {
 	flag.Parse()
@@ -64,5 +46,62 @@ func main() {
 				outbox <- t
 			}
 		}
+	}
+}
+
+func tweetWriter() chan<- anaconda.Tweet { // return send only channel
+	outbox := make(chan anaconda.Tweet)
+	go func() {
+		for tweet := range outbox {
+			g, err := NewFromTweet(tweet)
+			if err != nil {
+				continue
+			}
+
+			jsonOut, err := json.Marshal(g)
+			if err == nil {
+				fmt.Println(string(jsonOut))
+			}
+		}
+	}()
+
+	return outbox
+}
+
+func geoJsonFromPoint(t anaconda.Tweet) geoevent.GeoJson {
+	return &geoevent.Point{
+		Coordinates: t.Coordinates.Coordinates,
+		Type:        t.Coordinates.Type,
+	}
+}
+
+func geoJsonFromBoundingBox(t anaconda.Tweet) geoevent.GeoJson {
+	return &geoevent.BoundingBox{
+		Coordinates: t.Place.BoundingBox.Coordinates,
+		Type:        t.Place.BoundingBox.Type,
+	}
+}
+
+func NewFromTweet(t anaconda.Tweet) (*geoevent.GeoEvent, error) {
+	if t.Coordinates != nil {
+		return &geoevent.GeoEvent{
+			Id:           t.Id,
+			City:         "nyc",
+			GeoJson:      geoJsonFromPoint(t),
+			Type:         "tweet",
+			Payload:      t.Text,
+			LocationType: "coordinate",
+		}, nil
+	} else if t.Place.PlaceType == "poi" {
+		return &geoevent.GeoEvent{
+			Id:           t.Id,
+			City:         "nyc",
+			GeoJson:      geoJsonFromBoundingBox(t),
+			Type:         "tweet",
+			Payload:      t.Text,
+			LocationType: t.Place.PlaceType,
+		}, nil
+	} else {
+		return nil, errors.New("Tweet does not contain a coordinate or place of interest")
 	}
 }
