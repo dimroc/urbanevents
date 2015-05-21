@@ -1,11 +1,9 @@
-package main
+package cityrecorder
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 )
 
 type City struct {
@@ -24,13 +22,4 @@ func (s *Settings) save() error {
 		log.Fatal(err)
 	}
 	return ioutil.WriteFile(filename, jsonOut, 0600)
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
-
-func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
 }

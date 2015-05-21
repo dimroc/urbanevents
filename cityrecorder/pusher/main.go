@@ -1,12 +1,9 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
 	"flag"
+	"github.com/dimroc/urban-events/cityrecorder/cityrecorder"
 	"github.com/dimroc/urban-events/cityrecorder/flagvalidator"
-	"github.com/pusher/pusher-http-go"
-	"log"
 	"os"
 )
 
@@ -21,27 +18,11 @@ func main() {
 	flags := []string{"appid", "key", "secret"}
 	flagvalidator.ValidateFlags(flags)
 
-	client := pusher.Client{
+	pusher := cityrecorder.Pusher{
 		AppId:  *pusherAppId,
 		Key:    *pusherKey,
 		Secret: *pusherSecret,
 	}
 
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		data, err := reader.ReadBytes('\n')
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-
-		var objmap *json.RawMessage
-		err = json.Unmarshal(data, &objmap)
-
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			client.Trigger("nyc", "tweet", objmap)
-		}
-	}
+	pusher.Start(os.Stdin)
 }
