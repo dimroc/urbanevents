@@ -1,2 +1,3 @@
 tmp/
 scripts/produce_tweets.sh
+.DS_Store

@@ -6,8 +6,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/azr/anaconda"
-	"github.com/dimroc/urban-events/flagvalidator"
-	"github.com/dimroc/urban-events/geoevent"
+	"github.com/dimroc/urban-events/cityrecorder/flagvalidator"
+	"github.com/dimroc/urban-events/cityrecorder/geoevent"
 	"log"
 	"net/url"
 )

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"flag"
-	"github.com/dimroc/urban-events/flagvalidator"
+	"github.com/dimroc/urban-events/cityrecorder/flagvalidator"
 	"github.com/pusher/pusher-http-go"
 	"log"
 	"os"
