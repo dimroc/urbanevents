@@ -17,7 +17,7 @@ type City struct {
 }
 
 type Settings struct {
-	Cities []City
+	Cities []City `json:"cities"`
 }
 
 func (s *Settings) Save() error {
@@ -26,6 +26,15 @@ func (s *Settings) Save() error {
 		log.Fatal(err)
 	}
 	return ioutil.WriteFile(filename, jsonOut, 0644)
+}
+
+func (s *Settings) String() string {
+	jsonOut, err := json.Marshal(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(jsonOut)
 }
 
 func LoadSettings() (Settings, error) {

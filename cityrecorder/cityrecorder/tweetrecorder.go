@@ -2,6 +2,7 @@ package cityrecorder
 
 import (
 	"errors"
+	"fmt"
 	"github.com/azr/anaconda"
 	"log"
 	"net/url"
@@ -19,7 +20,34 @@ type tweetEntry struct {
 	City  City
 }
 
-func (t *TweetRecorder) Start(city City, writer Writer) {
+func (p *TweetRecorder) Configured() bool {
+	if len(p.ConsumerKey) == 0 || len(p.ConsumerSecret) == 0 || len(p.Token) == 0 || len(p.TokenSecret) == 0 {
+		return false
+	}
+
+	return true
+}
+
+func (p *TweetRecorder) String() string {
+	return fmt.Sprintf("ConsumerKey: %s, ConsumerSecret: %s, Token: %s, TokenSecret: %s", p.ConsumerKey, p.ConsumerSecret, p.Token, p.TokenSecret)
+}
+
+func NewTweetRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string) *TweetRecorder {
+	recorder := &TweetRecorder{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+		Token:          token,
+		TokenSecret:    tokenSecret,
+	}
+
+	if !recorder.Configured() {
+		log.Fatal(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
+	}
+
+	return recorder
+}
+
+func (t *TweetRecorder) Record(city City, writer Writer) {
 	anaconda.SetConsumerKey(t.ConsumerKey)
 	anaconda.SetConsumerSecret(t.ConsumerSecret)
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)

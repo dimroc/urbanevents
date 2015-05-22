@@ -1,41 +1,59 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dimroc/urban-events/cityrecorder/cityrecorder"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/justinas/alice"
+	"log"
 	"net/http"
+	"os"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+var (
+	settings, settingsErr = cityrecorder.LoadSettings()
+)
+
+func stdoutLoggingHandler(h http.Handler) http.Handler {
+	return handlers.CombinedLoggingHandler(os.Stdout, h)
 }
 
 func main() {
-	recorder := cityrecorder.TweetRecorder{
-		ConsumerKey:    *consumerKey,
-		ConsumerSecret: *consumerSecret,
-		Token:          *token,
-		TokenSecret:    *tokenSecret,
+	if settingsErr != nil {
+		log.Fatal(settingsErr)
 	}
 
-	pusher := cityrecorder.Pusher{
-		AppId:  *pusherAppId,
-		Key:    *pusherKey,
-		Secret: *pusherSecret,
-	}
+	fmt.Println("Loaded Settings")
 
-	pusher.Start(os.Stdin)
+	recorder := cityrecorder.NewTweetRecorder(
+		os.Getenv("TWITTER_CONSUMER_KEY"),
+		os.Getenv("TWITTER_CONSUMER_SECRET"),
+		os.Getenv("TWITTER_TOKEN"),
+		os.Getenv("TWITTER_TOKEN_SECRET"),
+	)
 
-	settings, err := cityrecorder.LoadSettings()
-	if err != nil {
-		log.Fatal(err)
-	}
+	pusher := cityrecorder.NewPusherFromURL(os.Getenv("PUSHER_URL"))
 
 	for _, city := range settings.Cities {
-		recorder.Start(city, writer)
-		pusher.Start(reader)
+		fmt.Println("Configuring city:", city)
+		go recorder.Record(city, pusher)
 	}
 
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	router := mux.NewRouter()
+	stdChain := alice.New(stdoutLoggingHandler, handlers.CompressHandler) //.Then(finalHandler)
+
+	router.Handle("/api/v1/settings", stdChain.Then(http.HandlerFunc(Settings)))
+
+	fmt.Println("Running server on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+func Settings(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(settings); err != nil {
+		panic(err)
+	}
 }

@@ -12,8 +12,9 @@ type Pusher struct {
 	client *pusher.Client
 }
 
-func (p *Pusher) Write(g GeoEvent) {
-	p.client.Trigger("nyc", "tweet", g)
+func (p *Pusher) Write(g GeoEvent) error {
+	_, err := p.client.Trigger("nyc", "tweet", g)
+	return err
 }
 
 // Blocking
@@ -41,5 +42,15 @@ func NewPusher(appId string, key string, secret string) *Pusher {
 		Secret: secret,
 	}
 
+	return p
+}
+
+func NewPusherFromURL(clientUrl string) *Pusher {
+	p := &Pusher{}
+	var err error
+	p.client, err = pusher.ClientFromURL(clientUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return p
 }
