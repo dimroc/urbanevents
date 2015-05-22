@@ -5,13 +5,21 @@ import (
 	"fmt"
 )
 
+var (
+	StdoutWriter = NewStdoutWriter()
+)
+
 type Writer interface {
 	Write(GeoEvent) error
 }
 
-type StdoutWriter struct{}
+type stdoutWriter struct{}
 
-func (w StdoutWriter) Write(g GeoEvent) error {
+func NewStdoutWriter() *stdoutWriter {
+	return &stdoutWriter{}
+}
+
+func (w stdoutWriter) Write(g GeoEvent) error {
 	jsonOut, err := json.Marshal(g)
 	if err == nil {
 		fmt.Println(string(jsonOut))

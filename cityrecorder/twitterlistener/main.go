@@ -43,6 +43,6 @@ func main() {
 	}
 
 	for _, city := range settings.Cities {
-		recorder.Start(city, cityrecorder.StdoutWriter{})
+		recorder.Start(city, cityrecorder.StdoutWriter)
 	}
 }
