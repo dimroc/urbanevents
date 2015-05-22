@@ -16,7 +16,12 @@ type TweetRecorder struct {
 	TokenSecret    string
 }
 
-func (t *TweetRecorder) Start(locations string) {
+type tweetEntry struct {
+	Tweet anaconda.Tweet
+	City  City
+}
+
+func (t *TweetRecorder) Start(city City) {
 	anaconda.SetConsumerKey(t.ConsumerKey)
 	anaconda.SetConsumerSecret(t.ConsumerSecret)
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
@@ -24,7 +29,7 @@ func (t *TweetRecorder) Start(locations string) {
 	outbox := tweetWriter()
 
 	v := url.Values{}
-	v.Set("locations", locations)
+	v.Set("locations", city.Locations)
 	stream := api.PublicStreamFilter(v)
 
 	for {
@@ -34,17 +39,20 @@ func (t *TweetRecorder) Start(locations string) {
 		case elem := <-stream.C:
 			t, ok := elem.(anaconda.Tweet)
 			if ok {
-				outbox <- t
+				outbox <- tweetEntry{Tweet: t, City: city}
 			}
 		}
 	}
 }
 
-func tweetWriter() chan<- anaconda.Tweet { // return send only channel
-	outbox := make(chan anaconda.Tweet)
+func tweetWriter() chan<- tweetEntry { // return send only channel
+	outbox := make(chan tweetEntry)
 	go func() {
-		for tweet := range outbox {
-			g, err := newFromTweet(tweet)
+		for entry := range outbox {
+			tweet := entry.Tweet
+			city := entry.City
+
+			g, err := newFromTweet(city, tweet)
 			if err != nil {
 				continue
 			}
@@ -73,11 +81,11 @@ func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
 	}
 }
 
-func newFromTweet(t anaconda.Tweet) (*GeoEvent, error) {
+func newFromTweet(city City, t anaconda.Tweet) (*GeoEvent, error) {
 	if t.Coordinates != nil {
 		return &GeoEvent{
 			Id:           t.Id,
-			City:         "nyc",
+			CityKey:      city.Key,
 			GeoJson:      geoJsonFromPoint(t),
 			Type:         "tweet",
 			Payload:      t.Text,
@@ -86,7 +94,7 @@ func newFromTweet(t anaconda.Tweet) (*GeoEvent, error) {
 	} else if t.Place.PlaceType == "poi" {
 		return &GeoEvent{
 			Id:           t.Id,
-			City:         "nyc",
+			CityKey:      city.Key,
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Type:         "tweet",
 			Payload:      t.Text,

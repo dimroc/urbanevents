@@ -5,7 +5,7 @@ import ()
 type GeoEvent struct {
 	GeoJson      GeoJson `json:"geojson"`
 	Id           int64   `json:"id"`
-	City         string  `json:"city"`
+	CityKey      string  `json:"city"`
 	LocationType string  `json:"locationType"`
 	Type         string  `json:"type"`
 	Payload      string  `json:"payload"`
