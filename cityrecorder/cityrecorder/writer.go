@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	StdoutWriter = NewStdoutWriter()
+	StdoutWriter = newStdoutWriter()
 )
 
 type Writer interface {
@@ -15,7 +15,7 @@ type Writer interface {
 
 type stdoutWriter struct{}
 
-func NewStdoutWriter() *stdoutWriter {
+func newStdoutWriter() *stdoutWriter {
 	return &stdoutWriter{}
 }
 
