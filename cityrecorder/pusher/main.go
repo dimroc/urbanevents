@@ -18,11 +18,6 @@ func main() {
 	flags := []string{"appid", "key", "secret"}
 	flagvalidator.ValidateFlags(flags)
 
-	pusher := cityrecorder.Pusher{
-		AppId:  *pusherAppId,
-		Key:    *pusherKey,
-		Secret: *pusherSecret,
-	}
-
-	pusher.Start(os.Stdin)
+	pusher := cityrecorder.NewPusher(*pusherAppId, *pusherKey, *pusherSecret)
+	pusher.Listen(os.Stdin)
 }

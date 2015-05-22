@@ -9,18 +9,15 @@ import (
 )
 
 type Pusher struct {
-	AppId  string
-	Key    string
-	Secret string
+	client *pusher.Client
 }
 
-func (p *Pusher) Start(rd io.Reader) {
-	client := pusher.Client{
-		AppId:  p.AppId,
-		Key:    p.Key,
-		Secret: p.Secret,
-	}
+func (p *Pusher) Write(g GeoEvent) {
+	p.client.Trigger("nyc", "tweet", g)
+}
 
+// Blocking
+func (p *Pusher) Listen(rd io.Reader) {
 	reader := bufio.NewReader(rd)
 
 	for {
@@ -30,13 +27,19 @@ func (p *Pusher) Start(rd io.Reader) {
 			continue
 		}
 
-		var objmap *json.RawMessage
-		err = json.Unmarshal(data, &objmap)
-
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			client.Trigger("nyc", "tweet", objmap)
-		}
+		g := GeoEvent{}
+		err = json.Unmarshal(data, &g)
+		p.Write(g)
 	}
+}
+
+func NewPusher(appId string, key string, secret string) *Pusher {
+	p := &Pusher{}
+	p.client = &pusher.Client{
+		AppId:  appId,
+		Key:    key,
+		Secret: secret,
+	}
+
+	return p
 }
