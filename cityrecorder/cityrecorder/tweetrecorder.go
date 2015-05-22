@@ -1,9 +1,7 @@
 package cityrecorder
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/azr/anaconda"
 	"log"
 	"net/url"
@@ -21,12 +19,12 @@ type tweetEntry struct {
 	City  City
 }
 
-func (t *TweetRecorder) Start(city City) {
+func (t *TweetRecorder) Start(city City, writer Writer) {
 	anaconda.SetConsumerKey(t.ConsumerKey)
 	anaconda.SetConsumerSecret(t.ConsumerSecret)
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
 
-	outbox := tweetWriter()
+	outbox := tweetWriter(writer)
 
 	v := url.Values{}
 	v.Set("locations", city.Locations)
@@ -45,7 +43,7 @@ func (t *TweetRecorder) Start(city City) {
 	}
 }
 
-func tweetWriter() chan<- tweetEntry { // return send only channel
+func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	outbox := make(chan tweetEntry)
 	go func() {
 		for entry := range outbox {
@@ -57,9 +55,9 @@ func tweetWriter() chan<- tweetEntry { // return send only channel
 				continue
 			}
 
-			jsonOut, err := json.Marshal(g)
-			if err == nil {
-				fmt.Println(string(jsonOut))
+			err = w.Write(g)
+			if err != nil {
+				log.Fatal(err)
 			}
 		}
 	}()
@@ -81,9 +79,9 @@ func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
 	}
 }
 
-func newFromTweet(city City, t anaconda.Tweet) (*GeoEvent, error) {
+func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	if t.Coordinates != nil {
-		return &GeoEvent{
+		return GeoEvent{
 			Id:           t.Id,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromPoint(t),
@@ -92,7 +90,7 @@ func newFromTweet(city City, t anaconda.Tweet) (*GeoEvent, error) {
 			LocationType: "coordinate",
 		}, nil
 	} else if t.Place.PlaceType == "poi" {
-		return &GeoEvent{
+		return GeoEvent{
 			Id:           t.Id,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromBoundingBox(t),
@@ -101,6 +99,6 @@ func newFromTweet(city City, t anaconda.Tweet) (*GeoEvent, error) {
 			LocationType: t.Place.PlaceType,
 		}, nil
 	} else {
-		return nil, errors.New("Tweet does not contain a coordinate or place of interest")
+		return GeoEvent{}, errors.New("Tweet does not contain a coordinate or place of interest")
 	}
 }
