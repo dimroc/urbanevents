@@ -13,9 +13,13 @@ import (
 	"os"
 )
 
+const (
+	CtxSettingsKey = "city.settings"
+)
+
 func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		context.Set(r, "settings", settings)
+		context.Set(r, CtxSettingsKey, settings)
 		next(w, r)
 	})
 }
@@ -53,6 +57,6 @@ func main() {
 
 func SettingsHandler(w http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{IndentJSON: true})
-	settings := context.Get(req, "settings")
+	settings := context.Get(req, CtxSettingsKey)
 	r.JSON(w, http.StatusOK, settings)
 }
