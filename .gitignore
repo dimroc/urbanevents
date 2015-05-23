@@ -1,3 +1,4 @@
 tmp/
 scripts/*.sh
 .DS_Store
+.envrc
