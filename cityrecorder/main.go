@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dimroc/urban-events/cityrecorder/cityrecorder"
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
 	"log"
 	"os"
@@ -33,6 +34,7 @@ func main() {
 	}
 
 	m := martini.Classic()
+	m.Use(gzip.All())
 	m.Use(render.Renderer())
 	m.Get("/api/v1/settings", Settings)
 	m.RunOnAddr(":8080")
