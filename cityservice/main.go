@@ -40,17 +40,18 @@ func main() {
 		go recorder.Record(city, pusher)
 	}
 
-	mux := mux.NewRouter()
-	mux.HandleFunc("/api/v1/settings", Settings).Methods("GET")
+	router := mux.NewRouter()
+	apiRoutes := router.PathPrefix("/api/v1").Subrouter()
+	apiRoutes.HandleFunc("/settings", SettingsHandler).Methods("GET")
 
 	n := negroni.Classic()
 	n.Use(SettingsMiddleware(settings))
 	n.Use(gzip.Gzip(gzip.DefaultCompression))
-	n.UseHandler(context.ClearHandler(mux))
+	n.UseHandler(context.ClearHandler(router))
 	n.Run(":8080")
 }
 
-func Settings(w http.ResponseWriter, req *http.Request) {
+func SettingsHandler(w http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{IndentJSON: true})
 	settings := context.Get(req, "settings")
 	r.JSON(w, http.StatusOK, settings)
