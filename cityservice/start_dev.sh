@@ -1,3 +1,3 @@
 #!/bin/bash
-go get github.com/githubnemo/CompileDaemon
-CompileDaemon -command="go run main.go" -exclude-dir=[.git]
+go get github.com/pilu/fresh
+fresh
