@@ -1,14 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/dimroc/urban-events/cityrecorder/cityrecorder"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"github.com/justinas/alice"
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -16,16 +13,10 @@ var (
 	settings, settingsErr = cityrecorder.LoadSettings()
 )
 
-func stdoutLoggingHandler(h http.Handler) http.Handler {
-	return handlers.CombinedLoggingHandler(os.Stdout, h)
-}
-
 func main() {
 	if settingsErr != nil {
 		log.Fatal(settingsErr)
 	}
-
-	fmt.Println("Loaded Settings")
 
 	recorder := cityrecorder.NewTweetRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
@@ -41,19 +32,12 @@ func main() {
 		go recorder.Record(city, pusher)
 	}
 
-	router := mux.NewRouter()
-	stdChain := alice.New(stdoutLoggingHandler, handlers.CompressHandler) //.Then(finalHandler)
-
-	router.Handle("/api/v1/settings", stdChain.Then(http.HandlerFunc(Settings)))
-
-	fmt.Println("Running server on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	m := martini.Classic()
+	m.Use(render.Renderer())
+	m.Get("/api/v1/settings", Settings)
+	m.RunOnAddr(":8080")
 }
 
-func Settings(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(settings); err != nil {
-		panic(err)
-	}
+func Settings(r render.Render) {
+	r.JSON(200, settings)
 }
