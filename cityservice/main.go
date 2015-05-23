@@ -2,13 +2,23 @@ package main
 
 import (
 	"fmt"
+	"github.com/codegangsta/negroni"
 	"github.com/dimroc/urban-events/cityservice/cityrecorder"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/gzip"
-	"github.com/martini-contrib/render"
+	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
+	"github.com/phyber/negroni-gzip/gzip"
+	"github.com/unrolled/render"
 	"log"
+	"net/http"
 	"os"
 )
+
+func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
+	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		context.Set(r, "settings", settings)
+		next(w, r)
+	})
+}
 
 func main() {
 	settings, settingsErr := cityrecorder.LoadSettings()
@@ -30,14 +40,18 @@ func main() {
 		go recorder.Record(city, pusher)
 	}
 
-	m := martini.Classic()
-	m.Use(gzip.All())
-	m.Use(render.Renderer())
-	m.MapTo(&settings, (*cityrecorder.SettingsInterface)(nil))
-	m.Get("/api/v1/settings", Settings)
-	m.RunOnAddr(":8080")
+	mux := mux.NewRouter()
+	mux.HandleFunc("/api/v1/settings", Settings).Methods("GET")
+
+	n := negroni.Classic()
+	n.Use(SettingsMiddleware(settings))
+	n.Use(gzip.Gzip(gzip.DefaultCompression))
+	n.UseHandler(context.ClearHandler(mux))
+	n.Run(":8080")
 }
 
-func Settings(r render.Render, s cityrecorder.SettingsInterface) {
-	r.JSON(200, s.GetSettings())
+func Settings(w http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{IndentJSON: true})
+	settings := context.Get(req, "settings")
+	r.JSON(w, http.StatusOK, settings)
 }
