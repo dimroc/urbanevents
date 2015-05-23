@@ -10,11 +10,8 @@ import (
 	"os"
 )
 
-var (
-	settings, settingsErr = cityrecorder.LoadSettings()
-)
-
 func main() {
+	settings, settingsErr := cityrecorder.LoadSettings()
 	if settingsErr != nil {
 		log.Fatal(settingsErr)
 	}
@@ -36,10 +33,11 @@ func main() {
 	m := martini.Classic()
 	m.Use(gzip.All())
 	m.Use(render.Renderer())
+	m.MapTo(&settings, (*cityrecorder.SettingsInterface)(nil))
 	m.Get("/api/v1/settings", Settings)
 	m.RunOnAddr(":8080")
 }
 
-func Settings(r render.Render) {
-	r.JSON(200, settings)
+func Settings(r render.Render, s cityrecorder.SettingsInterface) {
+	r.JSON(200, s.GetSettings())
 }
