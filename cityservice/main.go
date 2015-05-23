@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/phyber/negroni-gzip/gzip"
+	"github.com/rs/cors"
 	"github.com/unrolled/render"
 	"log"
 	"net/http"
@@ -49,8 +50,9 @@ func main() {
 	apiRoutes.HandleFunc("/settings", SettingsHandler).Methods("GET")
 
 	n := negroni.Classic()
-	n.Use(SettingsMiddleware(settings))
+	n.Use(cors.Default())
 	n.Use(gzip.Gzip(gzip.DefaultCompression))
+	n.Use(SettingsMiddleware(settings))
 	n.UseHandler(context.ClearHandler(router))
 	n.Run(":8080")
 }

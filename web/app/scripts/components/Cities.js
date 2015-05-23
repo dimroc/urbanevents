@@ -2,18 +2,36 @@
 
 var React = require('react');
 var Router = require('react-router');
+var CityStore = require('../stores/CityStore');
 var { Route, Redirect, RouteHandler, Link } = Router;
 
 var Cities = React.createClass({
   getInitialState: function() {
-    return {items: ['nyc']};
+    return {items: CityStore.getAll()};
   },
+
+  updateCities: function() {
+    this.setState({items: CityStore.getAll()});
+  },
+
+  componentDidMount: function() {
+    CityStore.addChangeListener(this.updateCities);
+  },
+
+  componentWillUnmount: function() {
+    CityStore.removeChangeListener(this.handlePush);
+  },
+
   render: function() {
     return (
       <div className="container-fluid">
         <h2>Cities</h2>
         <ul>
-          <li><Link to="map" params={{cityId: 'nyc'}}>NYC</Link></li>
+          {
+            this.state.items.map(function(city) {
+            <li><Link to="map" params={{cityId: city.key}}>NYC</Link></li>
+            })
+          }
         </ul>
 
         <RouteHandler/>
@@ -23,5 +41,4 @@ var Cities = React.createClass({
 });
 
 module.exports = Cities;
-
 

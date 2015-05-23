@@ -55,7 +55,7 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	outbox := tweetWriter(writer)
 
 	v := url.Values{}
-	v.Set("locations", city.Locations)
+	v.Set("locations", city.LocationString())
 	stream := api.PublicStreamFilter(v)
 
 	for {

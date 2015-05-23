@@ -2,6 +2,7 @@ package cityrecorder
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 )
@@ -11,9 +12,18 @@ const (
 )
 
 type City struct {
-	Key       string `json:"key"`
-	Display   string `json:"display"`
-	Locations string `json:"locations"`
+	Key     string      `json:"key"`
+	Display string      `json:"display"`
+	Bounds  [][]float64 `json:"bounds"` //long,lat pair defining the bounding rectangle
+}
+
+func (c *City) LocationString() string {
+	return fmt.Sprintf("%v,%v,%v,%v",
+		c.Bounds[0][0],
+		c.Bounds[0][1],
+		c.Bounds[1][0],
+		c.Bounds[1][1],
+	)
 }
 
 type Settings struct {
