@@ -29,7 +29,7 @@ var Cities = React.createClass({
         <ul>
           {
             this.state.items.map(function(city) {
-              return (<li><Link to="map" params={{cityId: city.key}}>{city.display}</Link></li>)
+              return (<li key={city.key}><Link to="map" params={{cityId: city.key}}>{city.display}</Link></li>)
             })
           }
         </ul>
