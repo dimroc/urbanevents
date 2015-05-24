@@ -19,7 +19,7 @@ var Cities = React.createClass({
   },
 
   componentWillUnmount: function() {
-    CityStore.removeChangeListener(this.handlePush);
+    CityStore.removeChangeListener(this.updateCities);
   },
 
   render: function() {
@@ -29,7 +29,7 @@ var Cities = React.createClass({
         <ul>
           {
             this.state.items.map(function(city) {
-            <li><Link to="map" params={{cityId: city.key}}>NYC</Link></li>
+              return (<li><Link to="map" params={{cityId: city.key}}>{city.display}</Link></li>)
             })
           }
         </ul>
