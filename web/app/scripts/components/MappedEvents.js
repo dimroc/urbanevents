@@ -8,7 +8,22 @@ var PusherActions = require("../actions/PusherActions");
 
 var Map = Leaflet.Map,
   TileLayer = Leaflet.TileLayer,
-  Circle = Leaflet.Circle
+  Circle = Leaflet.Circle,
+  Polygon = Leaflet.Polygon;
+
+var latLongList = function(bounds) {
+  // Bounds come in as long, lat, since long is X
+  var twoCorners = bounds.map(function(bound) {
+    return bound.reverse();
+  });
+
+  var corners = [];
+  corners.push(twoCorners[0]);
+  corners.push([twoCorners[1][0], twoCorners[0][1]]);
+  corners.push(twoCorners[1]);
+  corners.push([twoCorners[0][0], twoCorners[1][1]]);
+  return corners;
+}
 
 var MappedEvents = React.createClass({
   contextTypes: {
@@ -36,6 +51,7 @@ var MappedEvents = React.createClass({
     return (
       <Map key={this.city.key} center={this.city.center} zoom={12} className="real-time-map">
         <TileLayer url="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png" attribution='Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>'/>
+        <Polygon positions={latLongList(this.city.bounds)} color="blue"/>
         {
           this.state.items.map(function(geoevent) {
             return (<Circle key={geoevent.id} center={geoevent.geojson.coordinates.reverse()}
