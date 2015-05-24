@@ -1,9 +1,10 @@
 'use strict';
 
-var gulp = require('gulp');
-var del = require('del');
-
-
+var gulp           = require('gulp');
+var del            = require('del');
+var gulpFilter     = require('gulp-filter')
+var mainBowerFiles = require('main-bower-files')
+var concat         = require('gulp-concat')
 
 // Load plugins
 var $ = require('gulp-load-plugins')();
@@ -20,7 +21,7 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
 // Styles
-gulp.task('styles', ['sass'  ]);
+gulp.task('styles', ['sass']);
 
 gulp.task('sass', function() {
     return gulp.src(['app/styles/**/*.scss', 'app/styles/**/*.css'])
@@ -33,15 +34,6 @@ gulp.task('sass', function() {
         .pipe(gulp.dest('dist/styles'))
         .pipe($.size());
 });
-
-gulp.task('stylus', function() {
-    return gulp.src(['app/styles/**/*.styl'])
-        .pipe($.stylus())
-        .pipe($.autoprefixer('last 1 version'))
-        .pipe(gulp.dest('dist/styles'))
-        .pipe($.size());
-});
-
 
 var bundler = watchify(browserify({
     entries: [sourceFile],
@@ -76,9 +68,6 @@ gulp.task('buildScripts', function() {
         .pipe(gulp.dest('dist/scripts'));
 });
 
-
-
-
 // HTML
 gulp.task('html', function() {
     return gulp.src('app/*.html')
@@ -101,8 +90,8 @@ gulp.task('images', function() {
 
 // Fonts
 gulp.task('fonts', function() {
-    return gulp.src(require('main-bower-files')({
             filter: '**/*.{eot,svg,ttf,woff,woff2}'
+    return gulp.src(mainBowerFiles({
         }).concat('app/fonts/**/*'))
         .pipe(gulp.dest('dist/fonts'));
 });
@@ -114,7 +103,7 @@ gulp.task('clean', function(cb) {
 });
 
 // Bundle
-gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
+gulp.task('bundle', ['styles', 'scripts', 'bower', 'bowerCss'], function() {
     return gulp.src('./app/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
@@ -122,7 +111,7 @@ gulp.task('bundle', ['styles', 'scripts', 'bower'], function() {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('buildBundle', ['styles', 'buildScripts', 'bower'], function() {
+gulp.task('buildBundle', ['styles', 'buildScripts', 'bower', 'bowerCss'], function() {
     return gulp.src('./app/*.html')
         .pipe($.useref.assets())
         .pipe($.useref.restore())
@@ -138,6 +127,16 @@ gulp.task('bower', function() {
         .pipe(gulp.dest('dist/bower_components/'));
 
 });
+
+//
+// concat just leaflet/*.css to `vendor.css`
+//
+gulp.task('bowerCss', function() {
+  var cssFilter = (/app\/bower_components\/leaflet\/.*css/i);
+  return gulp.src(mainBowerFiles({filter: cssFilter}))
+    .pipe(concat('vendor.css'))
+    .pipe(gulp.dest('dist/styles'))
+})
 
 gulp.task('json', function() {
     gulp.src('app/scripts/json/**/*.json', {
