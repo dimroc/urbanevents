@@ -15,6 +15,7 @@ var PushedItems = React.createClass({
           <div className="location-info text text-muted">
             <span className="type">{geoevent.geojson.type}</span>
             <span className="coordinates">{geoevent.geojson.coordinates}</span>
+            <span className="created-at">{geoevent.createdAt}</span>
           </div>
           <hr/>
         </li>

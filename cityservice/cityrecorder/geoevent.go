@@ -3,6 +3,7 @@ package cityrecorder
 import ()
 
 type GeoEvent struct {
+	CreatedAt    string   `json:createdAt"`
 	GeoJson      GeoJson  `json:"geojson"`
 	Id           string   `json:"id"`
 	CityKey      string   `json:"city"`
