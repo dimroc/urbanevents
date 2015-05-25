@@ -4,8 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/azr/anaconda"
+	"github.com/op/go-logging"
 	"log"
 	"net/url"
+)
+
+var (
+	logger = logging.MustGetLogger("cityrecorder")
 )
 
 type TweetRecorder struct {
@@ -57,14 +62,17 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	v.Set("locations", city.LocationString())
 	stream := api.PublicStreamFilter(v)
 
+	logger.Debug("Listening to tweets from %s", city.Key)
 	for {
 		select {
 		case <-stream.Quit:
-			log.Println("Quitting")
+			logger.Debug("Quitting")
 		case elem := <-stream.C:
 			t, ok := elem.(anaconda.Tweet)
 			if ok {
 				outbox <- tweetEntry{Tweet: t, City: city}
+			} else {
+				log.Fatal("Unable to type cast tweet")
 			}
 		}
 	}
@@ -79,6 +87,7 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 
 			g, err := newFromTweet(city, tweet)
 			if err != nil {
+				//logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
 				continue
 			}
 
@@ -144,6 +153,7 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	if t.Coordinates != nil {
 		return GeoEvent{
 			Id:           t.IdStr,
+			CreatedAt:    t.CreatedAt,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromPoint(t),
 			Type:         "tweet",
@@ -154,6 +164,7 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	} else if t.Place.PlaceType == "poi" {
 		return GeoEvent{
 			Id:           t.IdStr,
+			CreatedAt:    t.CreatedAt,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Type:         "tweet",
