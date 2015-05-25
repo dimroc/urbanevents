@@ -14,7 +14,7 @@ var Map = Leaflet.Map,
 var latLongList = function(bounds) {
   // Bounds come in as long, lat, since long is X
   var twoCorners = bounds.map(function(bound) {
-    return bound.reverse();
+    return bound.slice(0).reverse();
   });
 
   var corners = [];
@@ -49,12 +49,12 @@ var MappedEvents = React.createClass({
   },
   render: function() {
     return (
-      <Map key={this.city.key} center={this.city.center} zoom={12} className="real-time-map">
+      <Map key={this.city.key} center={this.city.center} zoom={10} className="real-time-map">
         <TileLayer url="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png" attribution='Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>'/>
         <Polygon positions={latLongList(this.city.bounds)} color="blue"/>
         {
           this.state.items.map(function(geoevent) {
-            return (<Circle key={geoevent.id} center={geoevent.geojson.coordinates.reverse()}
+            return (<Circle key={geoevent.id} center={geoevent.geojson.coordinates.slice(0).reverse()}
                 radius={500} color="red" fillColor="#f03" fillOpacity={0.5}/>);
           })
         }

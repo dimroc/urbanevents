@@ -1,1 +1,4 @@
-{"Cities":[{"key":"nyc","display":"New York City","bounds":[[-74.3,40.462],[-73.65,40.95]]}]}
+{"Cities":[
+  {"key":"nyc","display":"New York City","bounds":[[-74.3,40.462],[-73.65,40.95]]},
+  {"key":"sf","display":"San Francisco","bounds":[[-122.75,36.8],[-121.75,37.8]]}
+]}
