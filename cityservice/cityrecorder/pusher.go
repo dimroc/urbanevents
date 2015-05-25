@@ -13,7 +13,11 @@ type Pusher struct {
 }
 
 func (p *Pusher) Write(g GeoEvent) error {
-	_, err := p.client.Trigger("nyc", "tweet", g)
+	_, err := p.client.Trigger(g.CityKey, "tweet", g)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return err
 }
 
