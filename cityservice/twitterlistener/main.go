@@ -4,6 +4,7 @@ import (
 	"github.com/dimroc/urban-events/cityservice/cityrecorder"
 	"log"
 	"os"
+	"sync"
 )
 
 func main() {
@@ -19,7 +20,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	for _, city := range settings.Cities {
-		recorder.Record(city, cityrecorder.StdoutWriter) // Blocking
+		go recorder.Record(city, cityrecorder.StdoutWriter) // Blocking
 	}
+
+	wg.Wait()
 }

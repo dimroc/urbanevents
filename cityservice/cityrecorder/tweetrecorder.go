@@ -44,14 +44,13 @@ func NewTweetRecorder(consumerKey string, consumerSecret string, token string, t
 		log.Fatal(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
 	}
 
+	anaconda.SetConsumerKey(consumerKey)
+	anaconda.SetConsumerSecret(consumerSecret)
 	return recorder
 }
 
 func (t *TweetRecorder) Record(city City, writer Writer) {
-	anaconda.SetConsumerKey(t.ConsumerKey)
-	anaconda.SetConsumerSecret(t.ConsumerSecret)
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
-
 	outbox := tweetWriter(writer)
 
 	v := url.Values{}
@@ -107,23 +106,59 @@ func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
 	}
 }
 
+type localEntities anaconda.Entities
+
+func (e localEntities) GetHashtagTexts() []string {
+	texts := make([]string, len(e.Hashtags))
+	for index, hashtag := range e.Hashtags {
+		texts[index] = hashtag.Text
+	}
+
+	return texts
+}
+
+func (e localEntities) GetMedias() ([]string, []string) {
+	types := make([]string, len(e.Media))
+	urls := make([]string, len(e.Media))
+	for index, media := range e.Media {
+		types[index] = media.Type
+		urls[index] = media.Media_url
+	}
+
+	return types, urls
+}
+
+func metadataFromTweet(t anaconda.Tweet) Metadata {
+	entities := localEntities(t.Entities)
+
+	types, urls := entities.GetMedias()
+	return Tweet{
+		ScreenName: t.User.ScreenName,
+		Hashtags:   entities.GetHashtagTexts(),
+		MediaTypes: types,
+		MediaUrls:  urls,
+	}
+}
+
 func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	if t.Coordinates != nil {
 		return GeoEvent{
-			Id:           t.Id,
+			Id:           t.IdStr,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromPoint(t),
 			Type:         "tweet",
 			Payload:      t.Text,
+			Metadata:     metadataFromTweet(t),
 			LocationType: "coordinate",
 		}, nil
 	} else if t.Place.PlaceType == "poi" {
 		return GeoEvent{
-			Id:           t.Id,
+			Id:           t.IdStr,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Type:         "tweet",
 			Payload:      t.Text,
+			Metadata:     metadataFromTweet(t),
 			LocationType: t.Place.PlaceType,
 		}, nil
 	} else {
