@@ -2,18 +2,15 @@ var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 var AppConstants = require('../constants/AppConstants');
 
 var pusher = new Pusher('81be37a4f4ee0f471476');
+var _channels = {};
 
 var PusherActions = {
   listen: function(key) {
-    if (this.key != key) {
-      this.key = key;
-      this.channel = pusher.subscribe(key);
-      this.channel.bind('tweet', this.handlePush, this);
+    if (!_channels[key]) {
+      var newChannel = pusher.subscribe(key);
+      newChannel.bind('tweet', this.handlePush, this);
+      _channels[key] = newChannel;
     }
-  },
-
-  stop: function() {
-    this.channel.unbind('tweet', this.handlePush);
   },
 
   handlePush: function(data) {

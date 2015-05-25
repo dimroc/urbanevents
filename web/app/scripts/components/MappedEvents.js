@@ -54,7 +54,8 @@ var MappedEvents = React.createClass({
         <Polygon positions={latLongList(this.city.bounds)} color="blue"/>
         {
           this.state.items.map(function(geoevent) {
-            return (<Circle key={geoevent.id} center={geoevent.geojson.coordinates.slice(0).reverse()}
+            var key = geoevent.id + "mapped";
+            return (<Circle key={key} center={geoevent.geojson.coordinates.slice(0).reverse()}
                 radius={500} color="red" fillColor="#f03" fillOpacity={0.5}/>);
           })
         }

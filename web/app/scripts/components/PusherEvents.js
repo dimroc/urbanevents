@@ -8,8 +8,9 @@ var PusherActions = require("../actions/PusherActions");
 var PushedItems = React.createClass({
   render: function() {
     var createItem = function(geoevent) {
+      var key = geoevent.id + "listed";
       return (
-        <li key={geoevent.id}>
+        <li key={key}>
           <span>{geoevent.payload}</span>
           <div className="location-info text text-muted">
             <span className="type">{geoevent.geojson.type}</span>
