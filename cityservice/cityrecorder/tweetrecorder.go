@@ -151,9 +151,10 @@ func metadataFromTweet(t anaconda.Tweet) Metadata {
 
 func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	if t.Coordinates != nil {
+		createdAt, _ := t.CreatedAtTime()
 		return GeoEvent{
 			Id:           t.IdStr,
-			CreatedAt:    t.CreatedAt,
+			CreatedAt:    createdAt,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromPoint(t),
 			Type:         "tweet",
@@ -162,9 +163,10 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			LocationType: "coordinate",
 		}, nil
 	} else if t.Place.PlaceType == "poi" {
+		createdAt, _ := t.CreatedAtTime()
 		return GeoEvent{
 			Id:           t.IdStr,
-			CreatedAt:    t.CreatedAt,
+			CreatedAt:    createdAt,
 			CityKey:      city.Key,
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Type:         "tweet",

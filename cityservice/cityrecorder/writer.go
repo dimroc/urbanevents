@@ -27,3 +27,22 @@ func (w stdoutWriter) Write(g GeoEvent) error {
 
 	return err
 }
+
+type broadcastWriter struct {
+	Writers []Writer
+}
+
+func NewBroadcastWriter(writers ...Writer) Writer {
+	return &broadcastWriter{Writers: writers}
+}
+
+func (b *broadcastWriter) Write(g GeoEvent) error {
+	var err error
+	for _, writer := range b.Writers {
+		newErr := writer.Write(g)
+		if newErr != nil {
+			err = newErr
+		}
+	}
+	return err
+}

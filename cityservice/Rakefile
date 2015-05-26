@@ -1,0 +1,33 @@
+require 'elasticsearch/persistence'
+require 'active_support/all'
+GO_ENV = ENV['GO_ENV'].presence || 'development'
+
+repository = Elasticsearch::Persistence::Repository.new do
+  # Configure the Elasticsearch client
+  client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
+
+  # Set a custom index name
+  index "#{GO_ENV}-ntc-geoevents"
+
+  # Set a custom document type
+  type  :tweet
+
+  settings do
+    mapping do
+      indexes :createdAt, type: 'date'
+      indexes :payload, analyzer: 'snowball'
+      indexes :metadata, type: 'object'
+      # Rest of the attributes are created lazily
+    end
+  end
+end
+
+namespace :elasticsearch do
+  task :create_index do
+    repository.create_index! force: true
+  end
+
+  task :destroy_index do
+    repository.delete_index!
+  end
+end

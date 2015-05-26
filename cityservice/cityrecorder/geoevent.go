@@ -1,16 +1,18 @@
 package cityrecorder
 
-import ()
+import (
+	"time"
+)
 
 type GeoEvent struct {
-	CreatedAt    string   `json:createdAt"`
-	GeoJson      GeoJson  `json:"geojson"`
-	Id           string   `json:"id"`
-	CityKey      string   `json:"city"`
-	LocationType string   `json:"locationType"`
-	Type         string   `json:"type"`
-	Payload      string   `json:"payload"`
-	Metadata     Metadata `json:"metadata"`
+	CreatedAt    time.Time `json:"createdAt"`
+	GeoJson      GeoJson   `json:"geojson"`
+	Id           string    `json:"id"`
+	CityKey      string    `json:"city"`
+	LocationType string    `json:"locationType"`
+	Type         string    `json:"type"`
+	Payload      string    `json:"payload"`
+	Metadata     Metadata  `json:"metadata"`
 }
 
 type GeoJson interface{}

@@ -39,10 +39,12 @@ func main() {
 	)
 
 	pusher := cityrecorder.NewPusherFromURL(os.Getenv("PUSHER_URL"))
+	elasticwriter := cityrecorder.NewElasticWriter(os.Getenv("ELASTICSEARCH_URL"))
+	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elasticwriter, cityrecorder.StdoutWriter)
 
 	for _, city := range settings.Cities {
 		fmt.Println("Configuring city:", city)
-		go recorder.Record(city, pusher)
+		go recorder.Record(city, broadcaster)
 	}
 
 	router := mux.NewRouter()

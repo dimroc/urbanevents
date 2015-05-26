@@ -2,4 +2,6 @@ source 'https://rubygems.org'
 ruby '2.2.1'
 #ruby-gemset=cityrecorder
 
-gem 'compass'
+gem 'activesupport'
+gem 'elasticsearch-persistence'
+gem 'rake'
