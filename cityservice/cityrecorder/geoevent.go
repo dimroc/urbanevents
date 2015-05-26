@@ -32,6 +32,6 @@ type Metadata interface{}
 type Tweet struct {
 	ScreenName string   `json:"screenName"`
 	Hashtags   []string `json:"hashtags"`
-	MediaTypes []string `json:"mediaType"`
-	MediaUrls  []string `json:"mediaUrl"`
+	MediaTypes []string `json:"mediaTypes"`
+	MediaUrls  []string `json:"mediaUrls"`
 }

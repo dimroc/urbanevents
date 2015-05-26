@@ -16,7 +16,19 @@ repository = Elasticsearch::Persistence::Repository.new do
     mapping do
       indexes :createdAt, type: 'date'
       indexes :payload, analyzer: 'snowball'
-      indexes :metadata, type: 'object'
+      indexes :city, type: 'string', index: 'not_analyzed'
+      indexes :metadata, type: 'object' do
+        indexes :screenName, type: 'string'
+        indexes :hashtags, type: 'string'
+        indexes :mediaTypes, type: 'string', index: 'not_analyzed'
+        indexes :mediaUrls, type: 'string', index: 'not_analyzed'
+      end
+
+      indexes :geojson, type: 'object' do
+        indexes :type, type: 'string', index: 'not_analyzed'
+        indexes :coordinates, type: 'geo_point'
+      end
+
       # Rest of the attributes are created lazily
     end
   end
@@ -24,6 +36,7 @@ end
 
 namespace :elasticsearch do
   task :create_index do
+    raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
     repository.create_index! force: true
   end
 
