@@ -13,6 +13,6 @@ func ValidateFlags(names []string) {
 
 func validateFlag(name string, flag string) {
 	if len(flag) <= 0 {
-		log.Fatal(name + " cannot be empty")
+		log.Panic(name + " cannot be empty")
 	}
 }

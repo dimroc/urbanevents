@@ -46,7 +46,7 @@ func NewTweetRecorder(consumerKey string, consumerSecret string, token string, t
 	}
 
 	if !recorder.Configured() {
-		log.Fatal(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
+		log.Panic(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
 	}
 
 	anaconda.SetConsumerKey(consumerKey)
@@ -72,7 +72,7 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 			if ok {
 				outbox <- tweetEntry{Tweet: t, City: city}
 			} else {
-				log.Fatal("Unable to type cast tweet")
+				log.Panic("Unable to type cast tweet")
 			}
 		}
 	}
@@ -93,7 +93,7 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 
 			err = w.Write(g)
 			if err != nil {
-				log.Fatal(err)
+				log.Println("Failed to write geoevent", err)
 			}
 		}
 	}()

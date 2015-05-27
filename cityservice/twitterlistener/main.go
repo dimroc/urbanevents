@@ -17,7 +17,7 @@ func main() {
 
 	settings, err := cityrecorder.LoadSettings()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	var wg sync.WaitGroup

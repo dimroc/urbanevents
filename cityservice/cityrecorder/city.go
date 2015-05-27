@@ -3,18 +3,19 @@ package cityrecorder
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-)
-
-const (
-	filename string = "conf.json"
+	"time"
 )
 
 type City struct {
 	Key     string      `json:"key"`
 	Display string      `json:"display"`
 	Bounds  [][]float64 `json:"bounds"` //long,lat pair defining the bounding rectangle
+}
+
+type CityDetailed struct {
+	City
+	Stats CityCounts
 }
 
 func (c *City) LocationString() string {
@@ -26,42 +27,90 @@ func (c *City) LocationString() string {
 	)
 }
 
-type Settings struct {
-	Cities []City `json:"cities"`
+type CityCounts struct {
+	Counts []int       `json:"counts"`
+	Days   []time.Time `json:"days"`
 }
 
-type SettingsInterface interface {
-	GetSettings() *Settings
+func (c *City) GetStats(e *ElasticConnection) CityDetailed {
+	return c.GetStatsFor(e, 7)
 }
 
-func (s *Settings) Save() error {
-	jsonOut, err := json.Marshal(s)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return ioutil.WriteFile(filename, jsonOut, 0644)
-}
+func (c *City) GetStatsFor(e *ElasticConnection, nDays int) CityDetailed {
+	counts := make([]int, nDays)
+	days := make([]time.Time, nDays)
+	current := time.Now()
 
-func (s *Settings) GetSettings() *Settings {
-	return s
-}
-
-func (s *Settings) String() string {
-	jsonOut, err := json.Marshal(s)
-	if err != nil {
-		log.Fatal(err)
+	for index := 0; index < nDays; index++ {
+		counts[index] = nDays - index
+		prevDay := current.AddDate(0, 0, -1)
+		statsForDay(e, index)
+		days[index] = current
+		current = prevDay
 	}
 
-	return string(jsonOut)
-}
-
-func LoadSettings() (Settings, error) {
-	contents, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatal(err)
+	stats := CityCounts{
+		Counts: counts,
+		Days:   days,
 	}
 
-	s := Settings{}
-	err = json.Unmarshal(contents, &s)
-	return s, err
+	return CityDetailed{*c, stats}
+}
+
+func statsForDay(e *ElasticConnection, daysBack int) {
+	queryJson := `{
+		"size": 0,
+		"aggs": {
+			"tweet_count": {
+				"filter": {
+					"range": {
+						"createdAt": {
+							"lt": "%s",
+							"gte": "%s"
+						}
+					}
+				},
+				"aggs": {
+					"city": {
+						"terms": {
+							"field": "city"
+						}
+					}
+				}
+			}
+		}
+	}`
+
+	var lt string
+	if daysBack == 0 {
+		lt = "now"
+	} else {
+		lt = time.Now().UTC().AddDate(0, 0, -daysBack+1).String()[0:10]
+	}
+
+	prevDate := time.Now().UTC().AddDate(0, 0, -daysBack).String()[0:10]
+	gte := prevDate
+	query := fmt.Sprintf(queryJson, lt, gte)
+
+	out := e.Search(query)
+	response := aggregationResult{}
+
+	err := json.Unmarshal(out.Aggregations, &response)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(response)
+}
+
+type aggregationResult struct {
+	TweetCount struct {
+		DocCount int64 `json:"doc_count"`
+		City     struct {
+			Buckets []struct {
+				Key      string `json:"key"`
+				DocCount int64  `json:"doc_count"`
+			} `json:"buckets"`
+		} `json:"city"`
+	} `json:"tweet_count"`
 }

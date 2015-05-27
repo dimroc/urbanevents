@@ -15,7 +15,7 @@ type Pusher struct {
 func (p *Pusher) Write(g GeoEvent) error {
 	_, err := p.client.Trigger(g.CityKey, "tweet", g)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	return err
@@ -54,7 +54,7 @@ func NewPusherFromURL(clientUrl string) *Pusher {
 	var err error
 	p.client, err = pusher.ClientFromURL(clientUrl)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return p
 }
