@@ -45,10 +45,15 @@ namespace :elasticsearch do
   end
 
   task :create_repository do
-
+    repository.client.snapshot.create_repository(repository: 'urban-events-backups',
+      body: {
+      type: 'fs',
+      settings: { location: '/tmp/backup', compress: true  }
+    })
   end
 
   task :snapshot do
-    repository.client.snapshot.create repository: 'elasticsearch_backups', snapshot: 'snapshot-1'
+    timestamp = Time.now.strftime("%Y%m%d-%H%M%S") 
+    repository.client.snapshot.create repository: 'urban-events-backups', snapshot: "#{timestamp}"
   end
 end
