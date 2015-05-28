@@ -14,7 +14,7 @@ repository = Elasticsearch::Persistence::Repository.new do
   # Set a custom document type
   type  :tweet
 
-  settings do
+  settings number_of_shards: 3 do
     mapping do
       indexes :createdAt, type: 'date'
       indexes :payload, analyzer: 'snowball'
