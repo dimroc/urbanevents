@@ -11,10 +11,11 @@ var PushedItems = React.createClass({
       var key = geoevent.id + "listed";
       return (
         <li key={key}>
+          <label className="screenName label label-info">{geoevent.metadata.screenName}</label>
           <span>{geoevent.payload}</span>
           <div className="location-info text text-muted">
-            <span className="type">{geoevent.geojson.type}</span>
-            <span className="coordinates">{geoevent.geojson.coordinates}</span>
+            <span className="type">{geoevent.locationType}</span>
+            <span className="coordinates">{geoevent.point}</span>
             <span className="created-at">{geoevent.createdAt}</span>
           </div>
           <hr/>

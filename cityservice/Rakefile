@@ -9,6 +9,8 @@ repository = Elasticsearch::Persistence::Repository.new do
   # Set a custom index name
   index "#{GO_ENV}-ntc-geoevents"
 
+  # TODO: Create timestamped index and then make alias
+
   # Set a custom document type
   type  :tweet
 
@@ -24,10 +26,8 @@ repository = Elasticsearch::Persistence::Repository.new do
         indexes :mediaUrls, type: 'string', index: 'not_analyzed'
       end
 
-      indexes :geojson, type: 'object' do
-        indexes :type, type: 'string', index: 'not_analyzed'
-        indexes :coordinates, type: 'geo_point'
-      end
+      indexes :geojson, type: 'geo_shape'
+      indexes :point, type: 'geo_point'
 
       # Rest of the attributes are created lazily
     end

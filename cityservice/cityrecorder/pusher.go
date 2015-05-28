@@ -15,7 +15,7 @@ type Pusher struct {
 func (p *Pusher) Write(g GeoEvent) error {
 	_, err := p.client.Trigger(g.CityKey, "tweet", g)
 	if err != nil {
-		log.Panic(err)
+		logger.Warning("Failed to push geoevent", g, err)
 	}
 
 	return err

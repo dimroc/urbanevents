@@ -4,13 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/azr/anaconda"
-	"github.com/op/go-logging"
 	"log"
 	"net/url"
-)
-
-var (
-	logger = logging.MustGetLogger("cityrecorder")
 )
 
 type TweetRecorder struct {
@@ -46,7 +41,7 @@ func NewTweetRecorder(consumerKey string, consumerSecret string, token string, t
 	}
 
 	if !recorder.Configured() {
-		log.Panic(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
+		log.Fatal(fmt.Sprintf("Recorder configuration is invalid: %s", recorder))
 	}
 
 	anaconda.SetConsumerKey(consumerKey)
@@ -66,7 +61,7 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	for {
 		select {
 		case <-stream.Quit:
-			logger.Debug("Quitting")
+			logger.Debug("%s Stream Quit", city.Key)
 		case elem := <-stream.C:
 			t, ok := elem.(anaconda.Tweet)
 			if ok {
@@ -93,7 +88,7 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 
 			err = w.Write(g)
 			if err != nil {
-				log.Println("Failed to write geoevent", err)
+				logger.Warning("Failed to write geoevent: %s %s", g.String(), err)
 			}
 		}
 	}()
@@ -156,7 +151,8 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			Id:           t.IdStr,
 			CreatedAt:    createdAt,
 			CityKey:      city.Key,
-			GeoJson:      geoJsonFromPoint(t),
+			GeoJson:      nil,
+			Point:        t.Coordinates.Coordinates,
 			Type:         "tweet",
 			Payload:      t.Text,
 			Metadata:     metadataFromTweet(t),
@@ -164,11 +160,13 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 		}, nil
 	} else if t.Place.PlaceType == "poi" {
 		createdAt, _ := t.CreatedAtTime()
+		geoJson := geoJsonFromBoundingBox(t)
 		return GeoEvent{
 			Id:           t.IdStr,
 			CreatedAt:    createdAt,
 			CityKey:      city.Key,
-			GeoJson:      geoJsonFromBoundingBox(t),
+			GeoJson:      geoJson,
+			Point:        geoJson.Center(),
 			Type:         "tweet",
 			Payload:      t.Text,
 			Metadata:     metadataFromTweet(t),

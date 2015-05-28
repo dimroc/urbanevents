@@ -14,7 +14,7 @@ var PusherActions = {
   },
 
   handlePush: function(data) {
-    if(data.geojson.type === "Point") {
+    if(data.locationType === "coordinate") {
       AppDispatcher.dispatch({
         actionType: AppConstants.PUSHER_TWEET,
         geoevent: data

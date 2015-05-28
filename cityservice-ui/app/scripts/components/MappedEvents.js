@@ -55,7 +55,7 @@ var MappedEvents = React.createClass({
         {
           this.state.items.map(function(geoevent) {
             var key = geoevent.id + "mapped";
-            return (<Circle key={key} center={geoevent.geojson.coordinates.slice(0).reverse()}
+            return (<Circle key={key} center={geoevent.point.slice(0).reverse()}
                 radius={500} color="red" fillColor="#f03" fillOpacity={0.5}/>);
           })
         }
