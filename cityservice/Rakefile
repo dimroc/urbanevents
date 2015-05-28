@@ -73,4 +73,9 @@ namespace :elasticsearch do
     timestamp = Time.now.strftime("%Y%m%d-%H%M%S")
     repository.client.snapshot.create repository: backup_repository_name, snapshot: "cityservice-#{timestamp}"
   end
+
+  task :restore do
+    snapshot = ENV['SNAPSHOT']
+    repository.client.snapshot.restore repository: backup_repository_name, snapshot: snapshot
+  end
 end
