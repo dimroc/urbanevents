@@ -1,6 +1,7 @@
 package cityrecorder
 
 import (
+	. "github.com/dimroc/urban-events/cityservice/utils"
 	elastigo "github.com/mattbaird/elastigo/lib"
 	"log"
 	"net"
@@ -19,6 +20,12 @@ type ElasticConnection struct {
 func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	if len(os.Getenv("GO_ENV")) == 0 {
 		log.Panic("GO_ENV not set")
+	}
+
+	if len(elasticsearchUrl) == 0 {
+		log.Panic("elasticsearchUrl empty")
+	} else {
+		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl)
 	}
 
 	u, err := url.Parse(elasticsearchUrl)
