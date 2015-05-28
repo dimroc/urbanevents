@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestIntegrationGetStats(t *testing.T) {
+func TestIntegrationGetDetails(t *testing.T) {
 	Convey("Given a populated elasticsearch", t, func() {
 		elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 		for index, geoevent := range Fixture.GeoEvents {
@@ -19,7 +19,7 @@ func TestIntegrationGetStats(t *testing.T) {
 		city := Fixture.GetCity()
 
 		Convey("the stats should be correct", func() {
-			detailed := city.GetStats(elastic)
+			detailed := city.GetDetails(elastic)
 			So(len(detailed.Stats.Counts), ShouldEqual, 7)
 			So(len(detailed.Stats.Days), ShouldEqual, 7)
 			So(detailed.Stats.Counts[0], ShouldEqual, 1)

@@ -58,6 +58,7 @@ func main() {
 	router := mux.NewRouter()
 	apiRoutes := router.PathPrefix("/api/v1").Subrouter()
 	apiRoutes.HandleFunc("/settings", SettingsHandler).Methods("GET")
+	apiRoutes.HandleFunc("/cities", CitiesHandler).Methods("GET")
 	apiRoutes.HandleFunc("/cities/{city}", CityHandler).Methods("GET")
 
 	n := negroni.Classic()
@@ -75,11 +76,18 @@ func SettingsHandler(w http.ResponseWriter, req *http.Request) {
 	r.JSON(w, http.StatusOK, settings)
 }
 
+func CitiesHandler(w http.ResponseWriter, req *http.Request) {
+	r := render.New(render.Options{IndentJSON: true})
+	settings := GetSettings(req)
+
+	r.JSON(w, http.StatusOK, settings.GetCityDetails(GetElasticConnection(req)))
+}
+
 func CityHandler(w http.ResponseWriter, req *http.Request) {
 	city := GetCity(req)
 
 	r := render.New(render.Options{IndentJSON: true})
-	r.JSON(w, http.StatusOK, city.GetStats(GetElasticConnection(req)))
+	r.JSON(w, http.StatusOK, city.GetDetails(GetElasticConnection(req)))
 }
 
 func GetCity(req *http.Request) cityrecorder.City {

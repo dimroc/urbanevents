@@ -14,9 +14,9 @@ type City struct {
 	Bounds  [][]float64 `json:"bounds"` //long,lat pair defining the bounding rectangle
 }
 
-type CityDetailed struct {
+type CityDetails struct {
 	City
-	Stats CityCounts
+	Stats CityCounts `json:"stats"`
 }
 
 func (c *City) LocationString() string {
@@ -33,11 +33,11 @@ type CityCounts struct {
 	Days   []time.Time `json:"days"`
 }
 
-func (c *City) GetStats(e *ElasticConnection) CityDetailed {
-	return c.GetStatsFor(e, 7)
+func (c *City) GetDetails(e *ElasticConnection) CityDetails {
+	return c.GetDetailsFor(e, 7)
 }
 
-func (c *City) GetStatsFor(e *ElasticConnection, nDays int) CityDetailed {
+func (c *City) GetDetailsFor(e *ElasticConnection, nDays int) CityDetails {
 	counts, days := c.retrieveStats(e, nDays)
 
 	stats := CityCounts{
@@ -45,7 +45,7 @@ func (c *City) GetStatsFor(e *ElasticConnection, nDays int) CityDetailed {
 		Days:   days,
 	}
 
-	return CityDetailed{*c, stats}
+	return CityDetails{*c, stats}
 }
 
 func (c *City) retrieveStats(e *ElasticConnection, daysBack int) ([]int, []time.Time) {

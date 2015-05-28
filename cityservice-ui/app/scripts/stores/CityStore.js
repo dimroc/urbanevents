@@ -5,9 +5,7 @@ var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
-var _cities = [
-  {key: 'nyc', display: 'New York City', bounds: [[40.462,-74.3], [40.95,-73.65]], center: [40.7737, -73.9800]}
-];
+var _cities = [];
 
 var CityStore = assign({}, EventEmitter.prototype, {
   getAll: function() {
@@ -47,10 +45,10 @@ var normalizeCities = function(cities) {
 }
 
 $.ajax({
-  url: "http://localhost:8080/api/v1/settings",
+  url: "http://localhost:58080/api/v1/cities",
   context: CityStore
 }).done(function(data) {
-  _cities = normalizeCities(data.cities);
+  _cities = normalizeCities(data);
   this.emitChange();
 }).fail(function() {
   console.log("failed to retrieve cities");
