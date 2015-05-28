@@ -35,7 +35,7 @@ repository = Elasticsearch::Persistence::Repository.new do
 end
 
 namespace :elasticsearch do
-  task :create_index do
+  task :recreate_index do
     raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
     repository.create_index! force: true
   end
