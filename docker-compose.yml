@@ -1,0 +1,25 @@
+elasticsearch:
+  image: dimroc/dockerfile-elasticsearch
+  restart: always
+  ports:
+    - 59200:9200
+    - 59300:9300
+  #volumes:
+    #- tmp/elasticsearch-data:/usr/share/elasticsearch/data
+
+cityservice:
+  build: cityservice
+  links:
+    - elasticsearch
+  ports:
+    - 58080:58080
+  environment:
+    - GO_ENV=qa
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+    - PUSHER_URL=
+
+  restart: always
