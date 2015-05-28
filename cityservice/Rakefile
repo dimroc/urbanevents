@@ -35,6 +35,10 @@ repository = Elasticsearch::Persistence::Repository.new do
 end
 
 namespace :elasticsearch do
+  def backup_repository_name
+    "urban-events"
+  end
+
   task :recreate_index do
     raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
     repository.create_index! force: true
@@ -44,16 +48,29 @@ namespace :elasticsearch do
     repository.delete_index!
   end
 
-  task :create_repository do
-    repository.client.snapshot.create_repository(repository: 'urban-events-backups',
+  task :create_s3_repository do
+    repository.client.snapshot.create_repository(repository: backup_repository_name,
+      body: {
+      "type": "s3",
+      "settings": {
+        "bucket": "#{GO_ENV}.urbanevents.elasticsearch",
+        "region": "us-east",
+        "access_key": ENV['AWS_ACCESS_KEY_ID'],
+        "secret_key": ENV['AWS_SECRET_ACCESS_KEY']
+      }
+    })
+  end
+
+  task :create_fs_repository do
+    repository.client.snapshot.create_repository(repository: backup_repository_name,
       body: {
       type: 'fs',
-      settings: { location: '/tmp/backup', compress: true  }
+      settings: { location: '/tmp/elasticsearch-backups', compress: true  }
     })
   end
 
   task :snapshot do
-    timestamp = Time.now.strftime("%Y%m%d-%H%M%S") 
-    repository.client.snapshot.create repository: 'urban-events-backups', snapshot: "#{timestamp}"
+    timestamp = Time.now.strftime("%Y%m%d-%H%M%S")
+    repository.client.snapshot.create repository: backup_repository_name, snapshot: "cityservice-#{timestamp}"
   end
 end
