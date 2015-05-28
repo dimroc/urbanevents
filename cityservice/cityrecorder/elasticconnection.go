@@ -31,7 +31,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	connection := elastigo.NewConn()
 	connection.Domain = host
 	connection.Port = port
-	log.Println("Connecting to Elasticsearch", connection)
+	log.Println("Connecting to Elasticsearch", connection.Domain, connection.Port, IndexName)
 
 	return &ElasticConnection{Connection: connection}
 }

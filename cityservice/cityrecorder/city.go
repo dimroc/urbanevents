@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -37,17 +38,7 @@ func (c *City) GetStats(e *ElasticConnection) CityDetailed {
 }
 
 func (c *City) GetStatsFor(e *ElasticConnection, nDays int) CityDetailed {
-	counts := make([]int, nDays)
-	days := make([]time.Time, nDays)
-	current := time.Now()
-
-	for index := 0; index < nDays; index++ {
-		counts[index] = nDays - index
-		prevDay := current.AddDate(0, 0, -1)
-		statsForDay(e, index)
-		days[index] = current
-		current = prevDay
-	}
+	counts, days := c.retrieveStats(e, nDays)
 
 	stats := CityCounts{
 		Counts: counts,
@@ -57,40 +48,32 @@ func (c *City) GetStatsFor(e *ElasticConnection, nDays int) CityDetailed {
 	return CityDetailed{*c, stats}
 }
 
-func statsForDay(e *ElasticConnection, daysBack int) {
-	queryJson := `{
-		"size": 0,
-		"aggs": {
-			"tweet_count": {
-				"filter": {
-					"range": {
-						"createdAt": {
-							"lt": "%s",
-							"gte": "%s"
-						}
-					}
-				},
-				"aggs": {
-					"city": {
-						"terms": {
-							"field": "city"
-						}
-					}
-				}
-			}
-		}
-	}`
-
-	var lt string
-	if daysBack == 0 {
-		lt = "now"
-	} else {
-		lt = time.Now().UTC().AddDate(0, 0, -daysBack+1).String()[0:10]
-	}
-
-	prevDate := time.Now().UTC().AddDate(0, 0, -daysBack).String()[0:10]
-	gte := prevDate
-	query := fmt.Sprintf(queryJson, lt, gte)
+func (c *City) retrieveStats(e *ElasticConnection, daysBack int) ([]int, []time.Time) {
+	queryJson := `
+{
+  "size": 0,
+  "aggs": {
+    "tweet_count": {
+      "filter": {
+        "terms": {
+          "city": [
+            "%s"
+          ]
+        }
+      },
+      "aggs": {
+        "range": {
+          "date_range": {
+            "field": "createdAt",
+            "ranges": [%s]
+          }
+        }
+      }
+    }
+  }
+}
+`
+	query := fmt.Sprintf(queryJson, c.Key, getDateRanges(daysBack))
 
 	out := e.Search(query)
 	response := aggregationResult{}
@@ -100,17 +83,65 @@ func statsForDay(e *ElasticConnection, daysBack int) {
 		log.Panic(err)
 	}
 
-	fmt.Println(response)
+	return response.GetCountsAndDays()
+}
+
+func getDateRanges(nDays int) string {
+	entries := make([]string, nDays)
+
+	for index := 0; index < nDays; index++ {
+		entries[index] = getDateRangeFor(index)
+	}
+
+	return strings.Join(entries, ",\n")
+}
+
+// Help w date range aggregations
+//
+//{
+//"key": "testkey",
+//"to": "now",
+//"from": "now/d"
+//}
+func getDateRangeFor(daysBack int) string {
+	var key, lt, gte string
+	if daysBack == 0 {
+		lt = "now"
+		key = "now"
+		gte = "now/d"
+	} else {
+		lt = time.Now().UTC().AddDate(0, 0, -daysBack+1).String()[0:10] + "||/d"
+		key = lt[0:10]
+		gte = time.Now().UTC().AddDate(0, 0, -daysBack).String()[0:10] + "||/d"
+	}
+
+	return fmt.Sprintf(`{"key": "%s", "to": "%s", "from": "%s"}`, key, lt, gte)
 }
 
 type aggregationResult struct {
 	TweetCount struct {
 		DocCount int64 `json:"doc_count"`
-		City     struct {
+		Range    struct {
 			Buckets []struct {
-				Key      string `json:"key"`
-				DocCount int64  `json:"doc_count"`
+				Key      string    `json:"key"`
+				DocCount int       `json:"doc_count"`
+				To       time.Time `json:"to_as_string"`
 			} `json:"buckets"`
-		} `json:"city"`
+		} `json:"range"`
 	} `json:"tweet_count"`
+}
+
+func (a *aggregationResult) GetCountsAndDays() ([]int, []time.Time) {
+	buckets := a.TweetCount.Range.Buckets
+	length := len(buckets)
+	counts := make([]int, length)
+	days := make([]time.Time, length)
+
+	for index, bucket := range buckets {
+		// Reverse order of counts and days so it's descending
+		counts[length-1-index] = bucket.DocCount
+		days[length-1-index] = bucket.To
+	}
+
+	return counts, days
 }

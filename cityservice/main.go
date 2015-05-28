@@ -15,20 +15,20 @@ import (
 )
 
 const (
-	CtxSettingsKey          = "city.settings"
-	CtxElasticConnectionKey = "city.elasticconnection"
+	CTX_SETTINGS_KEY           = "city.settings"
+	CTX_ELASTIC_CONNECTION_KEY = "city.elasticconnection"
 )
 
 func ElasticConnectionMiddleware(e *cityrecorder.ElasticConnection) negroni.HandlerFunc {
 	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		context.Set(r, CtxElasticConnectionKey, e)
+		context.Set(r, CTX_ELASTIC_CONNECTION_KEY, e)
 		next(w, r)
 	})
 }
 
 func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		context.Set(r, CtxSettingsKey, settings)
+		context.Set(r, CTX_SETTINGS_KEY, settings)
 		next(w, r)
 	})
 }
@@ -66,12 +66,12 @@ func main() {
 	n.Use(SettingsMiddleware(settings))
 	n.Use(ElasticConnectionMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))
-	n.Run(":8080")
+	n.Run(":58080")
 }
 
 func SettingsHandler(w http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{IndentJSON: true})
-	settings := context.Get(req, CtxSettingsKey)
+	settings := context.Get(req, CTX_SETTINGS_KEY)
 	r.JSON(w, http.StatusOK, settings)
 }
 
@@ -90,7 +90,7 @@ func GetCity(req *http.Request) cityrecorder.City {
 }
 
 func GetSettings(req *http.Request) cityrecorder.Settings {
-	if rv := context.Get(req, CtxSettingsKey); rv != nil {
+	if rv := context.Get(req, CTX_SETTINGS_KEY); rv != nil {
 		return rv.(cityrecorder.Settings)
 	}
 
@@ -99,7 +99,7 @@ func GetSettings(req *http.Request) cityrecorder.Settings {
 }
 
 func GetElasticConnection(req *http.Request) *cityrecorder.ElasticConnection {
-	if rv := context.Get(req, CtxElasticConnectionKey); rv != nil {
+	if rv := context.Get(req, CTX_ELASTIC_CONNECTION_KEY); rv != nil {
 		return rv.(*cityrecorder.ElasticConnection)
 	}
 

@@ -1,0 +1,29 @@
+package cityrecorder_test
+
+import (
+	"github.com/dimroc/urban-events/cityservice/cityrecorder"
+	. "github.com/smartystreets/goconvey/convey"
+	"os"
+	"testing"
+	"time"
+)
+
+func TestIntegrationGetStats(t *testing.T) {
+	Convey("Given a populated elasticsearch", t, func() {
+		elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		for index, geoevent := range Fixture.GeoEvents {
+			geoevent.CreatedAt = time.Now().AddDate(0, 0, -index)
+			elastic.Write(geoevent)
+		}
+
+		city := Fixture.GetCity()
+
+		Convey("the stats should be correct", func() {
+			detailed := city.GetStats(elastic)
+			So(len(detailed.Stats.Counts), ShouldEqual, 7)
+			So(len(detailed.Stats.Days), ShouldEqual, 7)
+			So(detailed.Stats.Counts[0], ShouldEqual, 1)
+			So(detailed.Stats.Days[0].Day, ShouldEqual, time.Now().Day)
+		})
+	})
+}

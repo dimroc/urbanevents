@@ -51,9 +51,10 @@ type Tweet struct {
 
 func (g *GeoEvent) String() string {
 	return fmt.Sprintf(
-		"{CreatedAt: %s, GeoJson: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Payload: %s, Metadata: %s}",
+		"{CreatedAt: %s, GeoJson: %s, Point: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Payload: %s, Metadata: %s}",
 		g.CreatedAt,
 		g.GeoJson,
+		g.Point,
 		g.Id,
 		g.CityKey,
 		g.LocationType,
