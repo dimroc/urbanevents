@@ -1,4 +1,4 @@
-package cityrecorder
+package utils
 
 import (
 	logging "github.com/op/go-logging"
@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	logger = newLogger()
+	Logger = newLogger()
 )
 
 func newLogger() *logging.Logger {

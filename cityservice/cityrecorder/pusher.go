@@ -3,6 +3,7 @@ package cityrecorder
 import (
 	"bufio"
 	"encoding/json"
+	. "github.com/dimroc/urban-events/cityservice/utils"
 	"github.com/pusher/pusher-http-go"
 	"io"
 	"log"
@@ -15,7 +16,7 @@ type Pusher struct {
 func (p *Pusher) Write(g GeoEvent) error {
 	_, err := p.client.Trigger(g.CityKey, "tweet", g)
 	if err != nil {
-		logger.Warning("Failed to push geoevent", g, err)
+		Logger.Warning("Failed to push geoevent" + g.String(), err)
 	}
 
 	return err

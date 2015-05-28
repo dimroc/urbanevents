@@ -1,4 +1,4 @@
-package flagvalidator
+package utils
 
 import (
 	"flag"

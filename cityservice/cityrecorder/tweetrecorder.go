@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/azr/anaconda"
+	. "github.com/dimroc/urban-events/cityservice/utils"
 	"log"
 	"net/url"
 )
@@ -57,11 +58,11 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	v.Set("locations", city.LocationString())
 	stream := api.PublicStreamFilter(v)
 
-	logger.Debug("Listening to tweets from %s", city.Key)
+	Logger.Debug("Listening to tweets from " + city.Key)
 	for {
 		select {
 		case <-stream.Quit:
-			logger.Debug("%s Stream Quit", city.Key)
+			Logger.Debug("%s Stream Quit", city.Key)
 		case elem := <-stream.C:
 			t, ok := elem.(anaconda.Tweet)
 			if ok {
@@ -82,13 +83,13 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 
 			g, err := newFromTweet(city, tweet)
 			if err != nil {
-				//logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
+				//Logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
 				continue
 			}
 
 			err = w.Write(g)
 			if err != nil {
-				logger.Warning("Failed to write geoevent: %s %s", g.String(), err)
+				Logger.Warning("Failed to write geoevent: "+g.String(), err)
 			}
 		}
 	}()

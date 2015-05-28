@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/negroni"
 	"github.com/dimroc/urban-events/cityservice/cityrecorder"
+	. "github.com/dimroc/urban-events/cityservice/utils"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/phyber/negroni-gzip/gzip"
@@ -35,9 +35,7 @@ func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 
 func main() {
 	settings, settingsErr := cityrecorder.LoadSettings()
-	if settingsErr != nil {
-		log.Panic(settingsErr)
-	}
+	Check(settingsErr)
 
 	recorder := cityrecorder.NewTweetRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
@@ -48,10 +46,12 @@ func main() {
 
 	pusher := cityrecorder.NewPusherFromURL(os.Getenv("PUSHER_URL"))
 	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	defer elastic.Connection.Close()
+
 	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic, cityrecorder.StdoutWriter)
 
 	for _, city := range settings.Cities {
-		fmt.Println("Configuring city:", city)
+		Logger.Debug("Configuring city: " + city.String())
 		go recorder.Record(city, broadcaster)
 	}
 

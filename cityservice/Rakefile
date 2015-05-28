@@ -43,4 +43,12 @@ namespace :elasticsearch do
   task :destroy_index do
     repository.delete_index!
   end
+
+  task :create_repository do
+
+  end
+
+  task :snapshot do
+    repository.client.snapshot.create repository: 'elasticsearch_backups', snapshot: 'snapshot-1'
+  end
 end

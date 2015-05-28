@@ -19,8 +19,12 @@ type CityDetails struct {
 	Stats CityCounts `json:"stats"`
 }
 
+func (c *City) String() string {
+	return fmt.Sprintf("%s %s %s", c.Key, c.Display, c.LocationString())
+}
+
 func (c *City) LocationString() string {
-	return fmt.Sprintf("%v,%v,%v,%v",
+	return fmt.Sprintf("%f,%f,%f,%f",
 		c.Bounds[0][0],
 		c.Bounds[0][1],
 		c.Bounds[1][0],
