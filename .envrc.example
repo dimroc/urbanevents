@@ -1,5 +1,11 @@
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+
 export TWITTER_CONSUMER_KEY=
 export TWITTER_CONSUMER_SECRET=
 export TWITTER_TOKEN=
 export TWITTER_TOKEN_SECRET=
+
 export PUSHER_URL=
+export ELASTICSEARCH_URL=http://localhost:9200
+export GO_ENV=development

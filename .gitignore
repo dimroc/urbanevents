@@ -3,3 +3,4 @@ scripts/*.sh
 .DS_Store
 .envrc
 gin-bin
+docker-compose.yml

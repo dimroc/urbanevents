@@ -32,13 +32,17 @@ repository = Elasticsearch::Persistence::Repository.new do
   end
 end
 
-namespace :elasticsearch do
+namespace :es do
   def backup_repository_name
-    "urban-events"
+    "urbanevents"
   end
 
   def es_alias
     "#{GO_ENV}-geoevents"
+  end
+
+  task :hello do
+    puts "FUCK OFF"
   end
 
   task :create_index do
@@ -50,6 +54,7 @@ namespace :elasticsearch do
     repository.client.indices.delete index: 'test-geo*'
   end
 
+  task :bootstrap => [:create_index_and_alias]
   task :create_index_and_alias do
     repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias

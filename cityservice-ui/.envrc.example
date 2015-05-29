@@ -1,4 +1,5 @@
 #!/bin/bash
+source_env ..
 
 export PUSHER_KEY=81be37a4f4ee0f471476
 export CITYSERVICE_URL=http://localhost:58080
