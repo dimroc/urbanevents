@@ -38,9 +38,12 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	connection := elastigo.NewConn()
 	connection.Domain = host
 	connection.Port = port
-	connection.RequestTracer = RequestTracer
 
 	return &ElasticConnection{Connection: connection}
+}
+
+func (e *ElasticConnection) SetRequestTracer(requestTracer func(string, string, string)) {
+	e.Connection.RequestTracer = requestTracer
 }
 
 func (e *ElasticConnection) Refresh() error {
