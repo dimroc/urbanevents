@@ -7,9 +7,7 @@ repository = Elasticsearch::Persistence::Repository.new do
   client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
 
   # Set a custom index name
-  index "#{GO_ENV}-ntc-geoevents"
-
-  # TODO: Create timestamped index and then make alias
+  index "#{GO_ENV}-geoevents-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
 
   # Set a custom document type
   type  :tweet
@@ -39,6 +37,10 @@ namespace :elasticsearch do
     "urban-events"
   end
 
+  def es_alias
+    "#{GO_ENV}-geoevents"
+  end
+
   task :recreate_index do
     raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
     repository.create_index! force: true
@@ -46,6 +48,27 @@ namespace :elasticsearch do
 
   task :destroy_index do
     repository.delete_index!
+  end
+
+  task :recreate_index_and_alias do
+    repository.create_index! force: true
+    repository.client.indices.put_alias index: repository.index, name: es_alias
+  end
+
+  task :set_alias do
+    old_index = ENV['OLD_INDEX']
+    new_index = ENV['NEW_INDEX']
+
+    if old_index.present?
+      repository.client.indices.update_aliases body: {
+        actions: [
+          { remove: { index: old_index, alias: es_alias } },
+          { add:    { index: new_index, alias: es_alias } }
+        ]
+      }
+    else
+      repository.client.indices.put_alias index: new_index, name: es_alias
+    end
   end
 
   task :create_s3_repository do

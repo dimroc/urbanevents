@@ -48,9 +48,9 @@ func loadFromFixtureFile(filename string, v interface{}) {
 }
 
 func setup() {
-	cmd := exec.Command("GO_ENV=test rake elasticsearch:recreate_index")
+	cmd := exec.Command("GO_ENV=test rake elasticsearch:recreate_index_and_alias")
 	cmd.Run()
-	IndexName = "test-ntc-geoevents"
+	IndexName = "test-geoevents"
 }
 
 func teardown() {

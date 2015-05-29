@@ -39,6 +39,8 @@ GEM
       faraday
       multi_json
     equalizer (0.0.11)
+    es-reindex (0.3.2)
+      elasticsearch (>= 1.0.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     hashie (3.4.1)
@@ -64,4 +66,5 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   elasticsearch-persistence
+  es-reindex
   rake

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	IndexName = os.Getenv("GO_ENV") + "-ntc-geoevents"
+	IndexName = os.Getenv("GO_ENV") + "-geoevents"
 )
 
 type ElasticConnection struct {
