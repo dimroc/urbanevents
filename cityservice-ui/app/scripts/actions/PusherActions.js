@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 var AppConstants = require('../constants/AppConstants');
 
-var pusher = new Pusher('81be37a4f4ee0f471476');
+var pusher = new Pusher(AppConstants.PUSHER_KEY);
 var _channels = {};
 
 var PusherActions = {

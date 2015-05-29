@@ -2,23 +2,19 @@
 
 var gulp           = require('gulp');
 var del            = require('del');
-var gulpFilter     = require('gulp-filter')
 var mainBowerFiles = require('main-bower-files')
 var concat         = require('gulp-concat')
 
 // Load plugins
-var $ = require('gulp-load-plugins')();
-var browserify = require('browserify');
-var watchify = require('watchify');
-var source = require('vinyl-source-stream'),
-
-    sourceFile = './app/scripts/app.js',
-
-    destFolder = './dist/scripts',
-    destFileName = 'app.js';
-
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
+var $            = require('gulp-load-plugins')();
+var browserify   = require('browserify');
+var watchify     = require('watchify');
+var source       = require('vinyl-source-stream');
+var sourceFile   = './app/scripts/app.js';
+var destFolder   = './dist/scripts';
+var destFileName = 'app.js';
+var browserSync  = require('browser-sync');
+var reload       = browserSync.reload;
 
 // Styles
 gulp.task('styles', ['sass']);
@@ -48,10 +44,13 @@ bundler.on('update', rebundle);
 bundler.on('log', $.util.log);
 
 function rebundle() {
+  console.log("** rebundle getting called", arguments);
     return bundler.bundle()
         // log errors if they happen
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source(destFileName))
+        .pipe($.streamify($.replace(/__ENV_PUSHER_KEY__/g, '"' + process.env.PUSHER_KEY + '"')))
+        .pipe($.streamify($.replace(/__ENV_CITYSERVICE_URL__/g, '"' + process.env.CITYSERVICE_URL + '"')))
         .pipe(gulp.dest(destFolder))
         .on('end', function() {
             reload();
@@ -65,6 +64,8 @@ gulp.task('buildScripts', function() {
     return browserify(sourceFile)
         .bundle()
         .pipe(source(destFileName))
+        .pipe($.streamify($.replace(/__ENV_PUSHER_KEY__/g, '"' + process.env.PUSHER_KEY + '"')))
+        .pipe($.streamify($.replace(/__ENV_CITYSERVICE_URL__/g, '"' + process.env.CITYSERVICE_URL + '"')))
         .pipe(gulp.dest('dist/scripts'));
 });
 
@@ -188,4 +189,4 @@ gulp.task('build', ['html', 'buildBundle', 'images', 'fonts', 'extras'], functio
 });
 
 // Default task
-gulp.task('default', ['clean', 'build'  ]);
+gulp.task('default', ['clean', 'build' ]);

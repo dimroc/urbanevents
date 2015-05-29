@@ -45,7 +45,7 @@ var normalizeCities = function(cities) {
 }
 
 $.ajax({
-  url: "http://localhost:58080/api/v1/cities",
+  url: AppConstants.CITYSERVICE_URL + "/api/v1/cities",
   context: CityStore
 }).done(function(data) {
   _cities = normalizeCities(data);
