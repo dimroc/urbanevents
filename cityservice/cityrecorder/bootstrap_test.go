@@ -3,10 +3,10 @@ package cityrecorder_test
 import (
 	"encoding/json"
 	. "github.com/dimroc/urban-events/cityservice/cityrecorder"
+	. "github.com/dimroc/urban-events/cityservice/utils"
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"testing"
 )
 
@@ -47,10 +47,26 @@ func loadFromFixtureFile(filename string, v interface{}) {
 	}
 }
 
+func truncateDocuments() {
+	elastic := NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	defer elastic.Connection.Close()
+	//indices []string, types []string, args map[string]interface{}, query interface{}
+
+	indices := []string{IndexName}
+	types := []string{"tweet"}
+	args := map[string]interface{}{}
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match_all": map[string]interface{}{},
+		},
+	}
+	_, err := elastic.Connection.DeleteByQuery(indices, types, args, query)
+	Check(err)
+}
+
 func setup() {
-	cmd := exec.Command("GO_ENV=test rake elasticsearch:recreate_index_and_alias")
-	cmd.Run()
 	IndexName = "test-geoevents"
+	truncateDocuments()
 }
 
 func teardown() {

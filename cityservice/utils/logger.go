@@ -18,5 +18,11 @@ func newLogger() *logging.Logger {
 	backend := logging.NewLogBackend(os.Stderr, "", 0)
 	backendFormatter := logging.NewBackendFormatter(backend, format)
 	logging.SetBackend(backendFormatter)
+
 	return newLogger
+}
+
+func RequestTracer(method, url, body string) {
+	Logger.Debug("Requesting %s %s", method, url)
+	Logger.Debug("Request body: %s", body)
 }

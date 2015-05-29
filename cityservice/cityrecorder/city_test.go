@@ -11,11 +11,13 @@ import (
 func TestIntegrationGetDetails(t *testing.T) {
 	Convey("Given a populated elasticsearch", t, func() {
 		elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		defer elastic.Connection.Close()
 		for index, geoevent := range Fixture.GeoEvents {
 			geoevent.CreatedAt = time.Now().AddDate(0, 0, -index)
 			elastic.Write(geoevent)
 		}
 
+		elastic.Refresh()
 		city := Fixture.GetCity()
 
 		Convey("the stats should be correct", func() {

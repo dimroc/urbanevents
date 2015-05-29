@@ -25,7 +25,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	if len(elasticsearchUrl) == 0 {
 		log.Panic("elasticsearchUrl empty")
 	} else {
-		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl)
+		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl + "with index " + IndexName)
 	}
 
 	u, err := url.Parse(elasticsearchUrl)
@@ -38,9 +38,19 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	connection := elastigo.NewConn()
 	connection.Domain = host
 	connection.Port = port
-	log.Println("Connecting to Elasticsearch", connection.Domain, connection.Port, IndexName)
+	connection.RequestTracer = RequestTracer
 
 	return &ElasticConnection{Connection: connection}
+}
+
+func (e *ElasticConnection) Refresh() error {
+	// Panics if tracing requests during refresh, so temporarily silence requesting
+	oldTracer := e.Connection.RequestTracer
+	e.Connection.RequestTracer = nil
+	_, err := e.Connection.Refresh(IndexName)
+	Check(err)
+	e.Connection.RequestTracer = oldTracer
+	return err
 }
 
 func (e *ElasticConnection) Write(g GeoEvent) error {

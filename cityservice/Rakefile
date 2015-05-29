@@ -41,17 +41,17 @@ namespace :elasticsearch do
     "#{GO_ENV}-geoevents"
   end
 
-  task :recreate_index do
+  task :create_index do
     raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
-    repository.create_index! force: true
+    repository.create_index!
   end
 
-  task :destroy_index do
-    repository.delete_index!
+  task :destroy_test_indices do
+    repository.client.indices.delete index: 'test-geo*'
   end
 
-  task :recreate_index_and_alias do
-    repository.create_index! force: true
+  task :create_index_and_alias do
+    repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias
   end
 
