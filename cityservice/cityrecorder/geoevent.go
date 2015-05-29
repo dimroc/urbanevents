@@ -43,12 +43,10 @@ func (bb *BoundingBox) Center() [2]float64 {
 type Metadata interface{}
 
 type Tweet struct {
-	ScreenName    string   `json:"screenName"`
-	Hashtags      []string `json:"hashtags"`
-	MediaTypes    []string `json:"mediaTypes"`
-	MediaUrls     []string `json:"mediaUrls"`
-	RetweetCount  int      `json:"retweetCount"`
-	FavoriteCount int      `json:"favoriteCount"`
+	ScreenName string   `json:"screenName"`
+	Hashtags   []string `json:"hashtags"`
+	MediaTypes []string `json:"mediaTypes"`
+	MediaUrls  []string `json:"mediaUrls"`
 }
 
 func (g *GeoEvent) String() string {
