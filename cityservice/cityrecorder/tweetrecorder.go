@@ -138,10 +138,12 @@ func metadataFromTweet(t anaconda.Tweet) Metadata {
 
 	types, urls := entities.GetMedias()
 	return Tweet{
-		ScreenName: t.User.ScreenName,
-		Hashtags:   entities.GetHashtagTexts(),
-		MediaTypes: types,
-		MediaUrls:  urls,
+		ScreenName:    t.User.ScreenName,
+		Hashtags:      entities.GetHashtagTexts(),
+		MediaTypes:    types,
+		MediaUrls:     urls,
+		RetweetCount:  t.RetweetCount,
+		FavoriteCount: t.FavoriteCount,
 	}
 }
 

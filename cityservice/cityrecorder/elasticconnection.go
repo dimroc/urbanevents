@@ -25,7 +25,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	if len(elasticsearchUrl) == 0 {
 		log.Panic("elasticsearchUrl empty")
 	} else {
-		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl + "with index " + IndexName)
+		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl + " with index " + IndexName)
 	}
 
 	u, err := url.Parse(elasticsearchUrl)
