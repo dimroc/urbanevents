@@ -11,6 +11,7 @@ import (
 type City struct {
 	Key     string      `json:"key"`
 	Display string      `json:"display"`
+	Aliases []string    `json:"aliases"`
 	Bounds  [][]float64 `json:"bounds"` //long,lat pair defining the bounding rectangle
 }
 
