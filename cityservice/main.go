@@ -19,7 +19,7 @@ const (
 	CTX_ELASTIC_CONNECTION_KEY = "city.elasticconnection"
 )
 
-func ElasticConnectionMiddleware(e *cityrecorder.ElasticConnection) negroni.HandlerFunc {
+func ElasticMiddleware(e cityrecorder.Elastic) negroni.HandlerFunc {
 	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		context.Set(r, CTX_ELASTIC_CONNECTION_KEY, e)
 		next(w, r)
@@ -34,6 +34,7 @@ func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 }
 
 func main() {
+	Logger.Info("Running in " + GO_ENV)
 	settings, settingsErr := cityrecorder.LoadSettings()
 	Check(settingsErr)
 
@@ -45,8 +46,8 @@ func main() {
 	)
 
 	pusher := cityrecorder.NewPusherFromURL(os.Getenv("PUSHER_URL"))
-	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
-	defer elastic.Connection.Close()
+	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	defer elastic.Close()
 
 	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic)
 	if GO_ENV != "production" {
@@ -68,7 +69,7 @@ func main() {
 	n.Use(cors.Default())
 	n.Use(gzip.Gzip(gzip.DefaultCompression))
 	n.Use(SettingsMiddleware(settings))
-	n.Use(ElasticConnectionMiddleware(elastic))
+	n.Use(ElasticMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))
 	n.Run(":58080")
 }
@@ -109,9 +110,9 @@ func GetSettings(req *http.Request) cityrecorder.Settings {
 	return cityrecorder.Settings{}
 }
 
-func GetElasticConnection(req *http.Request) *cityrecorder.ElasticConnection {
+func GetElasticConnection(req *http.Request) cityrecorder.Elastic {
 	if rv := context.Get(req, CTX_ELASTIC_CONNECTION_KEY); rv != nil {
-		return rv.(*cityrecorder.ElasticConnection)
+		return rv.(cityrecorder.Elastic)
 	}
 
 	log.Panic("Could not retrieve Elastic Connection")

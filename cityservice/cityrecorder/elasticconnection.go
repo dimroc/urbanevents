@@ -13,6 +13,12 @@ var (
 	IndexName = os.Getenv("GO_ENV") + "-geoevents"
 )
 
+type Elastic interface {
+	Writer
+	Close()
+	Search(query string) elastigo.SearchResult
+}
+
 type ElasticConnection struct {
 	Connection *elastigo.Conn
 }
@@ -48,6 +54,10 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	return &ElasticConnection{Connection: connection}
 }
 
+func (e *ElasticConnection) Close() {
+	e.Connection.Close()
+}
+
 func (e *ElasticConnection) SetRequestTracer(requestTracer func(string, string, string)) {
 	e.Connection.RequestTracer = requestTracer
 }
@@ -74,4 +84,28 @@ func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	}
 
 	return out
+}
+
+type BulkElasticConnection struct {
+	*ElasticConnection
+	BulkIndexer *elastigo.BulkIndexer
+}
+
+func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
+	elastic := NewElasticConnection(elasticsearchUrl)
+	bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
+	bulkIndexer.Start()
+
+	return &BulkElasticConnection{elastic, bulkIndexer}
+}
+
+func (e *BulkElasticConnection) Write(g GeoEvent) error {
+	if g.LocationType == "poi" {
+		// We are skipping Places of interests because elasticsearch as of this
+		// time does not properly support GeoJson:
+		// https://github.com/elastic/elasticsearch/issues/11131
+		return nil
+	} else {
+		return e.BulkIndexer.Index(IndexName, "tweet", g.Id, "", &g.CreatedAt, g, false)
+	}
 }

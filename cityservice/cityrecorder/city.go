@@ -37,11 +37,11 @@ type CityCounts struct {
 	Days   []time.Time `json:"days"`
 }
 
-func (c *City) GetDetails(e *ElasticConnection) CityDetails {
+func (c *City) GetDetails(e Elastic) CityDetails {
 	return c.GetDetailsFor(e, 7)
 }
 
-func (c *City) GetDetailsFor(e *ElasticConnection, nDays int) CityDetails {
+func (c *City) GetDetailsFor(e Elastic, nDays int) CityDetails {
 	counts, days := c.retrieveStats(e, nDays)
 
 	stats := CityCounts{
@@ -52,7 +52,7 @@ func (c *City) GetDetailsFor(e *ElasticConnection, nDays int) CityDetails {
 	return CityDetails{*c, stats}
 }
 
-func (c *City) retrieveStats(e *ElasticConnection, daysBack int) ([]int, []time.Time) {
+func (c *City) retrieveStats(e Elastic, daysBack int) ([]int, []time.Time) {
 	queryJson := `
 {
   "size": 0,
