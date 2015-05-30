@@ -48,7 +48,10 @@ func main() {
 	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	defer elastic.Connection.Close()
 
-	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic, cityrecorder.StdoutWriter)
+	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic)
+	if GO_ENV != "production" {
+		broadcaster.Push(cityrecorder.StdoutWriter)
+	}
 
 	for _, city := range settings.Cities {
 		Logger.Debug("Configuring city: " + city.String())

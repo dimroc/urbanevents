@@ -28,15 +28,15 @@ func (w stdoutWriter) Write(g GeoEvent) error {
 	return err
 }
 
-type broadcastWriter struct {
+type BroadcastWriter struct {
 	Writers []Writer
 }
 
-func NewBroadcastWriter(writers ...Writer) Writer {
-	return &broadcastWriter{Writers: writers}
+func NewBroadcastWriter(writers ...Writer) *BroadcastWriter {
+	return &BroadcastWriter{Writers: writers}
 }
 
-func (b *broadcastWriter) Write(g GeoEvent) error {
+func (b *BroadcastWriter) Write(g GeoEvent) error {
 	var err error
 	for _, writer := range b.Writers {
 		newErr := writer.Write(g)
@@ -45,4 +45,8 @@ func (b *broadcastWriter) Write(g GeoEvent) error {
 		}
 	}
 	return err
+}
+
+func (b *BroadcastWriter) Push(writer Writer) {
+	b.Writers = append(b.Writers, writer)
 }
