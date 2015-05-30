@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	settingsFilename = flag.String("settings", "conf.json", "Path to the settings file")
+	settingsFilename = flag.String("settings", "config/conf1.json", "Path to the settings file")
 )
 
 const (
@@ -40,7 +40,7 @@ func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 
 func main() {
 	Logger.Info("Running in " + GO_ENV)
-	settings, settingsErr := cityrecorder.LoadSettings(settingsFilename)
+	settings, settingsErr := cityrecorder.LoadSettings(*settingsFilename)
 	Check(settingsErr)
 
 	recorder := cityrecorder.NewTweetRecorder(
