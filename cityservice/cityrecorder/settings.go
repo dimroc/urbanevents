@@ -6,10 +6,6 @@ import (
 	"log"
 )
 
-const (
-	settingsFilename string = "conf.json"
-)
-
 type Settings struct {
 	Cities []City `json:"cities"`
 	lookup map[string]City
@@ -24,7 +20,7 @@ func (s *Settings) GetCityDetails(e Elastic) []CityDetails {
 	return cities
 }
 
-func (s *Settings) Save() error {
+func (s *Settings) Save(settingsFilename string) error {
 	jsonOut, err := json.Marshal(s)
 	if err != nil {
 		log.Panic(err)
@@ -41,7 +37,7 @@ func (s *Settings) String() string {
 	return string(jsonOut)
 }
 
-func LoadSettings() (Settings, error) {
+func LoadSettings(settingsFilename string) (Settings, error) {
 	contents, err := ioutil.ReadFile(settingsFilename)
 	if err != nil {
 		log.Panic(err)
