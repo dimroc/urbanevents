@@ -33,9 +33,15 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 		log.Panic(err)
 	}
 
-	host, port, _ := net.SplitHostPort(u.Host)
-
 	connection := elastigo.NewConn()
+
+	if u.User != nil {
+		connection.Username = u.User.Username()
+		p, _ := u.User.Password()
+		connection.Password = p
+	}
+
+	host, port, _ := net.SplitHostPort(u.Host)
 	connection.Domain = host
 	connection.Port = port
 
