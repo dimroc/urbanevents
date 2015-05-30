@@ -2,8 +2,8 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
-	. "github.com/dimroc/urban-events/cityservice/cityrecorder"
-	. "github.com/dimroc/urban-events/cityservice/utils"
+	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
 	"log"
 	"os"

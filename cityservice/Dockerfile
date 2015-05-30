@@ -3,16 +3,16 @@
 FROM golang
 
 # Copy the local package files to the container's workspace.
-ADD . /go/src/github.com/dimroc/urban-events/cityservice
+ADD . /go/src/github.com/dimroc/urbanevents/cityservice
 
 # Build the outyet command inside the container.
 # (You may fetch or manage dependencies here,
 # either manually or with a tool like "godep".)
 
-WORKDIR /go/src/github.com/dimroc/urban-events/cityservice
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityservice
 
 RUN go get
-RUN go install github.com/dimroc/urban-events/cityservice
+RUN go install github.com/dimroc/urbanevents/cityservice
 
 ENTRYPOINT /go/bin/cityservice
 

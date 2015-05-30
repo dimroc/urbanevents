@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/azr/anaconda"
-	. "github.com/dimroc/urban-events/cityservice/utils"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net/url"
 )

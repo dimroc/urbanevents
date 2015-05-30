@@ -4,6 +4,9 @@ elasticsearch:
   ports:
     - 59200:9200
     - 59300:9300
+  environment:
+    - ELASTICSEARCH_USER=admin
+    - ELASTICSEARCH_PASS=password
   #volumes:
     #- tmp/elasticsearch-data:/usr/share/elasticsearch/data
 
@@ -15,7 +18,7 @@ cityservice:
     - 58080:58080
   environment:
     - GO_ENV=qa
-    - ELASTICSEARCH_URL=http://elasticsearch:9200
+    - ELASTICSEARCH_URL=http://admin:password@elasticsearch:9200
     - TWITTER_CONSUMER_KEY=
     - TWITTER_CONSUMER_SECRET=
     - TWITTER_TOKEN=

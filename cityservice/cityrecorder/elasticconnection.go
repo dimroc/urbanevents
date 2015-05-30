@@ -1,7 +1,7 @@
 package cityrecorder
 
 import (
-	. "github.com/dimroc/urban-events/cityservice/utils"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	elastigo "github.com/mattbaird/elastigo/lib"
 	"log"
 	"net"

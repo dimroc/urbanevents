@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dimroc/urban-events/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	"os"
 )
 
