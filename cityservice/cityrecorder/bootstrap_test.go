@@ -25,7 +25,7 @@ func (f *fixture) GetCity() City {
 
 func newFixture() *fixture {
 	bounds := [][]float64{[]float64{-74.3, 40.462}, []float64{-73.65, 40.95}}
-	cities := []City{{"nyc", "New York City", bounds}}
+	cities := []City{{"nyc", "New York City", []string{}, bounds}}
 	geoevents := []GeoEvent{}
 	loadFromFixtureFile("fixtures/geoevents.json", &geoevents)
 
