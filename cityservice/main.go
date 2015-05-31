@@ -55,7 +55,7 @@ func main() {
 	defer elastic.Close()
 
 	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic)
-	if GO_ENV != "production" {
+	if GO_ENV == "development" {
 		broadcaster.Push(cityrecorder.StdoutWriter)
 	}
 
