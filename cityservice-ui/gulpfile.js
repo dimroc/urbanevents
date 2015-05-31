@@ -44,7 +44,6 @@ bundler.on('update', rebundle);
 bundler.on('log', $.util.log);
 
 function rebundle() {
-  console.log("** rebundle getting called", arguments);
     return bundler.bundle()
         // log errors if they happen
         .on('error', $.util.log.bind($.util, 'Browserify Error'))

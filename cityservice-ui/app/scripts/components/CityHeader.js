@@ -29,12 +29,6 @@ var CityHeader = React.createClass({
   },
 
   render: function () {
-    var names = this.getRoutes().map(function(item) {
-      return item.name;
-    });
-
-    var isActive = function(key) { if (names.indexOf(key) >= 0) return 'active' }
-
     if(!this.state.city) {
       return (<div className="holder">Loading...</div>);
     }
@@ -44,9 +38,9 @@ var CityHeader = React.createClass({
         <header className="row">
           <div className="col-xs-12">
             <ButtonGroup justified>
-              <Button href={"/#/cities"}>Cities</Button>
-              <Button href={"/#/cities/" + this.state.city.key + "/map"} className={isActive('map')}>{this.state.city.display} Map</Button>
-              <Button href={"/#/cities/" + this.state.city.key + "/events"} className={isActive('events')}>Events</Button>
+              <Link className="btn btn-default" to="cities">Cities</Link>
+              <Link className="btn btn-default" to="map" params={{cityId: this.state.city.key}}>{this.state.city.display} Map</Link>
+              <Link className="btn btn-default" to="events" params={{cityId: this.state.city.key}}>{this.state.city.display} Events</Link>
             </ButtonGroup>
           </div>
         </header>

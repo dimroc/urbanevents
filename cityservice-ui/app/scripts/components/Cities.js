@@ -5,6 +5,7 @@ var Router = require('react-router');
 var CityStore = require('../stores/CityStore');
 var { Route, Redirect, RouteHandler, Link } = Router;
 var BarChart = require("react-chartjs").Bar;
+var AppConstants = require('../constants/AppConstants');
 var moment = require("moment");
 
 //var data = {
@@ -29,7 +30,7 @@ var chartDataFor = function(city) {
 
 var Cities = React.createClass({
   getInitialState: function() {
-    return {items: CityStore.getAll()};
+    return {items: CityStore.getAll(), url: AppConstants.CITYSERVICE_URL};
   },
 
   updateCities: function() {
@@ -44,20 +45,38 @@ var Cities = React.createClass({
     CityStore.removeChangeListener(this.updateCities);
   },
 
+  handleChange: function() {
+    this.setState({url: event.target.value});
+  },
+
   render: function() {
     var chartOptions = {maintainAspectRatio: false, responsive: true}
     return (
       <div className="container-fluid">
         <div className="row">
-          <h2 className="col-sm-4">Cities</h2>
-          <h2 className="col-sm-8 hidden-xs">Tweets</h2>
+          <h1 className="col-sm-3">Connection</h1>
+          <div className="col-sm-9 connection">
+            <form method="get">
+              <div className="input-group">
+                <input type="text" className="form-control string optional" name="url" value={this.state.url} onChange={this.handleChange}/>
+                <span className="input-group-btn">
+                  <input className="btn btn-default" type="submit" value="Go!"/>
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div className="row">
+          <h2 className="col-sm-3">Cities</h2>
+          <h2 className="col-sm-9 hidden-xs">Tweets</h2>
         </div>
         {
           this.state.items.map(function(city) {
             return (
               <div className="row" key={city.key}>
-                <Link className="city-key col-sm-4" to="map" params={{cityId: city.key}}>{city.display}</Link>
-                <div className="chart-container col-sm-8">
+                <Link className="city-key col-sm-3" to="map" params={{cityId: city.key}}>{city.display}</Link>
+                <div className="chart-container col-sm-9">
                   <BarChart className="barchart" data={chartDataFor(city)} options={chartOptions}/>
                 </div>
               </div>
