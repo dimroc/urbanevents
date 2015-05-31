@@ -1,0 +1,38 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.location-info {
+  font-size: 10px;
+}
+.location-info span {
+  margin: 0 5px;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  z-index: 100;
+}
+
+.below {
+  margin-top: 30px;
+}
+
+.chart-container {
+  /*width: 600px;*/
+  height: 200px;
+}
+
+.city-key {
+  font-size: 26px;
+}
+@media (min-width: 767px) {
+  .city-key {
+    line-height: 200px;
+  }
+}
+
+.connection .input-group {
+  margin: 25px 0;
+}
