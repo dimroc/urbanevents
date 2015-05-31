@@ -187,5 +187,16 @@ gulp.task('build', ['html', 'buildBundle', 'images', 'fonts', 'extras'], functio
         .pipe(gulp.dest('dist/scripts'));
 });
 
+gulp.task('clearCityserviceUrlEnv', function() {
+  process.env.CITYSERVICE_URL = "";
+});
+
+gulp.task('copyToService', ['clearCityserviceUrlEnv', 'build'], function() {
+  gulp.src('dist/**/*')
+    .pipe(gulp.dest('../cityservice/public'));
+});
+
+gulp.task('deploy', ['clean', 'copyToService']);
+
 // Default task
 gulp.task('default', ['clean', 'build' ]);
