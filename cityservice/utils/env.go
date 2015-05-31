@@ -15,3 +15,12 @@ func getGoEnvironment() string {
 		return "development"
 	}
 }
+
+func GetenvOrDefault(env_var string, default_value string) string {
+	temp := os.Getenv(env_var)
+	if len(temp) == 0 {
+		return default_value
+	} else {
+		return temp
+	}
+}

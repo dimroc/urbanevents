@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/codegangsta/negroni"
 	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
@@ -16,7 +15,8 @@ import (
 )
 
 var (
-	settingsFilename = flag.String("settings", "config/conf1.json", "Path to the settings file")
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/conf1.json")
+	port             = GetenvOrDefault("PORT", "58080")
 )
 
 const (
@@ -39,8 +39,8 @@ func SettingsMiddleware(settings cityrecorder.Settings) negroni.HandlerFunc {
 }
 
 func main() {
-	Logger.Info("Running in " + GO_ENV)
-	settings, settingsErr := cityrecorder.LoadSettings(*settingsFilename)
+	Logger.Info("Running in " + GO_ENV + " with settings " + settingsFilename)
+	settings, settingsErr := cityrecorder.LoadSettings(settingsFilename)
 	Check(settingsErr)
 
 	recorder := cityrecorder.NewTweetRecorder(
@@ -76,7 +76,7 @@ func main() {
 	n.Use(SettingsMiddleware(settings))
 	n.Use(ElasticMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))
-	n.Run(":58080")
+	n.Run(":" + port)
 }
 
 func SettingsHandler(w http.ResponseWriter, req *http.Request) {
