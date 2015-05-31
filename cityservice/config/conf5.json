@@ -1,0 +1,6 @@
+{"Cities":[
+  {"key":"jacksonville","display":"Jacksonville","bounds":[[-82.087954,30.090678],[-81.391412,30.600418]]},
+  {"key":"houston","display":"Houston","bounds":[[-95.788087,29.523624],[-95.014496,30.110732]]},
+  {"key":"dfw","display":"Dallas - Fort Worth","aliases":["Dallas", "Fort Worth"],"bounds":[[-97.556497,32.56547],[-96.463738,33.041062]]}
+]}
+
