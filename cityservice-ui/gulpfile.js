@@ -189,6 +189,7 @@ gulp.task('build', ['html', 'buildBundle', 'images', 'fonts', 'extras'], functio
 
 gulp.task('clearCityserviceUrlEnv', function() {
   process.env.CITYSERVICE_URL = "";
+  process.env.PUSHER_KEY = "af86285886361f71867c";
 });
 
 gulp.task('copyToService', ['clearCityserviceUrlEnv', 'build'], function() {
