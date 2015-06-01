@@ -1,1 +1,1 @@
-0 4 0 0 */2 root /ruby/urbanevents/tools/cronall.sh >> /var/log/cron.log 2>&1
+0 10 0 0 */2 root /ruby/urbanevents/tools/cronall.sh >> /var/log/cron.log 2>&1
