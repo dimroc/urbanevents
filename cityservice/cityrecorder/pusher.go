@@ -3,7 +3,6 @@ package cityrecorder
 import (
 	"bufio"
 	"encoding/json"
-	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/pusher/pusher-http-go"
 	"io"
 	"log"
