@@ -1,1 +1,2 @@
-0 10 0 0 */2 root /ruby/urbanevents/tools/cronall.sh >> /var/log/cron.log 2>&1
+* * * * * root /ruby/urbanevents/tools/cronrunner.sh output.sh
+0 10 0 0 */2 root /ruby/urbanevents/tools/cronrunner.sh backup_es.sh

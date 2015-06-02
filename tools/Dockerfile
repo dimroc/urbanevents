@@ -26,4 +26,4 @@ RUN chmod 0644 /etc/cron.d/cityservice-cron
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
 
-CMD env > /tmp/.env && cron && tail -f /var/log/cron.log
+CMD env > /tmp/.env && service cron start && tail -f /var/log/cron.log
