@@ -1,7 +1,7 @@
 FROM ruby:2.2.1
 
 RUN apt-get update && \
-      apt-get install -y cron && \
+      apt-get install -y rsyslog cron && \
       apt-get install -y -q tmux vim ack-grep && \
       apt-get clean
 
@@ -18,12 +18,8 @@ RUN bundle
 ADD . /ruby/urbanevents/tools
 WORKDIR /ruby/urbanevents/tools
 
-# Add crontab file in the cron directory
-ADD crontab /etc/cron.d/cityservice-cron
-
-RUN chmod 0644 /etc/cron.d/cityservice-cron
-
-# Create the log file to be able to run tail
+# Add crontab file
+ADD crontab /etc/crontab
 RUN touch /var/log/cron.log
 
-CMD env > /tmp/.env && service cron start && tail -f /var/log/cron.log
+CMD env > /tmp/.env && rsyslogd && cron && tail -f /var/log/syslog /var/log/cron.log
