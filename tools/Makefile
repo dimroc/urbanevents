@@ -15,3 +15,6 @@ run: build
 
 build:
 	$(DOCKER) build -t $(REPO):$(TAG) .
+
+push:
+	$(DOCKER) push $(REPO):$(TAG)
