@@ -25,7 +25,7 @@ repository = Elasticsearch::Persistence::Repository.new do
       end
 
       indexes :geojson, type: 'geo_shape'
-      indexes :point, type: 'geo_point'
+      indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'
 
       # Rest of the attributes are created lazily
     end
