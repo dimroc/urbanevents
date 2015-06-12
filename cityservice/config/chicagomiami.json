@@ -1,5 +1,5 @@
 {"Cities":[
-  {"key":"paris","display":"Paris","bounds":[[2.233469,48.801102],[2.478161,48.908915]]},
+  {"key":"chicago","display":"Chicago","bounds":[[-88.4044,41.4923],[-87.535,42.4238]]},
   {"key":"miami-metro","display":"Miami Metropolitan Area", "aliases": ["Miami", "Dade", "Fort Lauderdale", "Boca Raton"], "bounds":[[-80.5921,25.3883],[-79.9888,26.4156]]}
 ]}
 
