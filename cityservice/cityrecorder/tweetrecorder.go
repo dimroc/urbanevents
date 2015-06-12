@@ -122,26 +122,30 @@ func (e localEntities) GetHashtagTexts() []string {
 	return texts
 }
 
-func (e localEntities) GetMedias() ([]string, []string) {
+func (e localEntities) GetMedias() ([]string, []string, []string) {
 	types := make([]string, len(e.Media))
-	urls := make([]string, len(e.Media))
+	mediaUrls := make([]string, len(e.Media))
+	expandedUrls := make([]string, len(e.Media))
+
 	for index, media := range e.Media {
 		types[index] = media.Type
-		urls[index] = media.Media_url
+		mediaUrls[index] = media.Media_url
+		expandedUrls[index] = media.Expanded_url
 	}
 
-	return types, urls
+	return types, mediaUrls, expandedUrls
 }
 
 func metadataFromTweet(t anaconda.Tweet) Metadata {
 	entities := localEntities(t.Entities)
+	types, mediaUrls, expandedUrls := entities.GetMedias()
 
-	types, urls := entities.GetMedias()
 	return Tweet{
-		ScreenName: t.User.ScreenName,
-		Hashtags:   entities.GetHashtagTexts(),
-		MediaTypes: types,
-		MediaUrls:  urls,
+		ScreenName:   t.User.ScreenName,
+		Hashtags:     entities.GetHashtagTexts(),
+		MediaTypes:   types,
+		MediaUrls:    mediaUrls,
+		ExpandedUrls: expandedUrls,
 	}
 }
 
