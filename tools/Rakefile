@@ -100,6 +100,8 @@ namespace :es do
   end
 
   task :report_health_last_hour do
+    raise StandardError, "AWS ENV vars must be set" unless (ENV['AWS_REGION'] && ENV['AWS_SECRET_ACCESS_KEY'] && ENV['AWS_ACCESS_KEY_ID'])
+
     city_counts = repository.city_count_since(cities, 1.hour.ago)
     city_counts.each do |key, count|
       puts "## Reporting #{key} with a tweet count of #{count} over the last hour"

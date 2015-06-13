@@ -1,3 +1,4 @@
 # m h dom mon dow user  command
 10 * * * * root /ruby/urbanevents/tools/cronrunner.sh output.sh
+40 * * * * root /ruby/urbanevents/tools/cronrunner.sh monitor_es.sh
 0 10 * * */2 root /ruby/urbanevents/tools/cronrunner.sh backup_es.sh

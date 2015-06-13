@@ -11,7 +11,10 @@ endif
 all: build
 
 run: build
-	$(DOCKER) run -i -t $(REPO)
+	$(DOCKER) run -i -t \
+		-e "ELASTICSEARCH_URL=$(ELASTICSEARCH_URL)" \
+		-e "AWS_REGION=$(AWS_REGION)" -e "AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY)" -e "AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID)" \
+		$(REPO)
 
 build:
 	$(DOCKER) build -t $(REPO):$(TAG) .
