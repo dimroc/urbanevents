@@ -2,7 +2,10 @@ source 'https://rubygems.org'
 ruby '2.2.1'
 #ruby-gemset=cityrecorder
 
-gem 'activesupport'
+gem 'activesupport', require: 'active_support/all'
+gem 'aws-sdk', '~> 2'
+gem 'elasticsearch-dsl'
 gem 'elasticsearch-persistence'
 gem 'es-reindex'
+gem 'pry'
 gem 'rake'

@@ -1,39 +1,22 @@
-require 'elasticsearch/persistence'
-require 'active_support/all'
-GO_ENV = ENV['GO_ENV'].presence || 'development'
-
-repository = Elasticsearch::Persistence::Repository.new do
-  # Configure the Elasticsearch client
-  client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
-
-  # Set a custom index name
-  index "#{GO_ENV}-geoevents-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
-
-  # Set a custom document type
-  type  :tweet
-
-  settings number_of_shards: 3 do
-    mapping do
-      indexes :createdAt, type: 'date'
-      indexes :payload, analyzer: 'snowball'
-      indexes :city, type: 'string', index: 'not_analyzed'
-      indexes :metadata, type: 'object' do
-        indexes :screenName, type: 'string'
-        indexes :hashtags, type: 'string'
-        indexes :mediaTypes, type: 'string', index: 'not_analyzed'
-        indexes :mediaUrls, type: 'string', index: 'not_analyzed'
-        indexes :expandedUrls, type: 'string', index: 'not_analyzed'
-      end
-
-      indexes :geojson, type: 'geo_shape', "tree": "quadtree", "precision": "1m"
-      indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'
-
-      # Rest of the attributes are created lazily
-    end
-  end
-end
+require_relative 'lib/tools'
 
 namespace :es do
+  def cities
+    # Taken from cityservice/config/*
+    %w(
+    bay-area
+    chicago
+    dfw
+    houston
+    london
+    losangeles
+    miami-metro
+    nyc
+    paris
+    washingtondc
+    )
+  end
+
   def backup_repository_name
     "urbanevents"
   end
@@ -42,12 +25,16 @@ namespace :es do
     "#{GO_ENV}-geoevents"
   end
 
+  def repository
+    raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
+    @repository ||= TweetRepository.new url: ENV['ELASTICSEARCH_URL']
+  end
+
   task :hello do
     puts "FUCK OFF"
   end
 
   task :create_index do
-    raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
     repository.create_index!
   end
 
@@ -106,5 +93,17 @@ namespace :es do
   task :restore do
     snapshot = ENV['SNAPSHOT']
     repository.client.snapshot.restore repository: backup_repository_name, snapshot: snapshot
+  end
+
+  task :health_last_hour do
+    jj repository.city_count_since(cities, 1.hour.ago).as_json
+  end
+
+  task :report_health_last_hour do
+    city_counts = repository.city_count_since(cities, 1.hour.ago)
+    city_counts.each do |key, count|
+      puts "## Reporting #{key} with a tweet count of #{count} over the last hour"
+      CloudMonitor.report(key, count)
+    end
   end
 end
