@@ -25,9 +25,9 @@ namespace :es do
     "#{GO_ENV}-geoevents"
   end
 
-  def repository
+  def repository(options={log: true})
     raise StandardError, "ELASTICSEARCH_URL must be set" unless ENV['ELASTICSEARCH_URL'].present?
-    @repository ||= TweetRepository.new url: ENV['ELASTICSEARCH_URL']
+    @repository ||= TweetRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
   task :hello do
@@ -107,5 +107,14 @@ namespace :es do
       puts "## Reporting #{key} with a tweet count of #{count} over the last hour"
       CloudMonitor.report(key, count)
     end
+  end
+
+  task :migrate_to_new_index do
+    old_index = ENV['OLD_INDEX']
+    raise ArgumentError, "OLD_INDEX must be set" unless old_index.present?
+
+    repository(log: false).create_index!
+    repository.client.indices.put_alias index: repository.index, name: es_alias
+    repository.copy_from old_index
   end
 end

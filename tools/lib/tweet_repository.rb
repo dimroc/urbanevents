@@ -1,10 +1,9 @@
 class TweetRepository
   include Elasticsearch::Persistence::Repository
-  include Elasticsearch::DSL
 
   def initialize(options={})
-    client Elasticsearch::Client.new url: options[:url], log: true
-    index "#{GO_ENV}-geoevents-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
+    self.client = Elasticsearch::Client.new url: options[:url], log: options[:log]
+    self.index = options[:index].presence || "#{GO_ENV}-geoevents-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
   end
 
   # Set a custom document type
@@ -30,34 +29,69 @@ class TweetRepository
     end
   end
 
+  def copy_from(source_index)
+    Tweet.gateway.index = source_index
+    Tweet.gateway.client = self.client
+    Tweet.find_in_batches(size: 100) do |batch|
+      insert_batch(batch)
+    end
+  end
+
   def city_count_since(cityKeys, time)
-    city_filters = cityKeys.inject({}) do |memo, cityKey|
-      memo[cityKey] = {terms: { city: [cityKey] } }
-      memo
+    Builder.new(client).city_count_since(cityKeys, time)
+  end
+
+  private
+
+  def insert_batch(batch)
+    bulk_insertion = batch.map do |tweet|
+      { index: { _id: tweet.id.to_s, data: tweet.to_hash } }
     end
 
-    definition = search do
-      size 0
-      aggregation :city_counts do
-        filters do
-          filters city_filters
-          aggregation :since do
-            date_range do
-              field :createdAt
-              ranges [
-                { from: time }
-              ]
+    self.client.bulk({
+      index: index,
+      type: 'tweet',
+      body: bulk_insertion
+    })
+  end
+
+  class Builder
+    include Elasticsearch::DSL
+    attr_accessor :client
+
+    def initialize(client)
+      @client = client
+    end
+
+    def city_count_since(cityKeys, time)
+      city_filters = cityKeys.inject({}) do |memo, cityKey|
+        memo[cityKey] = {terms: { city: [cityKey] } }
+        memo
+      end
+
+      definition = search do
+        size 0
+        aggregation :city_counts do
+          filters do
+            filters city_filters
+            aggregation :since do
+              date_range do
+                field :createdAt
+                ranges [
+                  { from: time }
+                ]
+              end
             end
           end
         end
       end
-    end
 
-    response = self.client.search body: definition
-    rval = response["aggregations"]["city_counts"]["buckets"]
-    cityKeys.inject({}) do |memo, cityKey|
-      memo[cityKey] = rval[cityKey]["since"]["buckets"][0]["doc_count"]
-      memo
+      response = client.search body: definition
+      rval = response["aggregations"]["city_counts"]["buckets"]
+      cityKeys.inject({}) do |memo, cityKey|
+        memo[cityKey] = rval[cityKey]["since"]["buckets"][0]["doc_count"]
+        memo
+      end
     end
   end
 end
