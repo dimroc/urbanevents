@@ -4,7 +4,7 @@ var EventSource = require('event-source');
 
 var url = AppConstants.CITYSERVICE_URL + "/api/v1/events";
 
-var EventPusherActions = {
+var EventActions = {
   start: function() {
     this._es = new EventSource(url);
     this._es.addEventListener("event", this.listen.bind(this));
@@ -26,4 +26,4 @@ var EventPusherActions = {
   }
 }
 
-module.exports = EventPusherActions;
+module.exports = EventActions;

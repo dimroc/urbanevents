@@ -2,8 +2,8 @@ var React = window.React = require('react'),
     Router = require('react-router'),
     Cities = require("./components/Cities"),
     CityHeader = require("./components/CityHeader"),
-    PusherEvents = require("./components/PusherEvents"),
-    EventPusherActions = require("./actions/EventPusherActions"),
+    ListEvents = require("./components/ListEvents"),
+    EventActions = require("./actions/EventActions"),
     MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
 
@@ -31,7 +31,7 @@ var routes = (
     <Route name="cities" path="/cities" handler={Cities}/>
     <Route name="city" path="/cities/:cityId" handler={CityHeader}>
       <Route name="map" path="map" handler={MappedEvents}/>
-      <Route name="events" path="events" handler={PusherEvents}/>
+      <Route name="events" path="events" handler={ListEvents}/>
     </Route>
   </Route>
 );
@@ -40,4 +40,4 @@ Router.run(routes, function (Handler) {
   React.render(<Handler/>, mountNode);
 });
 
-EventPusherActions.start();
+EventActions.start();

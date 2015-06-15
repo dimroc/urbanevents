@@ -13,7 +13,7 @@ function addEvent(geoevent) {
   arr = arr.slice(0, 1000);
 }
 
-var PusherStore = assign({}, EventEmitter.prototype, {
+var EventStore = assign({}, EventEmitter.prototype, {
   getAll: function(key) {
     return _geoevents[key] || [];
   },
@@ -44,7 +44,7 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case AppConstants.PUSHER_TWEET:
       addEvent(action.geoevent);
-      PusherStore.emitChange(action.geoevent.city);
+      EventStore.emitChange(action.geoevent.city);
       break;
     case AppConstants.PUSHER_RESET_STORE:
       _geoevents = {};
@@ -52,4 +52,4 @@ AppDispatcher.register(function(action) {
   }
 });
 
-module.exports = PusherStore;
+module.exports = EventStore;

@@ -1,9 +1,9 @@
 'use strict';
 
 var React = require('react');
-var PusherStore = require('../stores/PusherStore');
+var EventStore = require('../stores/EventStore');
 var CityStore = require('../stores/CityStore');
-var EventPusherActions = require("../actions/EventPusherActions");
+var EventActions = require("../actions/EventActions");
 
 var PushedItems = React.createClass({
   render: function() {
@@ -26,7 +26,7 @@ var PushedItems = React.createClass({
   }
 });
 
-var PusherEvents = React.createClass({
+var ListEvents = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -34,16 +34,16 @@ var PusherEvents = React.createClass({
     var { cityId } = this.context.router.getCurrentParams();
     this.city = CityStore.get(cityId);
 
-    return {items: PusherStore.getAll(this.city.key)};
+    return {items: EventStore.getAll(this.city.key)};
   },
   handlePush: function() {
-    this.setState({items: PusherStore.getAll(this.city.key)});
+    this.setState({items: EventStore.getAll(this.city.key)});
   },
   componentDidMount: function() {
-    PusherStore.addChangeListener(this.city.key, this.handlePush);
+    EventStore.addChangeListener(this.city.key, this.handlePush);
   },
   componentWillUnmount: function() {
-    PusherStore.removeChangeListener(this.city.key, this.handlePush);
+    EventStore.removeChangeListener(this.city.key, this.handlePush);
   },
   render: function() {
     return (
@@ -55,5 +55,5 @@ var PusherEvents = React.createClass({
   }
 });
 
-module.exports = PusherEvents;
+module.exports = ListEvents;
 

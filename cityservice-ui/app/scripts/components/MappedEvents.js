@@ -2,7 +2,7 @@
 
 var React = require('react');
 var Leaflet = require('react-leaflet');
-var PusherStore = require('../stores/PusherStore');
+var EventStore = require('../stores/EventStore');
 var CityStore = require('../stores/CityStore');
 
 var Map = Leaflet.Map,
@@ -32,18 +32,18 @@ var MappedEvents = React.createClass({
     var { cityId } = this.context.router.getCurrentParams();
     this.city = CityStore.get(cityId);
 
-    return {items: PusherStore.getAll(this.city.key)};
+    return {items: EventStore.getAll(this.city.key)};
   },
 
   handlePush: function() {
-    this.setState({items: PusherStore.getAll(this.city.key)});
+    this.setState({items: EventStore.getAll(this.city.key)});
   },
 
   componentDidMount: function() {
-    PusherStore.addChangeListener(this.city.key, this.handlePush);
+    EventStore.addChangeListener(this.city.key, this.handlePush);
   },
   componentWillUnmount: function() {
-    PusherStore.removeChangeListener(this.city.key, this.handlePush);
+    EventStore.removeChangeListener(this.city.key, this.handlePush);
   },
   render: function() {
     return (
