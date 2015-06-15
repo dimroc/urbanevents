@@ -32,7 +32,7 @@ func main() {
 	wg.Add(1)
 
 	for _, city := range settings.Cities {
-		go recorder.Record(city, cityrecorder.StdoutWriter) // Blocking
+		go recorder.Record(city, cityrecorder.StdoutWriter)
 	}
 
 	wg.Wait()
