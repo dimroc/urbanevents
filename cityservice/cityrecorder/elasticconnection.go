@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	IndexName = os.Getenv("GO_ENV") + "-geoevents"
+	IndexName = os.Getenv("GO_ENV") + "-geoevents-write"
 )
 
 type Elastic interface {

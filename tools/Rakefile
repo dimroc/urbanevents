@@ -22,7 +22,7 @@ namespace :es do
   end
 
   def es_alias
-    "#{GO_ENV}-geoevents"
+    "#{GO_ENV}-geoevents-write"
   end
 
   def repository(options={log: true})
@@ -114,7 +114,16 @@ namespace :es do
     raise ArgumentError, "OLD_INDEX must be set" unless old_index.present?
 
     repository(log: false).create_index!
-    repository.client.indices.put_alias index: repository.index, name: es_alias
+    # We swap the index instead of having an alias point to multiple indices
+    # since you cannot write to an alias pointing to multiple indices:
+    # https://github.com/elastic/elasticsearch/issues/6240
+    repository.client.indices.update_aliases body: {
+      actions: [
+        { remove: { index: old_index, alias: es_alias } },
+        { add:    { index: repository.index, alias: es_alias } }
+      ]
+    }
+
     repository.copy_from old_index
   end
 end
