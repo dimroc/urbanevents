@@ -3,6 +3,7 @@ var React = window.React = require('react'),
     Cities = require("./components/Cities"),
     CityHeader = require("./components/CityHeader"),
     PusherEvents = require("./components/PusherEvents"),
+    EventPusherActions = require("./actions/EventPusherActions"),
     MappedEvents = require("./components/MappedEvents"),
     mountNode = document.getElementById("app");
 
@@ -38,3 +39,5 @@ var routes = (
 Router.run(routes, function (Handler) {
   React.render(<Handler/>, mountNode);
 });
+
+EventPusherActions.start();

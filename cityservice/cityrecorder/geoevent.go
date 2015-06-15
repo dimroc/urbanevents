@@ -1,7 +1,9 @@
 package cityrecorder
 
 import (
+	"encoding/json"
 	"fmt"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"time"
 )
 
@@ -63,4 +65,10 @@ func (g *GeoEvent) String() string {
 		g.Payload,
 		g.Metadata,
 	)
+}
+
+func (g *GeoEvent) ToJsonString() string {
+	b, err := json.Marshal(g)
+	Check(err)
+	return string(b)
 }

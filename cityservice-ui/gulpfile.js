@@ -48,7 +48,6 @@ function rebundle() {
         // log errors if they happen
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source(destFileName))
-        .pipe($.streamify($.replace(/__ENV_PUSHER_KEY__/g, '"' + process.env.PUSHER_KEY + '"')))
         .pipe($.streamify($.replace(/__ENV_CITYSERVICE_URL__/g, '"' + process.env.CITYSERVICE_URL + '"')))
         .pipe(gulp.dest(destFolder))
         .on('end', function() {
@@ -63,7 +62,6 @@ gulp.task('buildScripts', function() {
     return browserify(sourceFile)
         .bundle()
         .pipe(source(destFileName))
-        .pipe($.streamify($.replace(/__ENV_PUSHER_KEY__/g, '"' + process.env.PUSHER_KEY + '"')))
         .pipe($.streamify($.replace(/__ENV_CITYSERVICE_URL__/g, '"' + process.env.CITYSERVICE_URL + '"')))
         .pipe(gulp.dest('dist/scripts'));
 });
@@ -189,7 +187,6 @@ gulp.task('build', ['html', 'buildBundle', 'images', 'fonts', 'extras'], functio
 
 gulp.task('clearCityserviceUrlEnv', function() {
   process.env.CITYSERVICE_URL = "";
-  process.env.PUSHER_KEY = "af86285886361f71867c";
 });
 
 gulp.task('copyToService', ['clearCityserviceUrlEnv', 'build'], function() {

@@ -20,10 +20,8 @@ var getCityserviceUrl = function() {
 };
 
 module.exports = $.extend(keyMirror({
-  PUSHER_CHANGE_CHANNEL: null,
   PUSHER_RESET_STORE: null,
   PUSHER_TWEET: null
 }), {
-  CITYSERVICE_URL: getCityserviceUrl(),
-  PUSHER_KEY: __ENV_PUSHER_KEY__
+  CITYSERVICE_URL: getCityserviceUrl()
 });

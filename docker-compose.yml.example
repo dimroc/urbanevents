@@ -23,7 +23,6 @@ cityservice:
     - TWITTER_CONSUMER_SECRET=
     - TWITTER_TOKEN=
     - TWITTER_TOKEN_SECRET=
-    - PUSHER_URL=
 
   restart: always
 

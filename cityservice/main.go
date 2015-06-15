@@ -6,7 +6,7 @@ import (
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	"github.com/phyber/negroni-gzip/gzip"
+	//"github.com/phyber/negroni-gzip/gzip"
 	"github.com/rs/cors"
 	"os"
 )
@@ -33,11 +33,12 @@ func main() {
 		os.Getenv("TWITTER_TOKEN_SECRET"),
 	)
 
-	pusher := cityrecorder.NewPusherFromURL(os.Getenv("PUSHER_URL"))
+	eventpusher := cityrecorder.NewEventPusher()
 	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	defer eventpusher.Close()
 	defer elastic.Close()
 
-	broadcaster := cityrecorder.NewBroadcastWriter(pusher, elastic)
+	broadcaster := cityrecorder.NewBroadcastWriter(eventpusher, elastic)
 	if GO_ENV == "development" {
 		broadcaster.Push(cityrecorder.StdoutWriter)
 	}
@@ -49,13 +50,14 @@ func main() {
 
 	router := mux.NewRouter()
 	apiRoutes := router.PathPrefix("/api/v1").Subrouter()
+	apiRoutes.Handle("/events", eventpusher)
 	apiRoutes.HandleFunc("/settings", SettingsHandler).Methods("GET")
 	apiRoutes.HandleFunc("/cities", CitiesHandler).Methods("GET")
 	apiRoutes.HandleFunc("/cities/{city}", CityHandler).Methods("GET")
 
 	n := negroni.Classic()
 	n.Use(cors.Default())
-	n.Use(gzip.Gzip(gzip.DefaultCompression))
+	//n.Use(gzip.Gzip(gzip.DefaultCompression))
 	n.Use(SettingsMiddleware(settings))
 	n.Use(ElasticMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))

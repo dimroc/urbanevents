@@ -4,7 +4,6 @@ var React = require('react');
 var Leaflet = require('react-leaflet');
 var PusherStore = require('../stores/PusherStore');
 var CityStore = require('../stores/CityStore');
-var PusherActions = require("../actions/PusherActions");
 
 var Map = Leaflet.Map,
   TileLayer = Leaflet.TileLayer,
@@ -33,7 +32,6 @@ var MappedEvents = React.createClass({
     var { cityId } = this.context.router.getCurrentParams();
     this.city = CityStore.get(cityId);
 
-    PusherActions.listen(this.city.key);
     return {items: PusherStore.getAll(this.city.key)};
   },
 
