@@ -1,4 +1,4 @@
-class Tweet
+class Geoevent
   include Elasticsearch::Persistence::Model
   attr_reader :attributes
 

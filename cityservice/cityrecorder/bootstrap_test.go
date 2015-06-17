@@ -29,9 +29,13 @@ func newFixture() *fixture {
 	geoevents := []GeoEvent{}
 	loadFromFixtureFile("fixtures/geoevents.json", &geoevents)
 
+	media := []ig.Media{}
+	loadFromFixtureFile("fixtures/media.json", &media)
+
 	return &fixture{
 		Cities:    cities,
 		GeoEvents: geoevents,
+		Media:     media,
 	}
 }
 

@@ -1,4 +1,4 @@
-class TweetRepository
+class GeoeventRepository
   include Elasticsearch::Persistence::Repository
 
   def initialize(options={})
@@ -7,19 +7,28 @@ class TweetRepository
   end
 
   # Set a custom document type
-  type :tweet
+  type :geoevent # Change for instagram?! No. YAGNI, keep same document type for now.
 
   settings number_of_shards: 3 do
     mapping do
       indexes :createdAt, type: 'date'
       indexes :payload, analyzer: 'snowball'
       indexes :city, type: 'string', index: 'not_analyzed'
+      indexes :username, type: 'string', index: 'not_analyzed'
+      indexes :fullName, type: 'string'
+      indexes :service, type: 'string', index: 'not_analyzed'
+
+      indexes :mediaType, type: 'string', index: 'not_analyzed'
+      indexes :thumbnailUrl, type: 'string', index: 'no'
+      indexes :imageUrl, type: 'string', index: 'no'
+      indexes :videoUrl, type: 'string', index: 'no'
+
       indexes :metadata, type: 'object' do
-        indexes :screenName, type: 'string'
-        indexes :hashtags, type: 'string'
+        indexes :hashtags, type: 'string', index: 'not_analyzed'
         indexes :mediaTypes, type: 'string', index: 'not_analyzed'
-        indexes :mediaUrls, type: 'string', index: 'not_analyzed'
-        indexes :expandedUrls, type: 'string', index: 'not_analyzed'
+        indexes :mediaUrls, type: 'string', index: 'no'
+        indexes :expandedUrls, type: 'string', index: 'no'
+        indexes :link, type: 'string', index: 'no'
       end
 
       indexes :geojson, type: 'geo_shape', "tree": "quadtree", "precision": "1m"
@@ -30,9 +39,9 @@ class TweetRepository
   end
 
   def copy_from(source_index)
-    Tweet.gateway.index = source_index
-    Tweet.gateway.client = self.client
-    Tweet.find_in_batches(size: 100) do |batch|
+    Geoevent.gateway.index = source_index
+    Geoevent.gateway.client = self.client
+    Geoevent.find_in_batches(size: 100) do |batch|
       insert_batch(batch)
     end
   end
@@ -44,13 +53,13 @@ class TweetRepository
   private
 
   def insert_batch(batch)
-    bulk_insertion = batch.map do |tweet|
-      { index: { _id: tweet.id.to_s, data: tweet.to_hash } }
+    bulk_insertion = batch.map do |geoevent|
+      { index: { _id: geoevent.id.to_s, data: geoevent.to_hash } }
     end
 
     self.client.bulk({
       index: index,
-      type: 'tweet',
+      type: type,
       body: bulk_insertion
     })
   end

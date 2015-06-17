@@ -13,11 +13,12 @@ import (
 
 var (
 	settingsFilename = flag.String("settings", "", "Path to the settings file")
+	baseUrl          = flag.String("baseurl", "", "The base url of the service used for callbacks")
 )
 
 func main() {
 	flag.Parse()
-	ValidateFlags([]string{"settings"})
+	ValidateFlags([]string{"settings", "baseurl"})
 	recorder := cityrecorder.NewInstagramRecorder(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
@@ -42,7 +43,7 @@ func main() {
 	go func() { log.Fatal(http.ListenAndServe(":58080", router)) }()
 
 	Logger.Debug("Adding Subscriptions if necessary")
-	recorder.Subscribe(settings.Cities)
+	recorder.Subscribe(*baseUrl+"/api/v1/callbacks/instagram/", settings.Cities)
 
 	printExistingSubscriptions(recorder)
 	wg.Wait()

@@ -50,6 +50,11 @@ type Tweet struct {
 	ExpandedUrls []string `json:"expandedUrls"`
 }
 
+type Instagram struct {
+	Hashtags []string `json:"hashtags"`
+	Link     string   `json:"link"`
+}
+
 func (g *GeoEvent) String() string {
 	return fmt.Sprintf(
 		"{CreatedAt: %s, GeoJson: %s, Point: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Payload: %s, Metadata: %s}",

@@ -60,13 +60,13 @@ func (recorder *InstagramRecorder) GetSubscriptions() []ig.Realtime {
 }
 
 // Initialize Real-Time Subscriptions with Instagram, if necessary.
-func (recorder *InstagramRecorder) Subscribe(cities []City) {
+func (recorder *InstagramRecorder) Subscribe(baseUrl string, cities []City) {
 	//lat, lng string, radius int, callbackURL, verifyToken string
 	response, err := recorder.client.Realtime.SubscribeToGeography(
 		"40.743",
 		"-74.0059",
 		5000,
-		"http://b5b26d21.ngrok.io/api/v1/callbacks/instagram/nyc",
+		baseUrl+"nyc",
 		"cityservice",
 	)
 
@@ -122,7 +122,25 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId string) {
 
 	for _, media := range medias {
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
-		//recorder.writer.write(g)
+		recorder.writer.write(CreateGeoEventFromInstagram(media))
+	}
+}
+
+func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
+	return GeoEvent{
+		Id:           media.ID,
+		CreatedAt:    time.Unix(media.CreatedTime, 0),
+		UserName:     media.User.Username, // New to GeoEvent
+		FullName:     media.User.FullName, // New to GeoEvent
+		Point:        media.Location,
+		CityKey:      "nyc",
+		LocationType: "coordinate",
+		Type:         "geoevent",
+		Service:      "instagram",
+		MediaType:    media.Type, // New to GeoEvent
+		Payload:      media.Caption.Text,
+		ImageUrl:     media.Images.StandardResolution.URL, // New to GeoEvent
+		ThumbnailUrl: media.Images.Thumbnail.URL,          // New to GeoEvent
 	}
 }
 
