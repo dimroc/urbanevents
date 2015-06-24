@@ -100,12 +100,5 @@ func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
 }
 
 func (e *BulkElasticConnection) Write(g GeoEvent) error {
-	if g.LocationType == "poi" {
-		// We are skipping Places of interests because elasticsearch as of this
-		// time does not properly support GeoJson:
-		// https://github.com/elastic/elasticsearch/issues/11131
-		return nil
-	} else {
-		return e.BulkIndexer.Index(IndexName, "tweet", g.Id, "", &g.CreatedAt, g, false)
-	}
+	return e.BulkIndexer.Index(IndexName, "tweet", g.Id, "", &g.CreatedAt, g, false)
 }
