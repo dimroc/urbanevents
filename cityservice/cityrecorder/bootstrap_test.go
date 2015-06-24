@@ -2,6 +2,7 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
+	ig "github.com/carbocation/go-instagram/instagram"
 	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
@@ -17,10 +18,15 @@ var (
 type fixture struct {
 	Cities    []City
 	GeoEvents []GeoEvent
+	Media     []ig.Media
 }
 
 func (f *fixture) GetCity() City {
 	return f.Cities[0]
+}
+
+func (f *fixture) GetInstagramMedia() []ig.Media {
+	return f.Media
 }
 
 func newFixture() *fixture {
@@ -57,7 +63,7 @@ func truncateDocuments() {
 	//indices []string, types []string, args map[string]interface{}, query interface{}
 
 	indices := []string{IndexName}
-	types := []string{"tweet"}
+	types := []string{"geoevent"}
 	args := map[string]interface{}{}
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
@@ -69,7 +75,7 @@ func truncateDocuments() {
 }
 
 func setup() {
-	IndexName = "test-geoevents"
+	IndexName = "test-geoevents-write"
 	truncateDocuments()
 }
 

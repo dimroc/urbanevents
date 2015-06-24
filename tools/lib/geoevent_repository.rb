@@ -22,14 +22,9 @@ class GeoeventRepository
       indexes :thumbnailUrl, type: 'string', index: 'no'
       indexes :imageUrl, type: 'string', index: 'no'
       indexes :videoUrl, type: 'string', index: 'no'
+      indexes :link, type: 'string', index: 'no'
 
-      indexes :metadata, type: 'object' do
-        indexes :hashtags, type: 'string', index: 'not_analyzed'
-        indexes :mediaTypes, type: 'string', index: 'not_analyzed'
-        indexes :mediaUrls, type: 'string', index: 'no'
-        indexes :expandedUrls, type: 'string', index: 'no'
-        indexes :link, type: 'string', index: 'no'
-      end
+      indexes :hashtags, type: 'string', index: 'not_analyzed'
 
       indexes :geojson, type: 'geo_shape', "tree": "quadtree", "precision": "1m"
       indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'

@@ -122,25 +122,29 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId string) {
 
 	for _, media := range medias {
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
-		recorder.writer.write(CreateGeoEventFromInstagram(media))
+		geoevent := CreateGeoEventFromInstagram(media)
+		geoevent.CityKey = "nyc"
+		recorder.writer.Write(geoevent)
 	}
 }
 
 func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 	return GeoEvent{
-		Id:           media.ID,
 		CreatedAt:    time.Unix(media.CreatedTime, 0),
-		UserName:     media.User.Username, // New to GeoEvent
+		Id:           media.ID,
 		FullName:     media.User.FullName, // New to GeoEvent
-		Point:        media.Location,
-		CityKey:      "nyc",
+		Hashtags:     media.Tags,
+		ImageUrl:     safelyRetrieveImage(media), // New to GeoEvent
+		Link:         media.Link,                 // New to GeoEvent
 		LocationType: "coordinate",
-		Type:         "geoevent",
-		Service:      "instagram",
-		MediaType:    media.Type, // New to GeoEvent
+		MediaType:    media.Type, // New to GeoEvent // Either image or video
 		Payload:      media.Caption.Text,
-		ImageUrl:     media.Images.StandardResolution.URL, // New to GeoEvent
-		ThumbnailUrl: media.Images.Thumbnail.URL,          // New to GeoEvent
+		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
+		Service:      "instagram",
+		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
+		Type:         "geoevent",
+		Username:     media.User.Username,        // New to GeoEvent
+		VideoUrl:     safelyRetrieveVideo(media), // New to GeoEvent
 	}
 }
 
@@ -151,4 +155,28 @@ func (recorder *InstagramRecorder) Close() {
 func (recorder *InstagramRecorder) DeleteAllSubscriptions() {
 	Logger.Warning("Deleting all Instagram Real-time Subscriptions!")
 	recorder.client.Realtime.DeleteAllSubscriptions()
+}
+
+func safelyRetrieveVideo(media ig.Media) string {
+	if media.Videos != nil {
+		return media.Videos.StandardResolution.URL
+	} else {
+		return ""
+	}
+}
+
+func safelyRetrieveThumbnail(media ig.Media) string {
+	if media.Images != nil {
+		return media.Images.Thumbnail.URL
+	} else {
+		return ""
+	}
+}
+
+func safelyRetrieveImage(media ig.Media) string {
+	if media.Images != nil {
+		return media.Images.StandardResolution.URL
+	} else {
+		return ""
+	}
 }

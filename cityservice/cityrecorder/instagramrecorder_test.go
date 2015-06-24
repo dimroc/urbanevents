@@ -1,12 +1,9 @@
 package cityrecorder_test
 
 import (
-	ig "github.com/carbocation/go-instagram/instagram"
 	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/smartystreets/goconvey/convey"
-	"os"
 	"testing"
-	"time"
 )
 
 func TestCreateGeoEventFromInstagram(t *testing.T) {

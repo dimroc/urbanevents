@@ -97,23 +97,29 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	return outbox
 }
 
-func geoJsonFromPoint(t anaconda.Tweet) GeoJson {
-	return &Point{
-		Coordinates: t.Coordinates.Coordinates,
-		Type:        t.Coordinates.Type,
-	}
-}
-
 func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
-	return &BoundingBox{
-		Coordinates: t.Place.BoundingBox.Coordinates,
-		Type:        t.Place.BoundingBox.Type,
+	if t.Place.PlaceType == "poi" {
+		return &BoundingBox{
+			Coordinates: t.Place.BoundingBox.Coordinates,
+			Type:        t.Place.BoundingBox.Type,
+		}
+	} else {
+		return nil
 	}
 }
 
-type localEntities anaconda.Entities
+func pointFromTweet(t anaconda.Tweet) ([2]float64, error) {
+	if t.Place.PlaceType == "poi" {
+		return geoJsonFromBoundingBox(t).Center(), nil
+	} else if t.Coordinates != nil {
+		return t.Coordinates.Coordinates, nil
+	} else {
+		return [2]float64{}, errors.New("No coordinate for tweet")
+	}
+}
 
-func (e localEntities) GetHashtagTexts() []string {
+func getHashtagTexts(t anaconda.Tweet) []string {
+	e := t.Entities
 	texts := make([]string, len(e.Hashtags))
 	for index, hashtag := range e.Hashtags {
 		texts[index] = hashtag.Text
@@ -122,64 +128,114 @@ func (e localEntities) GetHashtagTexts() []string {
 	return texts
 }
 
-func (e localEntities) GetMedias() ([]string, []string, []string) {
-	types := make([]string, len(e.Media))
-	mediaUrls := make([]string, len(e.Media))
-	expandedUrls := make([]string, len(e.Media))
-
-	for index, media := range e.Media {
-		types[index] = media.Type
-		mediaUrls[index] = media.Media_url
-		expandedUrls[index] = media.Expanded_url
+func getImageUrl(t anaconda.Tweet) string {
+	if len(t.Entities.Media) > 0 && t.Entities.Media[0].Type == "photo" {
+		return t.Entities.Media[0].Media_url
+	} else {
+		return ""
 	}
-
-	return types, mediaUrls, expandedUrls
 }
 
-func metadataFromTweet(t anaconda.Tweet) Metadata {
-	entities := localEntities(t.Entities)
-	types, mediaUrls, expandedUrls := entities.GetMedias()
+func getThumbnailUrl(t anaconda.Tweet) string {
+	imageUrl := getImageUrl(t)
+	if len(imageUrl) > 0 {
+		return imageUrl + ":thumb"
+	} else {
+		return ""
+	}
+}
 
-	return Tweet{
-		ScreenName:   t.User.ScreenName,
-		Hashtags:     entities.GetHashtagTexts(),
-		MediaTypes:   types,
-		MediaUrls:    mediaUrls,
-		ExpandedUrls: expandedUrls,
+func getVideoUrl(t anaconda.Tweet) string {
+	return "" // Doesn't exist yet.
+}
+
+func getMediaType(t anaconda.Tweet) string {
+	if len(t.Entities.Media) > 0 {
+		current := t.Entities.Media[0].Type
+		if current == "photo" {
+			return "image"
+		} else if len(current) > 0 {
+			return current
+		} else {
+			return "text"
+		}
+	} else {
+		return "text"
+	}
+}
+
+func generateLink(t anaconda.Tweet) string {
+	// https://twitter.com/thereaIbanksy/status/613791445858648064
+	return fmt.Sprintf("https://twitter.com/%s/status/%s", t.User.ScreenName, t.IdStr)
+}
+
+func getLocationType(t anaconda.Tweet) string {
+	if t.Place.PlaceType == "poi" {
+		return "poi"
+	} else {
+		return "coordinate"
+	}
+}
+
+func metadataFromTweet(t anaconda.Tweet) (metadata, error) {
+	point, err := pointFromTweet(t)
+
+	if err != nil {
+		return metadata{}, err
+	} else {
+		// Leaned towards readability over speed, so some
+		// methods perform redundant actions.
+		return metadata{
+			GeoJson:      geoJsonFromBoundingBox(t),
+			Hashtags:     getHashtagTexts(t),
+			ImageUrl:     getImageUrl(t),
+			Link:         generateLink(t),
+			LocationType: getLocationType(t),
+			MediaType:    getMediaType(t),
+			Point:        point,
+			ThumbnailUrl: getThumbnailUrl(t),
+			VideoUrl:     getVideoUrl(t),
+		}, nil
 	}
 }
 
 func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
-	if t.Coordinates != nil {
+	metadata, err := metadataFromTweet(t)
+
+	if err == nil {
 		createdAt, _ := t.CreatedAtTime()
 		return GeoEvent{
-			Id:           t.IdStr,
-			CreatedAt:    createdAt,
 			CityKey:      city.Key,
-			GeoJson:      nil,
-			Point:        t.Coordinates.Coordinates,
-			Type:         "geoevent",
-			Service:      "twitter",
-			Payload:      t.Text,
-			Metadata:     metadataFromTweet(t),
-			LocationType: "coordinate",
-		}, nil
-	} else if t.Place.PlaceType == "poi" {
-		createdAt, _ := t.CreatedAtTime()
-		geoJson := geoJsonFromBoundingBox(t)
-		return GeoEvent{
-			Id:           t.IdStr,
 			CreatedAt:    createdAt,
-			CityKey:      city.Key,
-			GeoJson:      geoJson,
-			Point:        geoJson.Center(),
-			Type:         "geoevent",
-			Service:      "twitter",
+			FullName:     t.User.Name,
+			GeoJson:      metadata.GeoJson,
+			Hashtags:     metadata.Hashtags,
+			Id:           t.IdStr,
+			ImageUrl:     metadata.ImageUrl,
+			Link:         metadata.Link,
+			LocationType: metadata.LocationType,
+			MediaType:    metadata.MediaType,
 			Payload:      t.Text,
-			Metadata:     metadataFromTweet(t),
-			LocationType: t.Place.PlaceType,
+			Point:        metadata.Point,
+			Service:      "twitter",
+			ThumbnailUrl: metadata.ThumbnailUrl,
+			Type:         "geoevent",
+			Username:     t.User.ScreenName,
+			VideoUrl:     metadata.VideoUrl,
 		}, nil
 	} else {
-		return GeoEvent{}, errors.New("Tweet does not contain a coordinate or place of interest")
+		return GeoEvent{}, err
 	}
+}
+
+type metadata struct {
+	GeoJson      GeoJson
+	Hashtags     []string
+	ImageUrl     string
+	Link         string
+	LocationType string
+	MediaType    string
+	Point        [2]float64
+	ThumbnailUrl string
+	VideoUrl     string
 }
