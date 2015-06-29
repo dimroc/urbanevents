@@ -18,8 +18,12 @@ type InstagramRecorder struct {
 	writer          Writer
 	client          *ig.Client
 	ticker          *time.Ticker
-	geographyIds    *set.Set
+	geographyIds    *set.SetValue
 	geographyMinIds map[string]string
+}
+
+type geographEntry struct {
+	City string
 }
 
 func NewInstagramRecorder(clientId, clientSecret string, writer Writer) *InstagramRecorder {
@@ -33,7 +37,7 @@ func NewInstagramRecorder(clientId, clientSecret string, writer Writer) *Instagr
 		writer:          writer,
 		client:          client,
 		ticker:          time.NewTicker(time.Second * 5),
-		geographyIds:    set.New(),
+		geographyIds:    set.NewSetValue(),
 		geographyMinIds: make(map[string]string),
 	}
 
@@ -62,6 +66,8 @@ func (recorder *InstagramRecorder) GetSubscriptions() []ig.Realtime {
 // Initialize Real-Time Subscriptions with Instagram, if necessary.
 func (recorder *InstagramRecorder) Subscribe(baseUrl string, cities []City) {
 	//lat, lng string, radius int, callbackURL, verifyToken string
+	// TODO: Iterate over each city
+	// TODO: Using the circle packer, register each circle for that city.
 	response, err := recorder.client.Realtime.SubscribeToGeography(
 		"40.743",
 		"-74.0059",
@@ -91,8 +97,7 @@ func (recorder *InstagramRecorder) ServeHTTP(rw http.ResponseWriter, req *http.R
 			// Hand off all responses to another goroutine to fetch RecentMedia so we free up this POST call.
 			Logger.Debug(cityKey + ": " + ToJsonStringUnsafe(jsonResponses))
 			for _, jsonResponse := range jsonResponses {
-				// TODO: Add cityKey to set somehow
-				recorder.geographyIds.Add(jsonResponse.ObjectID)
+				recorder.geographyIds.Add(jsonResponse.ObjectID, geographEntry{City: cityKey})
 			}
 		}
 	}
@@ -100,14 +105,15 @@ func (recorder *InstagramRecorder) ServeHTTP(rw http.ResponseWriter, req *http.R
 
 func (recorder *InstagramRecorder) startMediaFetcher() {
 	for _ = range recorder.ticker.C {
-		ids := recorder.geographyIds.ListAndClear()
-		for _, geographyId := range ids {
-			recorder.retrieveMediaFor(geographyId)
+		entries := recorder.geographyIds.ListAndClear()
+		for _, entry := range entries {
+			// Entry: { Key string, Value interface{} ({ City: "paris" })}
+			recorder.retrieveMediaFor(entry.Key, entry.Value.(geographEntry).City)
 		}
 	}
 }
 
-func (recorder *InstagramRecorder) retrieveMediaFor(geographyId string) {
+func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string) {
 	parameters := ig.Parameters{
 		MinID: recorder.geographyMinIds[geographyId],
 	}
@@ -123,7 +129,7 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId string) {
 	for _, media := range medias {
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
 		geoevent := CreateGeoEventFromInstagram(media)
-		geoevent.CityKey = "nyc"
+		geoevent.CityKey = cityKey
 		recorder.writer.Write(geoevent)
 	}
 }
