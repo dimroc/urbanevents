@@ -14,6 +14,18 @@ func TestCreateGeoEventFromInstagram(t *testing.T) {
 			geoevent := cityrecorder.CreateGeoEventFromInstagram(media)
 
 			So(geoevent.Id, ShouldEqual, media.ID)
+			So(geoevent.ImageUrl, ShouldEqual, media.Images.StandardResolution.URL)
+		})
+	})
+
+	Convey("Given an Instagram Media Object without a caption", t, func() {
+		media := Fixture.GetInstagramMedia()[2]
+
+		Convey("the geoevent should be correct", func() {
+			geoevent := cityrecorder.CreateGeoEventFromInstagram(media)
+
+			So(geoevent.Id, ShouldEqual, media.ID)
+			So(geoevent.ImageUrl, ShouldEqual, "https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/e15/11374545_116871491983909_567056437_n.jpg")
 		})
 	})
 }

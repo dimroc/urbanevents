@@ -121,6 +121,7 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 	medias, _, err := recorder.client.Geographies.RecentMedia(geographyId, &parameters)
 	if err != nil {
 		Logger.Warning("Unable to retrieve media", err)
+		return
 	}
 
 	if len(medias) > 0 {
@@ -146,7 +147,7 @@ func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 		Link:         media.Link,                 // New to GeoEvent
 		LocationType: "coordinate",
 		MediaType:    media.Type, // New to GeoEvent // Either image or video
-		Payload:      media.Caption.Text,
+		Payload:      safelyRetrieveCaption(media),
 		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
 		Service:      "instagram",
 		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
@@ -184,6 +185,14 @@ func safelyRetrieveThumbnail(media ig.Media) string {
 func safelyRetrieveImage(media ig.Media) string {
 	if media.Images != nil {
 		return media.Images.StandardResolution.URL
+	} else {
+		return ""
+	}
+}
+
+func safelyRetrieveCaption(media ig.Media) string {
+	if media.Caption != nil {
+		return media.Caption.Text
 	} else {
 		return ""
 	}
