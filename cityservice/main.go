@@ -6,7 +6,6 @@ import (
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	"github.com/phyber/negroni-gzip/gzip"
 	"github.com/rs/cors"
 	"os"
 )
@@ -66,7 +65,6 @@ func main() {
 
 	n := negroni.Classic()
 	n.Use(cors.Default())
-	n.Use(gzip.Gzip(gzip.DefaultCompression))
 	n.Use(SettingsMiddleware(settings))
 	n.Use(ElasticMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))
