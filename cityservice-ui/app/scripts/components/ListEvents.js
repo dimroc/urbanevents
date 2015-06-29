@@ -11,7 +11,7 @@ var PushedItems = React.createClass({
       var key = geoevent.id + "listed";
       return (
         <li key={key}>
-          <label className="screenName label label-info">{geoevent.metadata.screenName}</label>
+          <label className="screenName label label-info">{geoevent.username}</label>
           <span>{geoevent.payload}</span>
           <div className="location-info text text-muted">
             <span className="type">{geoevent.locationType}</span>
