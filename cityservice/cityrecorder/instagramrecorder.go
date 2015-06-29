@@ -119,13 +119,15 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 	}
 
 	medias, _, err := recorder.client.Geographies.RecentMedia(geographyId, &parameters)
-	Check(err)
-	Logger.Debug("%s", ToJsonStringUnsafe(medias))
+	if err != nil {
+		Logger.Warning("Unable to retrieve media", err)
+	}
 
 	if len(medias) > 0 {
 		recorder.geographyMinIds[geographyId] = medias[0].ID
 	}
 
+	Logger.Debug("%s", ToJsonStringUnsafe(medias))
 	for _, media := range medias {
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
 		geoevent := CreateGeoEventFromInstagram(media)
