@@ -30,7 +30,7 @@ func (f *fixture) GetInstagramMedia() []ig.Media {
 }
 
 func newFixture() *fixture {
-	bounds := [][]float64{[]float64{-74.3, 40.462}, []float64{-73.65, 40.95}}
+	bounds := [4]float64{-74.3, 40.462, -73.65, 40.95}
 	cities := []City{{"nyc", "New York City", []string{}, bounds}}
 	geoevents := []GeoEvent{}
 	loadFromFixtureFile("fixtures/geoevents.json", &geoevents)

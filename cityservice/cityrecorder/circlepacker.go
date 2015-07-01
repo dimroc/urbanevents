@@ -19,6 +19,6 @@ type GeoCircle struct {
 * spheres, their centers form an equilateral triangle with those two neighbors' centers. The side lengths are all 2r, so the
 * height or y-coordinate difference between the rows is \scriptstyle\sqrt{3}r.
  */
-func PackCircles(bounds BoundingBox) []GeoCircle {
+func PackCircles(boundingBox [4]float64) []GeoCircle {
 	return []GeoCircle{}
 }

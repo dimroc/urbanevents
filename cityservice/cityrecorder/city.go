@@ -9,10 +9,10 @@ import (
 )
 
 type City struct {
-	Key     string      `json:"key"`
-	Display string      `json:"display"`
-	Aliases []string    `json:"aliases"`
-	Bounds  [][]float64 `json:"bounds"` //long,lat pair defining the bounding rectangle
+	Key         string     `json:"key"`
+	Display     string     `json:"display"`
+	Aliases     []string   `json:"aliases"`
+	BoundingBox [4]float64 `json:"bbox"` //long,lat pair defining the bounding rectangle
 }
 
 type CityDetails struct {
@@ -26,10 +26,10 @@ func (c *City) String() string {
 
 func (c *City) LocationString() string {
 	return fmt.Sprintf("%f,%f,%f,%f",
-		c.Bounds[0][0],
-		c.Bounds[0][1],
-		c.Bounds[1][0],
-		c.Bounds[1][1],
+		c.BoundingBox[0],
+		c.BoundingBox[1],
+		c.BoundingBox[2],
+		c.BoundingBox[3],
 	)
 }
 

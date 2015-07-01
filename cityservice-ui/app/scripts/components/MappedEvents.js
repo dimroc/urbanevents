@@ -11,16 +11,14 @@ var Map = Leaflet.Map,
   Polygon = Leaflet.Polygon;
 
 var latLongList = function(bounds) {
-  // Bounds come in as long, lat, since long is X
-  var twoCorners = bounds.map(function(bound) {
-    return bound.slice(0).reverse();
-  });
-
+  // Bounds come in as long, lat, since long is X and this complies with GeoJSON
+  // Leaflet expects lat, long for historical reasons, so we have to reverse.
+  var reversed = bounds.slice(0).reverse();
   var corners = [];
-  corners.push(twoCorners[0]);
-  corners.push([twoCorners[1][0], twoCorners[0][1]]);
-  corners.push(twoCorners[1]);
-  corners.push([twoCorners[0][0], twoCorners[1][1]]);
+  corners.push([reversed[0], reversed[1]]);
+  corners.push([reversed[2], reversed[1]]);
+  corners.push([reversed[2], reversed[3]]);
+  corners.push([reversed[0], reversed[3]]);
   return corners;
 }
 
@@ -49,7 +47,7 @@ var MappedEvents = React.createClass({
     return (
       <Map key={this.city.key} center={this.city.center} zoom={10} className="real-time-map">
         <TileLayer url="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png" attribution='Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>'/>
-        <Polygon positions={latLongList(this.city.bounds)} color="blue"/>
+        <Polygon positions={latLongList(this.city.bbox)} color="blue"/>
         {
           this.state.items.map(function(geoevent) {
             var key = geoevent.id + "mapped";

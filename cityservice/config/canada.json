@@ -1,6 +1,6 @@
 {"Cities":[
-  {"key":"toronto","display":"Toronto","bounds":[[-79.742216,43.542214],[-78.989181,43.92078]]},
-  {"key":"vancouver","display":"Vancouver","bounds":[[-123.287587,49.183635],[-122.881619,49.354347]]},
-  {"key":"montreal","display":"Montreal","bounds":[[-73.948865,45.340413],[-73.302266,45.727653]]}
+  {"key":"toronto","display":"Toronto","bbox":[-79.742216,43.542214,-78.989181,43.92078]},
+  {"key":"vancouver","display":"Vancouver","bbox":[-123.287587,49.183635,-122.881619,49.354347]},
+  {"key":"montreal","display":"Montreal","bbox":[-73.948865,45.340413,-73.302266,45.727653]}
 ]}
 
