@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+const (
+	secondsUntilMediaRetrieval = 5
+)
+
 type InstagramRecorder struct {
 	clientId        string
 	clientSecret    string
@@ -36,7 +40,7 @@ func NewInstagramRecorder(clientId, clientSecret string, writer Writer) *Instagr
 		clientSecret:    clientSecret,
 		writer:          writer,
 		client:          client,
-		ticker:          time.NewTicker(time.Second * 5),
+		ticker:          time.NewTicker(time.Second * secondsUntilMediaRetrieval),
 		geographyIds:    set.NewSetValue(),
 		geographyMinIds: make(map[string]string),
 	}
@@ -66,18 +70,21 @@ func (recorder *InstagramRecorder) GetSubscriptions() []ig.Realtime {
 // Initialize Real-Time Subscriptions with Instagram, if necessary.
 func (recorder *InstagramRecorder) Subscribe(baseUrl string, cities []City) {
 	//lat, lng string, radius int, callbackURL, verifyToken string
-	// TODO: Iterate over each city
-	// TODO: Using the circle packer, register each circle for that city.
-	response, err := recorder.client.Realtime.SubscribeToGeography(
-		"40.743",
-		"-74.0059",
-		5000,
-		baseUrl+"nyc",
-		"cityservice",
-	)
+	for _, city := range cities {
+		for _, circle := range city.Circles {
+			// Using the circle packer generated circles, register each circle for that city via instagram.
+			response, err := recorder.client.Realtime.SubscribeToGeography(
+				circle.LatString(),
+				circle.LngString(),
+				circle.Meters(),
+				baseUrl+city.Key,
+				"cityservice",
+			)
 
-	Logger.Debug(ToJsonStringUnsafe(response))
-	Check(err)
+			Logger.Debug(ToJsonStringUnsafe(response))
+			Check(err)
+		}
+	}
 }
 
 func (recorder *InstagramRecorder) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -138,22 +145,28 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 }
 
 func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
+	var mediaUrl string
+	if media.Type == "video" {
+		mediaUrl = safelyRetrieveVideo(media)
+	} else {
+		mediaUrl = safelyRetrieveImage(media)
+	}
+
 	return GeoEvent{
 		CreatedAt:    time.Unix(media.CreatedTime, 0),
 		Id:           media.ID,
 		FullName:     media.User.FullName, // New to GeoEvent
 		Hashtags:     media.Tags,
-		ImageUrl:     safelyRetrieveImage(media), // New to GeoEvent
-		Link:         media.Link,                 // New to GeoEvent
+		Link:         media.Link, // New to GeoEvent
 		LocationType: "coordinate",
 		MediaType:    media.Type, // New to GeoEvent // Either image or video
+		MediaUrl:     mediaUrl,   // New to GeoEvent
 		Payload:      safelyRetrieveCaption(media),
 		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
 		Service:      "instagram",
 		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
 		Type:         "geoevent",
-		Username:     media.User.Username,        // New to GeoEvent
-		VideoUrl:     safelyRetrieveVideo(media), // New to GeoEvent
+		Username:     media.User.Username, // New to GeoEvent
 	}
 }
 

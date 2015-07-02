@@ -12,7 +12,7 @@ type GeoEvent struct {
 	GeoJson      GeoJson    `json:"geojson"`
 	Hashtags     []string   `json:"hashtags"`
 	Id           string     `json:"id"`
-	ImageUrl     string     `json:"imageUrl"`
+	MediaUrl     string     `json:"mediaUrl"`
 	Link         string     `json:"link"`
 	LocationType string     `json:"locationType"`
 	MediaType    string     `json:"mediaType"`
@@ -22,7 +22,6 @@ type GeoEvent struct {
 	ThumbnailUrl string     `json:"thumbnailUrl"`
 	Type         string     `json:"type"`
 	Username     string     `json:"username"`
-	VideoUrl     string     `json:"videoUrl"`
 }
 
 type GeoJson interface {

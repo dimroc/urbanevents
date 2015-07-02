@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	settingsFilename = flag.String("settings", "", "Path to the settings file")
+	settingsFilename = flag.String("settings", "config/nyc.json", "Path to the settings file")
 	baseUrl          = flag.String("baseurl", "", "The base url of the service used for callbacks")
 )
 

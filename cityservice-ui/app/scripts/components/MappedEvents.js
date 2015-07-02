@@ -60,8 +60,10 @@ var MappedEvents = React.createClass({
         {
           this.state.items.map(function(geoevent) {
             var key = geoevent.id + "mapped";
+            var color = geoevent.service == "twitter" ? "red" : "green";
+            var fillColor = geoevent.service == "twitter" ? "#f03" : "#3f0";
             return (<Circle key={key} center={geoevent.point.slice(0).reverse()}
-                radius={50} color="red" fillColor="#f03" fillOpacity={0.5}/>);
+                radius={50} color={color} fillColor={fillColor} fillOpacity={0.5}/>);
           })
         }
       </Map>

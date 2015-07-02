@@ -145,10 +145,6 @@ func getThumbnailUrl(t anaconda.Tweet) string {
 	}
 }
 
-func getVideoUrl(t anaconda.Tweet) string {
-	return "" // Doesn't exist yet.
-}
-
 func getMediaType(t anaconda.Tweet) string {
 	if len(t.Entities.Media) > 0 {
 		current := t.Entities.Media[0].Type
@@ -188,13 +184,12 @@ func metadataFromTweet(t anaconda.Tweet) (metadata, error) {
 		return metadata{
 			GeoJson:      geoJsonFromBoundingBox(t),
 			Hashtags:     getHashtagTexts(t),
-			ImageUrl:     getImageUrl(t),
+			MediaUrl:     getImageUrl(t),
 			Link:         generateLink(t),
 			LocationType: getLocationType(t),
 			MediaType:    getMediaType(t),
 			Point:        point,
 			ThumbnailUrl: getThumbnailUrl(t),
-			VideoUrl:     getVideoUrl(t),
 		}, nil
 	}
 }
@@ -211,7 +206,7 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			GeoJson:      metadata.GeoJson,
 			Hashtags:     metadata.Hashtags,
 			Id:           t.IdStr,
-			ImageUrl:     metadata.ImageUrl,
+			MediaUrl:     metadata.MediaUrl,
 			Link:         metadata.Link,
 			LocationType: metadata.LocationType,
 			MediaType:    metadata.MediaType,
@@ -221,7 +216,6 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			ThumbnailUrl: metadata.ThumbnailUrl,
 			Type:         "geoevent",
 			Username:     t.User.ScreenName,
-			VideoUrl:     metadata.VideoUrl,
 		}, nil
 	} else {
 		return GeoEvent{}, err
@@ -231,11 +225,10 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 type metadata struct {
 	GeoJson      GeoJson
 	Hashtags     []string
-	ImageUrl     string
+	MediaUrl     string
 	Link         string
 	LocationType string
 	MediaType    string
 	Point        [2]float64
 	ThumbnailUrl string
-	VideoUrl     string
 }

@@ -9,14 +9,28 @@ var PushedItems = React.createClass({
   render: function() {
     var createItem = function(geoevent) {
       var key = geoevent.id + "listed";
+      var icon;
+      if (geoevent.service == "twitter") {
+        icon = <i className="fa fa-twitter fa-stack-2x"></i>
+      } else {
+        icon = <i className="fa fa-instagram fa-stack-2x"></i>
+      }
+
+      var img;
+      if (geoevent.thumbnailUrl) { img = <img src={geoevent.thumbnailUrl}></img> }
+
       return (
         <li key={key}>
-          <label className="screenName label label-info">{geoevent.username}</label>
+          <a href={geoevent.link} target="_blank">
+            <label className="screenName label label-info">{geoevent.username}</label>
+          </a>
           <span>{geoevent.payload}</span>
+          {img}
           <div className="location-info text text-muted">
             <span className="type">{geoevent.locationType}</span>
             <span className="coordinates">{geoevent.point}</span>
             <span className="created-at">{geoevent.createdAt}</span>
+            {icon}
           </div>
           <hr/>
         </li>

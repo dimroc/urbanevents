@@ -8,10 +8,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"os"
+	"time"
 )
 
 var (
-	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/conf2.json")
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/nyc.json")
 	port             = GetenvOrDefault("PORT", "58080")
 )
 
@@ -42,17 +43,16 @@ func main() {
 		broadcaster.Push(cityrecorder.StdoutWriter)
 	}
 
-	//instagramRecorder := cityrecorder.NewInstagramRecorder(
-	//os.Getenv("INSTAGRAM_CLIENT_ID"),
-	//os.Getenv("INSTAGRAM_CLIENT_SECRET"),
-	//broadcaster,
-	//)
-	//defer instagramRecorder.Close()
+	instagramRecorder := cityrecorder.NewInstagramRecorder(
+		os.Getenv("INSTAGRAM_CLIENT_ID"),
+		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
+		broadcaster,
+	)
+	defer instagramRecorder.Close()
 
 	for _, city := range settings.Cities {
 		Logger.Debug("Configuring city: " + city.String())
 		go tweetRecorder.Record(city, broadcaster)
-		//go instagramRecorder.Record(city, broadcaster)
 	}
 
 	router := mux.NewRouter()
@@ -61,7 +61,15 @@ func main() {
 	apiRoutes.HandleFunc("/settings", SettingsHandler).Methods("GET")
 	apiRoutes.HandleFunc("/cities", CitiesHandler).Methods("GET")
 	apiRoutes.HandleFunc("/cities/{city}", CityHandler).Methods("GET")
-	//apiRoutes.Handle("/callbacks/instagram", instagramRecorder).Methods("GET", "POST")
+	apiRoutes.Handle("/callbacks/instagram/{city}", instagramRecorder).Methods("GET", "POST")
+
+	timer := time.NewTimer(time.Second)
+	go func() {
+		<-timer.C
+		Logger.Debug("Subscribing to instagram geographies")
+		instagramRecorder.DeleteAllSubscriptions()
+		instagramRecorder.Subscribe(GetBaseUrl()+"/api/v1/callbacks/instagram/", settings.Cities)
+	}()
 
 	n := negroni.Classic()
 	n.Use(cors.Default())

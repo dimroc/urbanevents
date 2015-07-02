@@ -2,6 +2,7 @@ package cityrecorder
 
 import (
 	geo "github.com/kellydunn/golang-geo"
+	"strconv"
 )
 
 const (
@@ -11,6 +12,26 @@ const (
 type GeoCircle struct {
 	Point  [2]float64 `json:"point"`
 	Radius int        `json:"radius"`
+}
+
+func (c *GeoCircle) Lng() float64 {
+	return c.Point[0]
+}
+
+func (c *GeoCircle) Lat() float64 {
+	return c.Point[1]
+}
+
+func (c *GeoCircle) LngString() string {
+	return strconv.FormatFloat(c.Lng(), 'f', 6, 64)
+}
+
+func (c *GeoCircle) LatString() string {
+	return strconv.FormatFloat(c.Lat(), 'f', 6, 64)
+}
+
+func (c *GeoCircle) Meters() int {
+	return c.Radius * 1000
 }
 
 /*

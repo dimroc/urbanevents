@@ -20,8 +20,7 @@ class GeoeventRepository
 
       indexes :mediaType, type: 'string', index: 'not_analyzed'
       indexes :thumbnailUrl, type: 'string', index: 'no'
-      indexes :imageUrl, type: 'string', index: 'no'
-      indexes :videoUrl, type: 'string', index: 'no'
+      indexes :mediaUrl, type: 'string', index: 'no'
       indexes :link, type: 'string', index: 'no'
 
       indexes :hashtags, type: 'string', index: 'not_analyzed'
