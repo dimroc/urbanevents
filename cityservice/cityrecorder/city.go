@@ -9,10 +9,11 @@ import (
 )
 
 type City struct {
-	Key         string     `json:"key"`
-	Display     string     `json:"display"`
-	Aliases     []string   `json:"aliases"`
-	BoundingBox [4]float64 `json:"bbox"` //long,lat pair defining the bounding rectangle
+	Key         string      `json:"key"`
+	Display     string      `json:"display"`
+	Aliases     []string    `json:"aliases"`
+	BoundingBox [4]float64  `json:"bbox"` //long,lat pair defining the bounding rectangle
+	Circles     []GeoCircle `json:"circles"`
 }
 
 type CityDetails struct {
@@ -31,6 +32,10 @@ func (c *City) LocationString() string {
 		c.BoundingBox[2],
 		c.BoundingBox[3],
 	)
+}
+
+func (c *City) GenerateCircles() {
+	c.Circles = PackCircles(c.BoundingBox)
 }
 
 type CityCounts struct {

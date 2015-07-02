@@ -44,15 +44,24 @@ var MappedEvents = React.createClass({
     EventStore.removeChangeListener(this.city.key, this.handlePush);
   },
   render: function() {
+    var cityKey = this.city.key;
+
     return (
-      <Map key={this.city.key} center={this.city.center} zoom={10} className="real-time-map">
+      <Map key={cityKey} center={this.city.center} zoom={10} className="real-time-map">
         <TileLayer url="http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png" attribution='Tiles by <a href="http://maps.stamen.com/toner/#12/37.7704/-122.3781">Stamen Toner</a>'/>
         <Polygon positions={latLongList(this.city.bbox)} color="blue"/>
+        {
+          this.city.circles.map(function(circle, index) {
+            var key = cityKey + "circle" + index;
+            return (<Circle key={key} center={circle.point.slice(0).reverse()}
+                radius={circle.radius * 1000} color="gray" fillColor="#aaa" fillOpacity={0.5}/>);
+          })
+        }
         {
           this.state.items.map(function(geoevent) {
             var key = geoevent.id + "mapped";
             return (<Circle key={key} center={geoevent.point.slice(0).reverse()}
-                radius={500} color="red" fillColor="#f03" fillOpacity={0.5}/>);
+                radius={50} color="red" fillColor="#f03" fillOpacity={0.5}/>);
           })
         }
       </Map>

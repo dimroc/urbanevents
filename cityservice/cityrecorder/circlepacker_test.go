@@ -13,7 +13,7 @@ func TestPackCircles(t *testing.T) {
 
 		Convey("there should be many hexagonal circles", func() {
 			circles := cr.PackCircles(boundingBox)
-			So(len(circles), ShouldEqual, 7)
+			So(len(circles), ShouldEqual, 50)
 		})
 	})
 }

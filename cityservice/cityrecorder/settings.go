@@ -47,6 +47,16 @@ func LoadSettings(settingsFilename string) (Settings, error) {
 	s.lookup = make(map[string]City)
 	err = json.Unmarshal(contents, &s)
 	if err == nil {
+
+		// Generate circles for cities and reassign settings.Cities
+		citiesWithCircles := make([]City, len(s.Cities))
+		for index, city := range s.Cities {
+			city.GenerateCircles()
+			citiesWithCircles[index] = city
+		}
+
+		// Create lookup map
+		s.Cities = citiesWithCircles
 		for _, city := range s.Cities {
 			s.lookup[city.Key] = city
 		}

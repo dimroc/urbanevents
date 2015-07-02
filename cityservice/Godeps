@@ -1,12 +1,13 @@
-github.com/araddon/gou cf9cf25f52be174c5878920a8021bd224cbe32c7 
-github.com/bitly/go-hostpool d0e59c22a56e8dadfed24f74f452cea5a52722d2 
 github.com/ChimeraCoder/tokenbucket c5a927568de7aad8a58127d80bcd36ca4e71e454 
+github.com/araddon/gou cf9cf25f52be174c5878920a8021bd224cbe32c7 
 github.com/azr/anaconda 69a50f09f4ddc95b9c675f2d834fa60d38d45036 
+github.com/bitly/go-hostpool d0e59c22a56e8dadfed24f74f452cea5a52722d2 
+github.com/codegangsta/negroni c7477ad8e330bef55bf1ebe300cf8aa67c492d1b
 github.com/dustin/go-jsonpointer 75939f54b39e7dafae879e61f65438dadc5f288c 
-github.com/codegangsta/negroni v0.1 
 github.com/dustin/gojson af16e0e771e2ed110f2785564ae33931de8829e4 
 github.com/gorilla/context 215affda49addc4c8ef7e2534915df2c8c35c6cd 
 github.com/gorilla/mux 94903de8c98a68d8b4483c529b26a5d146e386a2 
+github.com/kellydunn/golang-geo v0.6.1
 github.com/op/go-logging e8d5414f0947014548c2334044a0fac13187dfee 
 github.com/rs/cors 5e4ce6bc0ecd3472f6f943666d84876691be2ced 
 github.com/unrolled/render 83f2ba57c12cec399ef137457b1957e41ef0bbe8 

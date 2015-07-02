@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/conf1.json")
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/conf2.json")
 	port             = GetenvOrDefault("PORT", "58080")
 )
 
