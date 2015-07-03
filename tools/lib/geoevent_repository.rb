@@ -7,7 +7,7 @@ class GeoeventRepository
   end
 
   # Set a custom document type
-  type :geoevent # Change for instagram?! No. YAGNI, keep same document type for now.
+  type :geoevent
 
   settings number_of_shards: 3 do
     mapping do
