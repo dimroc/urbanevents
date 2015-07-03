@@ -1,9 +1,11 @@
 class GeoeventRepository
   include Elasticsearch::Persistence::Repository
+  attr_reader :builder
 
   def initialize(options={})
     self.client = Elasticsearch::Client.new url: options[:url], log: options[:log]
     self.index = options[:index].presence || "#{GO_ENV}-geoevents-#{Time.now.strftime("%Y%m%d-%H%M%S")}"
+    @builder = Builder.new(client)
   end
 
   # Set a custom document type
@@ -40,10 +42,6 @@ class GeoeventRepository
     end
   end
 
-  def city_count_since(cityKeys, time)
-    Builder.new(client).city_count_since(cityKeys, time)
-  end
-
   private
 
   def insert_batch(batch)
@@ -64,6 +62,42 @@ class GeoeventRepository
 
     def initialize(client)
       @client = client
+    end
+
+    def city_count_for_service_since(cityKeys, service, time)
+      city_filters = cityKeys.inject({}) do |memo, cityKey|
+        memo[cityKey] = {
+          bool: { must: [
+            { term: { city: cityKey } },
+            { term: { service: service } }
+          ]}
+        }
+        memo
+      end
+
+      definition = search do
+        size 0
+        aggregation :city_counts do
+          filters do
+            filters city_filters
+            aggregation :since do
+              date_range do
+                field :createdAt
+                ranges [
+                  { from: time }
+                ]
+              end
+            end
+          end
+        end
+      end
+
+      response = client.search body: definition
+      rval = response["aggregations"]["city_counts"]["buckets"]
+      cityKeys.inject({}) do |memo, cityKey|
+        memo[cityKey] = rval[cityKey]["since"]["buckets"][0]["doc_count"]
+        memo
+      end
     end
 
     def city_count_since(cityKeys, time)
