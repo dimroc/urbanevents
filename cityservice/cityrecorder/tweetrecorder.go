@@ -7,6 +7,7 @@ import (
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net/url"
+	"strings"
 )
 
 type TweetRecorder struct {
@@ -128,6 +129,16 @@ func getHashtagTexts(t anaconda.Tweet) []string {
 	return texts
 }
 
+func getInstagramUrl(t anaconda.Tweet) string {
+	for _, url := range t.Entities.Urls {
+		if strings.Contains(url.Url, "instagram") {
+			return url.Url
+		}
+	}
+
+	return ""
+}
+
 func getImageUrl(t anaconda.Tweet) string {
 	if len(t.Entities.Media) > 0 && t.Entities.Media[0].Type == "photo" {
 		return t.Entities.Media[0].Media_url
@@ -173,62 +184,35 @@ func getLocationType(t anaconda.Tweet) string {
 	}
 }
 
-func metadataFromTweet(t anaconda.Tweet) (metadata, error) {
-	point, err := pointFromTweet(t)
-
-	if err != nil {
-		return metadata{}, err
-	} else {
-		// Leaned towards readability over speed, so some
-		// methods perform redundant actions.
-		return metadata{
-			GeoJson:      geoJsonFromBoundingBox(t),
-			Hashtags:     getHashtagTexts(t),
-			MediaUrl:     getImageUrl(t),
-			Link:         generateLink(t),
-			LocationType: getLocationType(t),
-			MediaType:    getMediaType(t),
-			Point:        point,
-			ThumbnailUrl: getThumbnailUrl(t),
-		}, nil
-	}
-}
-
 func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
-	metadata, err := metadataFromTweet(t)
+	point, err := pointFromTweet(t)
 
 	if err == nil {
 		createdAt, _ := t.CreatedAtTime()
+		instagramUrl := getInstagramUrl(t)
+		if instagramUrl != "" {
+			Logger.Warning("INSTAGRAM URL IN TWEET: %s", instagramUrl)
+		}
+
 		return GeoEvent{
 			CityKey:      city.Key,
 			CreatedAt:    createdAt,
 			FullName:     t.User.Name,
-			GeoJson:      metadata.GeoJson,
-			Hashtags:     metadata.Hashtags,
+			GeoJson:      geoJsonFromBoundingBox(t),
+			Hashtags:     getHashtagTexts(t),
 			Id:           t.IdStr,
-			MediaUrl:     metadata.MediaUrl,
-			Link:         metadata.Link,
-			LocationType: metadata.LocationType,
-			MediaType:    metadata.MediaType,
+			MediaUrl:     getImageUrl(t),
+			Link:         generateLink(t),
+			LocationType: getLocationType(t),
+			MediaType:    getMediaType(t),
 			Payload:      t.Text,
-			Point:        metadata.Point,
+			Point:        point,
 			Service:      "twitter",
-			ThumbnailUrl: metadata.ThumbnailUrl,
+			ThumbnailUrl: getThumbnailUrl(t),
 			Type:         "geoevent",
 			Username:     t.User.ScreenName,
 		}, nil
 	} else {
 		return GeoEvent{}, err
 	}
-}
-
-type metadata struct {
-	GeoJson      GeoJson
-	Hashtags     []string
-	MediaUrl     string
-	Link         string
-	LocationType string
-	MediaType    string
-	Point        [2]float64
-	ThumbnailUrl string
 }
