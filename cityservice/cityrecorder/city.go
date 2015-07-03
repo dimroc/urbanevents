@@ -39,8 +39,9 @@ func (c *City) GenerateCircles() {
 }
 
 type CityCounts struct {
-	Counts []int       `json:"counts"`
-	Days   []time.Time `json:"days"`
+	TweetCounts     []int       `json:"tweetCounts"`
+	InstagramCounts []int       `json:"instagramCounts"`
+	Days            []time.Time `json:"days"`
 }
 
 func (c *City) GetDetails(e Elastic) CityDetails {
@@ -48,42 +49,54 @@ func (c *City) GetDetails(e Elastic) CityDetails {
 }
 
 func (c *City) GetDetailsFor(e Elastic, nDays int) CityDetails {
-	counts, days := c.retrieveStats(e, nDays)
+	tweets, instagrams, days := c.retrieveStats(e, nDays)
 
 	stats := CityCounts{
-		Counts: counts,
-		Days:   days,
+		TweetCounts:     tweets,
+		InstagramCounts: instagrams,
+		Days:            days,
 	}
 
 	return CityDetails{*c, stats}
 }
 
-func (c *City) retrieveStats(e Elastic, daysBack int) ([]int, []time.Time) {
+func (c *City) retrieveStats(e Elastic, daysBack int) ([]int, []int, []time.Time) {
 	queryJson := `
 {
   "size": 0,
   "aggs": {
-    "tweet_count": {
-      "filter": {
-        "terms": {
-          "city": [
-            "%s"
-          ]
-        }
-      },
-      "aggs": {
-        "range": {
-          "date_range": {
-            "field": "createdAt",
-            "ranges": [%s]
+    "counts": {
+      "filter": { "term": { "city": "%s" } },
+      "aggs":
+        { "twitter" : {
+          "filter": { "term": { "service": "twitter" }},
+          "aggs": {
+            "range": {
+              "date_range": {
+                "field": "createdAt",
+                "ranges": [%s]
+              }
+            }
+          }
+        },
+         "instagram" : {
+          "filter": { "term": { "service": "instagram" }},
+          "aggs": {
+            "range": {
+              "date_range": {
+                "field": "createdAt",
+                "ranges": [%s]
+              }
+            }
           }
         }
-      }
-    }
-  }
+			}
+		}
+	}
 }
 `
-	query := fmt.Sprintf(queryJson, c.Key, getDateRanges(daysBack))
+	dateRanges := getDateRanges(daysBack)
+	query := fmt.Sprintf(queryJson, c.Key, dateRanges, dateRanges)
 
 	out := e.Search(query)
 	response := aggregationResult{}
@@ -129,29 +142,50 @@ func getDateRangeFor(daysBack int) string {
 }
 
 type aggregationResult struct {
-	TweetCount struct {
-		DocCount int64 `json:"doc_count"`
-		Range    struct {
-			Buckets []struct {
-				Key      string    `json:"key"`
-				DocCount int       `json:"doc_count"`
-				To       time.Time `json:"to_as_string"`
-			} `json:"buckets"`
-		} `json:"range"`
-	} `json:"tweet_count"`
+	Counts struct {
+		Twitter struct {
+			DocCount int64 `json:"doc_count"`
+			Range    struct {
+				Buckets []struct {
+					Key      string    `json:"key"`
+					DocCount int       `json:"doc_count"`
+					To       time.Time `json:"to_as_string"`
+				} `json:"buckets"`
+			} `json:"range"`
+		} `json:"twitter"`
+		Instagram struct {
+			DocCount int64 `json:"doc_count"`
+			Range    struct {
+				Buckets []struct {
+					Key      string    `json:"key"`
+					DocCount int       `json:"doc_count"`
+					To       time.Time `json:"to_as_string"`
+				} `json:"buckets"`
+			} `json:"range"`
+		} `json:"instagram"`
+	} `json:"counts"`
 }
 
-func (a *aggregationResult) GetCountsAndDays() ([]int, []time.Time) {
-	buckets := a.TweetCount.Range.Buckets
+func (a *aggregationResult) GetCountsAndDays() ([]int, []int, []time.Time) {
+	buckets := a.Counts.Twitter.Range.Buckets
+
 	length := len(buckets)
-	counts := make([]int, length)
 	days := make([]time.Time, length)
+	tweets := make([]int, length)
 
 	for index, bucket := range buckets {
-		// Reverse order of counts and days so it's descending
-		counts[length-1-index] = bucket.DocCount
+		// Reverse order of tweets and days so it's descending
+		tweets[length-1-index] = bucket.DocCount
 		days[length-1-index] = bucket.To
 	}
 
-	return counts, days
+	buckets = a.Counts.Instagram.Range.Buckets
+	instagrams := make([]int, length)
+
+	for index, bucket := range buckets {
+		// Reverse order of instagram and days so it's descending
+		instagrams[length-1-index] = bucket.DocCount
+	}
+
+	return tweets, instagrams, days
 }

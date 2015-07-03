@@ -13,6 +13,8 @@ import (
 
 var (
 	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/nyc.json")
+	enableInstagram  = GetenvOrDefault("CITYSERVICE_INSTAGRAM", "true")
+	enableTwitter    = GetenvOrDefault("CITYSERVICE_TWITTER", "true")
 	port             = GetenvOrDefault("PORT", "58080")
 )
 
@@ -33,6 +35,7 @@ func main() {
 		os.Getenv("TWITTER_TOKEN_SECRET"),
 	)
 
+	// Configure Geoevent Writers
 	eventpusher := cityrecorder.NewEventPusher()
 	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	defer eventpusher.Close()
@@ -50,9 +53,11 @@ func main() {
 	)
 	defer instagramRecorder.Close()
 
-	for _, city := range settings.Cities {
-		Logger.Debug("Configuring city: " + city.String())
-		go tweetRecorder.Record(city, broadcaster)
+	if twitterEnabled() {
+		for _, city := range settings.Cities {
+			Logger.Debug("Recording tweets for city: " + city.String())
+			go tweetRecorder.Record(city, broadcaster)
+		}
 	}
 
 	router := mux.NewRouter()
@@ -63,13 +68,16 @@ func main() {
 	apiRoutes.HandleFunc("/cities/{city}", CityHandler).Methods("GET")
 	apiRoutes.Handle("/callbacks/instagram/{city}", instagramRecorder).Methods("GET", "POST")
 
-	timer := time.NewTimer(time.Second)
-	go func() {
-		<-timer.C
-		Logger.Debug("Subscribing to instagram geographies")
-		instagramRecorder.DeleteAllSubscriptions()
-		instagramRecorder.Subscribe(GetBaseUrl()+"/api/v1/callbacks/instagram/", settings.Cities)
-	}()
+	if instagramEnabled() {
+		timer := time.NewTimer(time.Second)
+		go func() {
+			<-timer.C
+			Logger.Debug("Subscribing to instagram geographies")
+
+			instagramRecorder.DeleteAllSubscriptions()
+			instagramRecorder.Subscribe(GetBaseUrl()+"/api/v1/callbacks/instagram/", settings.Cities)
+		}()
+	}
 
 	n := negroni.Classic()
 	n.Use(cors.Default())
@@ -77,4 +85,12 @@ func main() {
 	n.Use(ElasticMiddleware(elastic))
 	n.UseHandler(context.ClearHandler(router))
 	n.Run(":" + port)
+}
+
+func instagramEnabled() bool {
+	return enableInstagram != "false"
+}
+
+func twitterEnabled() bool {
+	return enableTwitter != "false"
 }
