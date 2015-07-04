@@ -73,12 +73,12 @@ func (e *ElasticConnection) Refresh() error {
 }
 
 func (e *ElasticConnection) Write(g GeoEvent) error {
-	_, err := e.Connection.Index(IndexName, "tweet", g.Id, nil, g)
+	_, err := e.Connection.Index(IndexName, "geoevent", g.Id, nil, g)
 	return err
 }
 
 func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
-	out, err := e.Connection.Search(IndexName, "tweet", nil, query)
+	out, err := e.Connection.Search(IndexName, "geoevent", nil, query)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -100,12 +100,5 @@ func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
 }
 
 func (e *BulkElasticConnection) Write(g GeoEvent) error {
-	if g.LocationType == "poi" {
-		// We are skipping Places of interests because elasticsearch as of this
-		// time does not properly support GeoJson:
-		// https://github.com/elastic/elasticsearch/issues/11131
-		return nil
-	} else {
-		return e.BulkIndexer.Index(IndexName, "tweet", g.Id, "", &g.CreatedAt, g, false)
-	}
+	return e.BulkIndexer.Index(IndexName, "geoevent", g.Id, "", &g.CreatedAt, g, false)
 }

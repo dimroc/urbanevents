@@ -1,13 +1,17 @@
 package main
 
 import (
+	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	"github.com/unrolled/render"
 	"log"
 	"net/http"
 )
+
+func InstagramCallbackHandler(rw http.ResponseWriter, req *http.Request) {
+	log.Println(req)
+}
 
 func SettingsHandler(w http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{IndentJSON: true})

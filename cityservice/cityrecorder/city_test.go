@@ -22,9 +22,11 @@ func TestIntegrationGetDetails(t *testing.T) {
 
 		Convey("the stats should be correct", func() {
 			detailed := city.GetDetails(elastic)
-			So(len(detailed.Stats.Counts), ShouldEqual, 7)
+			So(len(detailed.Stats.TweetCounts), ShouldEqual, 7)
+			So(len(detailed.Stats.InstagramCounts), ShouldEqual, 7)
 			So(len(detailed.Stats.Days), ShouldEqual, 7)
-			So(detailed.Stats.Counts[0], ShouldEqual, 1)
+			So(detailed.Stats.TweetCounts[0], ShouldEqual, 1)
+			So(detailed.Stats.InstagramCounts[0], ShouldEqual, 0)
 			So(detailed.Stats.Days[0].Day, ShouldEqual, time.Now().Day)
 		})
 	})

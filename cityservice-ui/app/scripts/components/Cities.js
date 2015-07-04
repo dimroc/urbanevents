@@ -8,17 +8,23 @@ var BarChart = require("react-chartjs").Bar;
 var AppConstants = require('../constants/AppConstants');
 var moment = require("moment");
 
+var colors = {
+  'tweetCounts': '#263248',
+  'instagramCounts': '#FF9800'
+}
+
 //var data = {
     //labels: ["January", "February", "March", "April", "May", "June", "July"],
     //datasets: [ { data: [65, 59, 80, 81, 56, 55, 40]}]
 //};
-var chartDataFor = function(city) {
+var chartDataFor = function(city, countName) {
   if (city.stats) {
     return {
       labels: city.stats.days.map(function(entry) { return moment(entry).format('dddd')}),
-      datasets: [
-        { data: city.stats.counts }
-      ]
+      datasets: [{
+        data: city.stats[countName],
+        fillColor: colors[countName]
+      }]
     };
   } else {
     return {
@@ -76,8 +82,15 @@ var Cities = React.createClass({
             return (
               <div className="row" key={city.key}>
                 <Link className="city-key col-sm-3" to="map" params={{cityId: city.key}}>{city.display}</Link>
-                <div className="chart-container col-sm-9">
-                  <BarChart className="barchart" data={chartDataFor(city)} options={chartOptions}/>
+                <div className="col-sm-9">
+                  <div className="chart-container">
+                    <BarChart className="barchart" data={chartDataFor(city, 'tweetCounts')} options={chartOptions}/>
+                  </div>
+
+                  <h2 className="hidden-xs">Instagrams</h2>
+                  <div className="chart-container">
+                    <BarChart className="barchart" data={chartDataFor(city, 'instagramCounts')} options={chartOptions}/>
+                  </div>
                 </div>
               </div>
             )

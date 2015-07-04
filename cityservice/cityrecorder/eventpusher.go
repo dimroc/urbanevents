@@ -1,6 +1,7 @@
 package cityrecorder
 
 import (
+	utils "github.com/dimroc/urbanevents/cityservice/utils"
 	eventsource "gopkg.in/antage/eventsource.v1"
 	"net/http"
 )
@@ -30,7 +31,12 @@ func (ep *EventPusher) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 }
 
 func (ep *EventPusher) Write(g GeoEvent) error {
-	ep.EventSource.SendEventMessage(g.ToJsonString(), "event", g.Id)
+	value, err := utils.ToJsonString(g)
+	if err != nil {
+		return err
+	}
+
+	ep.EventSource.SendEventMessage(value, "event", g.Id)
 	return nil
 }
 

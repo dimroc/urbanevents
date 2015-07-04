@@ -36,8 +36,8 @@ var CityStore = assign({}, EventEmitter.prototype, {
 var normalizeCities = function(cities) {
   cities.forEach(function(city) {
     city.center = [
-      (city.bounds[0][0] + city.bounds[1][0]) / 2.0,
-      (city.bounds[0][1] + city.bounds[1][1]) / 2.0
+      (city.bbox[0] + city.bbox[2]) / 2.0,
+      (city.bbox[1] + city.bbox[3]) / 2.0
     ].reverse();
   });
 
