@@ -134,10 +134,27 @@ namespace :es do
     repository.copy_from old_index
   end
 
+  def geojson_filenames
+    Dir.glob("assets/neighborhoods/test/new-york-city-boroughs.geojson") do |filename|
+      yield filename
+    end
+  end
+
   task :seed_percolators do
-    Dir.glob("assets/neighborhoods/new-york-city-boroughs.geojson") do |filename|
+    geojson_filenames do |filename|
       puts "Registering percolator for: #{filename}"
       repository(index: es_alias).register_percolator(filename)
+    end
+  end
+
+  task :write_clean_geojson_files do
+    FileUtils.mkdir_p "tmp/clean_geojson"
+    geojson_filenames do |filename|
+      File.open("tmp/clean_geojson/#{File.basename(filename)}", "w+") do |f|
+        fc = FeatureCollection.new(filename)
+        fc.clean_duplicate_coordinates!
+        f.write JSON.pretty_generate(fc.as_json)
+      end
     end
   end
 end

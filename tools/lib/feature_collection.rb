@@ -19,6 +19,10 @@ class FeatureCollection
     end
   end
 
+  def as_json(options={})
+    geojson.as_json(options)
+  end
+
   class Feature
     def initialize(feature_hash)
       @hash = feature_hash
