@@ -133,4 +133,11 @@ namespace :es do
 
     repository.copy_from old_index
   end
+
+  task :seed_percolators do
+    Dir.glob("assets/neighborhoods/new-york-city-boroughs.geojson") do |filename|
+      puts "Registering percolator for: #{filename}"
+      repository(index: es_alias).register_percolator(filename)
+    end
+  end
 end

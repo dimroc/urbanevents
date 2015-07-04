@@ -30,6 +30,8 @@ class GeoeventRepository
       indexes :geojson, type: 'geo_shape', "tree": "quadtree", "precision": "1m"
       indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'
 
+      indexes :neighborhoods, type: 'string', index: 'not_analyzed'
+
       # Rest of the attributes are created lazily
     end
   end
@@ -39,6 +41,19 @@ class GeoeventRepository
     Geoevent.gateway.client = self.client
     Geoevent.find_in_batches(size: 100) do |batch|
       insert_batch(batch)
+    end
+  end
+
+  def register_percolator(geojson_path)
+    feature_collection = FeatureCollection.new(geojson_path)
+    feature_collection.clean_duplicate_coordinates!
+    feature_collection.each do |feature|
+      self.client.index({
+        index: index,
+        type: '.percolator',
+        id: feature.name,
+        body: { query: { geo_shape: { geojson: { shape: feature.geometry } } } }
+      })
     end
   end
 
