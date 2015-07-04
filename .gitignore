@@ -4,3 +4,4 @@ scripts/*.sh
 .envrc
 gin-bin
 docker-compose.yml
+*.swp
