@@ -98,20 +98,23 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	return outbox
 }
 
-func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
+func geoJsonFromTweet(t anaconda.Tweet) GeoJson {
 	if t.Place.PlaceType == "poi" {
 		return &BoundingBox{
 			Coordinates: t.Place.BoundingBox.Coordinates,
 			Type:        t.Place.BoundingBox.Type,
 		}
 	} else {
-		return nil
+		return &Point{
+			Coordinates: t.Coordinates.Coordinates,
+			Type:        "point",
+		}
 	}
 }
 
 func pointFromTweet(t anaconda.Tweet) ([2]float64, error) {
 	if t.Place.PlaceType == "poi" {
-		return geoJsonFromBoundingBox(t).Center(), nil
+		return geoJsonFromTweet(t).Center(), nil
 	} else if t.Coordinates != nil {
 		return t.Coordinates.Coordinates, nil
 	} else {
@@ -198,7 +201,7 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			CityKey:      city.Key,
 			CreatedAt:    createdAt,
 			FullName:     t.User.Name,
-			GeoJson:      geoJsonFromBoundingBox(t),
+			GeoJson:      geoJsonFromTweet(t),
 			Hashtags:     getHashtagTexts(t),
 			Id:           t.IdStr,
 			MediaUrl:     getImageUrl(t),

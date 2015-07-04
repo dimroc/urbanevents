@@ -163,6 +163,7 @@ func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 		MediaUrl:     mediaUrl,   // New to GeoEvent
 		Payload:      safelyRetrieveCaption(media),
 		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
+		GeoJson:      getGeoJson(media),
 		Service:      "instagram",
 		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
 		Type:         "geoevent",
@@ -208,5 +209,12 @@ func safelyRetrieveCaption(media ig.Media) string {
 		return media.Caption.Text
 	} else {
 		return ""
+	}
+}
+
+func getGeoJson(media ig.Media) Point {
+	return Point{
+		Coordinates: [2]float64{media.Location.Longitude, media.Location.Latitude},
+		Type:        "point",
 	}
 }
