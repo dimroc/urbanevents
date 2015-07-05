@@ -139,7 +139,7 @@ namespace :es do
   end
 
   def geojson_filenames
-    Dir.glob("assets/neighborhoods/sf-cleaned.geojson") do |filename|
+    Dir.glob("assets/neighborhoods/london-clean.geojson") do |filename|
       yield filename
     end
   end
