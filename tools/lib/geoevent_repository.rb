@@ -49,12 +49,19 @@ class GeoeventRepository
     feature_collection.clean_duplicate_coordinates!
     feature_collection.each do |feature|
       self.client.index({
-        index: index,
-        type: '.percolator',
-        id: feature.name,
-        body: { query: { geo_shape: { geojson: { shape: feature.geometry } } } }
+        index: "neighborhoods",
+        type: 'hood',
+        body: { index: { _id: feature.name, data: { shape: feature.geometry } } }
       })
     end
+    #feature_collection.each do |feature|
+      #self.client.index({
+        #index: index,
+        #type: '.percolator',
+        #id: feature.name,
+        #body: { query: { geo_shape: { geojson: { shape: feature.geometry } } } }
+      #})
+    #end
   end
 
   private

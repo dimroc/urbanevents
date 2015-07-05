@@ -53,7 +53,7 @@ class FeatureCollection
           cleaned = inner.map do |coordinate|
             if coordinate == prev
               prev = coordinate
-              puts "removing duplicate: #{coordinate}"
+              #puts "removing duplicate: #{coordinate}"
               nil
             else
               prev = coordinate
@@ -61,8 +61,8 @@ class FeatureCollection
             end
           end.compact
 
-          puts "first: #{cleaned.first} last: #{cleaned.last}"
-          puts "count: #{cleaned.count}"
+          #puts "first: #{cleaned.first} last: #{cleaned.last}"
+          #puts "count: #{cleaned.count}"
           cleaned
         end
       end
@@ -74,7 +74,7 @@ class FeatureCollection
         cleaned = polygon.map do |coordinate|
           if coordinate == prev
             prev = coordinate
-            puts "removing duplicate: #{coordinate}"
+            #puts "removing duplicate: #{coordinate}"
             nil
           else
             prev = coordinate
@@ -82,8 +82,8 @@ class FeatureCollection
           end
         end.compact
 
-        puts "first: #{cleaned.first} last: #{cleaned.last}"
-        puts "count: #{cleaned.count}"
+        #puts "first: #{cleaned.first} last: #{cleaned.last}"
+        #puts "count: #{cleaned.count}"
         cleaned
       end
     end

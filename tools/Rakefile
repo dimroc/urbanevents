@@ -30,6 +30,10 @@ namespace :es do
     @repository ||= GeoeventRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
+  def hood_repository
+    @hood_repository ||= HoodRepository.new({url: ENV['ELASTICSEARCH_URL']})
+  end
+
   task :hello do
     puts "FUCK OFF"
   end
@@ -135,15 +139,18 @@ namespace :es do
   end
 
   def geojson_filenames
-    Dir.glob("assets/neighborhoods/test/new-york-city-boroughs.geojson") do |filename|
+    Dir.glob("assets/neighborhoods/sf-cleaned.geojson") do |filename|
       yield filename
     end
   end
 
   task :seed_percolators do
+    hood_repository.create_index!
+
     geojson_filenames do |filename|
-      puts "Registering percolator for: #{filename}"
-      repository(index: es_alias).register_percolator(filename)
+      puts "Indexing neighborhoods from #{filename}"
+      hood_repository.import_from filename
+      #repository(index: es_alias).register_percolator(filename)
     end
   end
 
