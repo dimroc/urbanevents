@@ -139,8 +139,18 @@ namespace :es do
   end
 
   def geojson_filenames
-    Dir.glob("assets/neighborhoods/london-clean.geojson") do |filename|
+    Dir.glob("assets/neighborhoods/nyc/*.geojson") do |filename|
       yield filename
+    end
+  end
+
+  task :seed_hoods do
+    hood_repository.create_index!
+
+    geojson_filenames do |filename|
+      puts "Indexing neighborhoods from #{filename}"
+      hood_repository.import_from filename
+      #repository(index: es_alias).register_percolator(filename)
     end
   end
 
@@ -148,9 +158,8 @@ namespace :es do
     hood_repository.create_index!
 
     geojson_filenames do |filename|
-      puts "Indexing neighborhoods from #{filename}"
-      hood_repository.import_from filename
-      #repository(index: es_alias).register_percolator(filename)
+      puts "Registering neighborhood percolator from #{filename}"
+      repository(index: es_alias).register_percolator(filename)
     end
   end
 
