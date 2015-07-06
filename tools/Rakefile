@@ -1,20 +1,31 @@
 require_relative 'lib/tools'
 
 namespace :es do
+  def each_city_and_geojson_filename
+    assignments = {
+      nyc: "assets/neighborhoods/nyc/*.geojson",
+      london: "assets/neighborhoods/london.geojson",
+      paris: "assets/neighborhoods/paris.geojson",
+      losangeles: "assets/neighborhoods/los-angeles-county.geojson",
+      chicago: "assets/neighborhoods/chicago.geojson",
+      miami: "assets/neighborhoods/miami.geojson",
+    }
+
+    assignments.each do |city, glob_path|
+      Dir.glob(glob_path) do |filename|
+        yield city, filename
+      end
+    end
+  end
+
   def cities
     # Taken from cityservice/config/*
-    %w(
-    bay-area
-    chicago
-    dfw
-    houston
-    london
-    losangeles
-    miami-metro
-    nyc
-    paris
-    washingtondc
-    )
+    # Yes, it's the long way to get cities, but at least it's DRY.
+    cities = []
+    each_city_and_geojson_filename do |city, glob_path|
+      cities << city
+    end
+    cities.uniq.map(&:to_s)
   end
 
   def backup_repository_name
@@ -30,6 +41,10 @@ namespace :es do
     @repository ||= GeoeventRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
+  def hood_repositor(options={log: false})
+    @hood_repository ||= HoodRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
+  end
+
   task :hello do
     puts "FUCK OFF"
   end
@@ -42,7 +57,7 @@ namespace :es do
     repository.client.indices.delete index: 'test-geo*'
   end
 
-  task :bootstrap => [:create_index_and_alias]
+  task :bootstrap => [:create_index_and_alias, :seed_percolators]
   task :create_index_and_alias do
     repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias
@@ -132,5 +147,34 @@ namespace :es do
     }
 
     repository.copy_from old_index
+  end
+
+  task :seed_hoods do
+    hood_repository(index: es_alias).create_index!
+
+    each_city_and_geojson_filename do |city, filename|
+      puts "Indexing neighborhoods from #{filename}"
+      hood_repository.import_from filename
+    end
+  end
+
+  task :seed_percolators do
+    hood_repository.create_index!
+
+    each_city_and_geojson_filename do |city, filename|
+      puts "Registering #{city}'s neighborhood percolator from #{filename}"
+      repository(index: es_alias).register_percolator(city, filename)
+    end
+  end
+
+  task :write_clean_geojson_files do
+    FileUtils.mkdir_p "tmp/clean_geojson"
+    geojson_filenames do |filename|
+      File.open("tmp/clean_geojson/#{File.basename(filename)}", "w+") do |f|
+        fc = FeatureCollection.new(filename)
+        fc.clean_duplicate_coordinates!
+        f.write JSON.pretty_generate(fc.as_json)
+      end
+    end
   end
 end

@@ -24,13 +24,14 @@ type InstagramRecorder struct {
 	ticker          *time.Ticker
 	geographyIds    *set.SetValue
 	geographyMinIds map[string]string
+	enricher        *HoodEnricher
 }
 
 type geographEntry struct {
 	City string
 }
 
-func NewInstagramRecorder(clientId, clientSecret string, writer Writer) *InstagramRecorder {
+func NewInstagramRecorder(clientId, clientSecret string, writer Writer, enricher *HoodEnricher) *InstagramRecorder {
 	client := ig.NewClient(nil)
 	client.ClientID = clientId
 	client.ClientSecret = clientSecret
@@ -43,6 +44,7 @@ func NewInstagramRecorder(clientId, clientSecret string, writer Writer) *Instagr
 		ticker:          time.NewTicker(time.Second * secondsUntilMediaRetrieval),
 		geographyIds:    set.NewSetValue(),
 		geographyMinIds: make(map[string]string),
+		enricher:        enricher,
 	}
 
 	if !recorder.Configured() {
@@ -140,7 +142,11 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
 		geoevent := CreateGeoEventFromInstagram(media)
 		geoevent.CityKey = cityKey
-		recorder.writer.Write(geoevent)
+		if recorder.enricher != nil {
+			recorder.writer.Write(recorder.enricher.Enrich(geoevent))
+		} else {
+			recorder.writer.Write(geoevent)
+		}
 	}
 }
 
@@ -163,6 +169,7 @@ func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 		MediaUrl:     mediaUrl,   // New to GeoEvent
 		Payload:      safelyRetrieveCaption(media),
 		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
+		GeoJson:      getGeoJson(media),
 		Service:      "instagram",
 		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
 		Type:         "geoevent",
@@ -209,4 +216,8 @@ func safelyRetrieveCaption(media ig.Media) string {
 	} else {
 		return ""
 	}
+}
+
+func getGeoJson(media ig.Media) GeoJson {
+	return GeoJsonFrom("point", [2]float64{media.Location.Longitude, media.Location.Latitude})
 }

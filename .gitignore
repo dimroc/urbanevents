@@ -4,3 +4,5 @@ scripts/*.sh
 .envrc
 gin-bin
 docker-compose.yml
+*.swp
+tools/assets/neighborhoods/test

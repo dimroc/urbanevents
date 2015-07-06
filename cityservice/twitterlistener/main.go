@@ -10,17 +10,21 @@ import (
 )
 
 var (
-	settingsFilename = flag.String("settings", "", "Path to the settings file")
+	settingsFilename = flag.String("settings", "config/nyc.json", "Path to the settings file")
 )
 
 func main() {
 	flag.Parse()
 	utils.ValidateFlags([]string{"settings"})
+
+	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
 	recorder := cityrecorder.NewTweetRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),
 		os.Getenv("TWITTER_TOKEN_SECRET"),
+		hoodEnricher,
 	)
 
 	settings, err := cityrecorder.LoadSettings(*settingsFilename)

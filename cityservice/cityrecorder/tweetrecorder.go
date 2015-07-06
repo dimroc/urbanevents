@@ -15,6 +15,7 @@ type TweetRecorder struct {
 	ConsumerSecret string
 	Token          string
 	TokenSecret    string
+	Enricher       *HoodEnricher
 }
 
 type tweetEntry struct {
@@ -34,12 +35,13 @@ func (p *TweetRecorder) String() string {
 	return fmt.Sprintf("ConsumerKey: %s, ConsumerSecret: %s, Token: %s, TokenSecret: %s", p.ConsumerKey, p.ConsumerSecret, p.Token, p.TokenSecret)
 }
 
-func NewTweetRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string) *TweetRecorder {
+func NewTweetRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string, enricher *HoodEnricher) *TweetRecorder {
 	recorder := &TweetRecorder{
 		ConsumerKey:    consumerKey,
 		ConsumerSecret: consumerSecret,
 		Token:          token,
 		TokenSecret:    tokenSecret,
+		Enricher:       enricher,
 	}
 
 	if !recorder.Configured() {
@@ -53,7 +55,7 @@ func NewTweetRecorder(consumerKey string, consumerSecret string, token string, t
 
 func (t *TweetRecorder) Record(city City, writer Writer) {
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
-	outbox := tweetWriter(writer)
+	outbox := t.tweetWriter(writer)
 
 	v := url.Values{}
 	v.Set("locations", city.LocationString())
@@ -75,20 +77,20 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	}
 }
 
-func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
+func (t *TweetRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	outbox := make(chan tweetEntry)
 	go func() {
 		for entry := range outbox {
 			tweet := entry.Tweet
 			city := entry.City
 
-			g, err := newFromTweet(city, tweet)
+			g, err := NewGeoEventFromTweet(city, tweet)
 			if err != nil {
 				//Logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
 				continue
 			}
 
-			err = w.Write(g)
+			err = w.Write(t.Enricher.Enrich(g))
 			if err != nil {
 				Logger.Warning("Failed to write geoevent: "+g.String(), err)
 			}
@@ -98,20 +100,17 @@ func tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	return outbox
 }
 
-func geoJsonFromBoundingBox(t anaconda.Tweet) GeoJson {
+func geoJsonFromTweet(t anaconda.Tweet) GeoJson {
 	if t.Place.PlaceType == "poi" {
-		return &BoundingBox{
-			Coordinates: t.Place.BoundingBox.Coordinates,
-			Type:        t.Place.BoundingBox.Type,
-		}
+		return GeoJsonFrom(t.Place.BoundingBox.Type, t.Place.BoundingBox.Coordinates)
 	} else {
-		return nil
+		return GeoJsonFrom("point", t.Coordinates.Coordinates)
 	}
 }
 
 func pointFromTweet(t anaconda.Tweet) ([2]float64, error) {
 	if t.Place.PlaceType == "poi" {
-		return geoJsonFromBoundingBox(t).Center(), nil
+		return geoJsonFromTweet(t).Center(), nil
 	} else if t.Coordinates != nil {
 		return t.Coordinates.Coordinates, nil
 	} else {
@@ -184,7 +183,7 @@ func getLocationType(t anaconda.Tweet) string {
 	}
 }
 
-func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
+func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	point, err := pointFromTweet(t)
 
 	if err == nil {
@@ -198,7 +197,7 @@ func newFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			CityKey:      city.Key,
 			CreatedAt:    createdAt,
 			FullName:     t.User.Name,
-			GeoJson:      geoJsonFromBoundingBox(t),
+			GeoJson:      geoJsonFromTweet(t),
 			Hashtags:     getHashtagTexts(t),
 			Id:           t.IdStr,
 			MediaUrl:     getImageUrl(t),

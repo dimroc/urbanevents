@@ -2,6 +2,7 @@ package cityrecorder_test
 
 import (
 	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	//. "github.com/dimroc/urbanevents/cityservice/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"os"
 	"testing"
