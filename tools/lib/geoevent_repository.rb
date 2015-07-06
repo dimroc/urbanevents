@@ -44,14 +44,14 @@ class GeoeventRepository
     end
   end
 
-  def register_percolator(geojson_path)
+  def register_percolator(city, geojson_path)
     feature_collection = FeatureCollection.new(geojson_path)
     feature_collection.clean_duplicate_coordinates!
     feature_collection.each do |feature|
       self.client.index({
         index: index,
         type: '.percolator',
-        id: feature.name,
+        id: city.to_s + "," + feature.name,
         body: { query: { geo_shape: { geojson: { shape: feature.geometry } } } }
       })
     end

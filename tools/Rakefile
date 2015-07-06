@@ -138,28 +138,38 @@ namespace :es do
     repository.copy_from old_index
   end
 
-  def geojson_filenames
-    Dir.glob("assets/neighborhoods/nyc/*.geojson") do |filename|
-      yield filename
+  def each_city_and_geojson_filename
+    assignments = {
+      nyc: "assets/neighborhoods/nyc/*.geojson",
+      london: "assets/neighborhoods/london.geojson",
+      paris: "assets/neighborhoods/paris.geojson",
+      losangeles: "assets/neighborhoods/los-angeles-county.geojson",
+      chicago: "assets/neighborhoods/chicago.geojson",
+      miami: "assets/neighborhoods/miami.geojson",
+    }
+
+    assignments.each do |city, glob_path|
+      Dir.glob(glob_path) do |filename|
+        yield city, filename
+      end
     end
   end
 
   task :seed_hoods do
     hood_repository.create_index!
 
-    geojson_filenames do |filename|
+    each_city_and_geojson_filename do |city, filename|
       puts "Indexing neighborhoods from #{filename}"
       hood_repository.import_from filename
-      #repository(index: es_alias).register_percolator(filename)
     end
   end
 
   task :seed_percolators do
     hood_repository.create_index!
 
-    geojson_filenames do |filename|
-      puts "Registering neighborhood percolator from #{filename}"
-      repository(index: es_alias).register_percolator(filename)
+    each_city_and_geojson_filename do |city, filename|
+      puts "Registering #{city}'s neighborhood percolator from #{filename}"
+      repository(index: es_alias).register_percolator(city, filename)
     end
   end
 
