@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type TweetRecorder struct {
+type TwitterRecorder struct {
 	ConsumerKey    string
 	ConsumerSecret string
 	Token          string
@@ -23,7 +23,7 @@ type tweetEntry struct {
 	City  City
 }
 
-func (p *TweetRecorder) Configured() bool {
+func (p *TwitterRecorder) Configured() bool {
 	if len(p.ConsumerKey) == 0 || len(p.ConsumerSecret) == 0 || len(p.Token) == 0 || len(p.TokenSecret) == 0 {
 		return false
 	}
@@ -31,12 +31,12 @@ func (p *TweetRecorder) Configured() bool {
 	return true
 }
 
-func (p *TweetRecorder) String() string {
+func (p *TwitterRecorder) String() string {
 	return fmt.Sprintf("ConsumerKey: %s, ConsumerSecret: %s, Token: %s, TokenSecret: %s", p.ConsumerKey, p.ConsumerSecret, p.Token, p.TokenSecret)
 }
 
-func NewTweetRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string, enricher *HoodEnricher) *TweetRecorder {
-	recorder := &TweetRecorder{
+func NewTwitterRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string, enricher *HoodEnricher) *TwitterRecorder {
+	recorder := &TwitterRecorder{
 		ConsumerKey:    consumerKey,
 		ConsumerSecret: consumerSecret,
 		Token:          token,
@@ -53,7 +53,7 @@ func NewTweetRecorder(consumerKey string, consumerSecret string, token string, t
 	return recorder
 }
 
-func (t *TweetRecorder) Record(city City, writer Writer) {
+func (t *TwitterRecorder) Record(city City, writer Writer) {
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
 	outbox := t.tweetWriter(writer)
 
@@ -77,7 +77,7 @@ func (t *TweetRecorder) Record(city City, writer Writer) {
 	}
 }
 
-func (t *TweetRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
+func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return send only channel
 	outbox := make(chan tweetEntry)
 	go func() {
 		for entry := range outbox {

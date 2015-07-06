@@ -35,7 +35,7 @@ func main() {
 	defer eventpusher.Close()
 	defer elastic.Close()
 
-	tweetRecorder := cityrecorder.NewTweetRecorder(
+	tweetRecorder := cityrecorder.NewTwitterRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),

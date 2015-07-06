@@ -19,7 +19,7 @@ func main() {
 
 	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
-	recorder := cityrecorder.NewTweetRecorder(
+	recorder := cityrecorder.NewTwitterRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),
