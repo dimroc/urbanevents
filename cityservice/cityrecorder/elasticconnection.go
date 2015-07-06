@@ -1,8 +1,9 @@
 package cityrecorder
 
 import (
+	"fmt"
+	elastigo "github.com/dimroc/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
-	elastigo "github.com/mattbaird/elastigo/lib"
 	"log"
 	"net"
 	"net/url"
@@ -10,13 +11,18 @@ import (
 )
 
 var (
-	IndexName = os.Getenv("GO_ENV") + "-geoevents-write"
+	ES_IndexName = os.Getenv("GO_ENV") + "-geoevents-write"
+)
+
+const (
+	ES_TypeName string = "geoevent"
 )
 
 type Elastic interface {
 	Writer
 	Close()
 	Search(query string) elastigo.SearchResult
+	Percolate(geojson GeoJson) []string
 }
 
 type ElasticConnection struct {
@@ -31,7 +37,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	if len(elasticsearchUrl) == 0 {
 		log.Panic("elasticsearchUrl empty")
 	} else {
-		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl + " with index " + IndexName)
+		Logger.Debug("Using Elasticsearch URL " + elasticsearchUrl + " with index " + ES_IndexName)
 	}
 
 	u, err := url.Parse(elasticsearchUrl)
@@ -66,19 +72,19 @@ func (e *ElasticConnection) Refresh() error {
 	// Panics if tracing requests during refresh, so temporarily silence requesting
 	oldTracer := e.Connection.RequestTracer
 	e.Connection.RequestTracer = nil
-	_, err := e.Connection.Refresh(IndexName)
+	_, err := e.Connection.Refresh(ES_IndexName)
 	Check(err)
 	e.Connection.RequestTracer = oldTracer
 	return err
 }
 
 func (e *ElasticConnection) Write(g GeoEvent) error {
-	_, err := e.Connection.Index(IndexName, "geoevent", g.Id, nil, g)
+	_, err := e.Connection.Index(ES_IndexName, ES_TypeName, g.Id, nil, g)
 	return err
 }
 
 func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
-	out, err := e.Connection.Search(IndexName, "geoevent", nil, query)
+	out, err := e.Connection.Search(ES_IndexName, ES_TypeName, nil, query)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -86,6 +92,24 @@ func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	return out
 }
 
+func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
+	//func (c *Conn) Percolate(index string, _type string, name string, args map[string]interface{}, doc string) (Match, error) {
+
+	geojson_str := ToJsonStringUnsafe(&geojson)
+	doc := fmt.Sprintf(`{"doc": { "geojson": %s }}`, geojson_str)
+
+	result, err := e.Connection.Percolate(ES_IndexName, ES_TypeName, "", nil, doc)
+	Check(err)
+
+	hoods := make([]string, len(result.Matches))
+	for index, match := range result.Matches {
+		hoods[index] = match.Id
+	}
+
+	return hoods
+}
+
+// Bulk Elastic
 type BulkElasticConnection struct {
 	*ElasticConnection
 	BulkIndexer *elastigo.BulkIndexer
@@ -100,5 +124,5 @@ func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
 }
 
 func (e *BulkElasticConnection) Write(g GeoEvent) error {
-	return e.BulkIndexer.Index(IndexName, "geoevent", g.Id, "", &g.CreatedAt, g, false)
+	return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
 }

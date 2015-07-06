@@ -2,6 +2,7 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
+	"github.com/azr/anaconda"
 	ig "github.com/carbocation/go-instagram/instagram"
 	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
@@ -19,10 +20,19 @@ type fixture struct {
 	Cities    []City
 	GeoEvents []GeoEvent
 	Media     []ig.Media
+	Tweets    []anaconda.Tweet
 }
 
 func (f *fixture) GetCity() City {
 	return f.Cities[0]
+}
+
+func (f *fixture) GetPoiTweet() anaconda.Tweet {
+	return f.Tweets[0]
+}
+
+func (f *fixture) GetCoordinateTweet() anaconda.Tweet {
+	return f.Tweets[1]
 }
 
 func (f *fixture) GetInstagramMedia() []ig.Media {
@@ -35,6 +45,9 @@ func newFixture() *fixture {
 	geoevents := []GeoEvent{}
 	loadFromFixtureFile("fixtures/geoevents.json", &geoevents)
 
+	tweets := []anaconda.Tweet{}
+	loadFromFixtureFile("fixtures/tweets.json", &tweets)
+
 	media := []ig.Media{}
 	loadFromFixtureFile("fixtures/media.json", &media)
 
@@ -42,6 +55,7 @@ func newFixture() *fixture {
 		Cities:    cities,
 		GeoEvents: geoevents,
 		Media:     media,
+		Tweets:    tweets,
 	}
 }
 
@@ -62,7 +76,7 @@ func truncateDocuments() {
 	defer elastic.Connection.Close()
 	//indices []string, types []string, args map[string]interface{}, query interface{}
 
-	indices := []string{IndexName}
+	indices := []string{ES_IndexName}
 	types := []string{"geoevent"}
 	args := map[string]interface{}{}
 	query := map[string]interface{}{
@@ -75,7 +89,7 @@ func truncateDocuments() {
 }
 
 func setup() {
-	IndexName = "test-geoevents-write"
+	ES_IndexName = "test-geoevents-write"
 	truncateDocuments()
 }
 

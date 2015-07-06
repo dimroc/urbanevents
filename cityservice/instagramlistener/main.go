@@ -19,10 +19,13 @@ var (
 func main() {
 	flag.Parse()
 	ValidateFlags([]string{"settings", "baseurl"})
+	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
 	recorder := cityrecorder.NewInstagramRecorder(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
 		cityrecorder.StdoutWriter,
+		hoodEnricher,
 	)
 
 	defer recorder.Close()

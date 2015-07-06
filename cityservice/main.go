@@ -28,18 +28,20 @@ func main() {
 	settings, settingsErr := cityrecorder.LoadSettings(settingsFilename)
 	Check(settingsErr)
 
+	// Configure Geoevent Writers
+	eventpusher := cityrecorder.NewEventPusher()
+	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
+	defer eventpusher.Close()
+	defer elastic.Close()
+
 	tweetRecorder := cityrecorder.NewTweetRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),
 		os.Getenv("TWITTER_TOKEN_SECRET"),
+		hoodEnricher,
 	)
-
-	// Configure Geoevent Writers
-	eventpusher := cityrecorder.NewEventPusher()
-	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
-	defer eventpusher.Close()
-	defer elastic.Close()
 
 	broadcaster := cityrecorder.NewBroadcastWriter(eventpusher, elastic)
 	if GO_ENV == "development" {
@@ -50,6 +52,7 @@ func main() {
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
 		broadcaster,
+		hoodEnricher,
 	)
 	defer instagramRecorder.Close()
 

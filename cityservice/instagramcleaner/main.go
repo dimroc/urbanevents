@@ -11,6 +11,7 @@ func main() {
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
 		cityrecorder.StdoutWriter,
+		nil,
 	)
 
 	defer recorder.Close()

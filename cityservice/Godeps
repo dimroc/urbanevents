@@ -12,3 +12,4 @@ github.com/op/go-logging e8d5414f0947014548c2334044a0fac13187dfee
 github.com/rs/cors 5e4ce6bc0ecd3472f6f943666d84876691be2ced 
 github.com/unrolled/render 83f2ba57c12cec399ef137457b1957e41ef0bbe8 
 gopkg.in/antage/eventsource.v1 803f4c5af2259daa9225c72732b23e1e65ee794e 
+github.com/dimroc/elastigo

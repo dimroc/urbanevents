@@ -41,8 +41,8 @@ namespace :es do
     @repository ||= GeoeventRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
-  def hood_repository
-    @hood_repository ||= HoodRepository.new({url: ENV['ELASTICSEARCH_URL']})
+  def hood_repositor(options={log: false})
+    @hood_repository ||= HoodRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
   task :hello do
@@ -57,7 +57,7 @@ namespace :es do
     repository.client.indices.delete index: 'test-geo*'
   end
 
-  task :bootstrap => [:create_index_and_alias]
+  task :bootstrap => [:create_index_and_alias, :seed_percolators]
   task :create_index_and_alias do
     repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias
@@ -150,7 +150,7 @@ namespace :es do
   end
 
   task :seed_hoods do
-    hood_repository.create_index!
+    hood_repository(index: es_alias).create_index!
 
     each_city_and_geojson_filename do |city, filename|
       puts "Indexing neighborhoods from #{filename}"
