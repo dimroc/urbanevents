@@ -110,7 +110,7 @@ class GeoeventRepository
       response = client.search body: definition
       rval = response["aggregations"]["city_counts"]["buckets"]
       cityKeys.inject({}) do |memo, cityKey|
-        memo[cityKey] = rval[cityKey]["since"]["buckets"][0]["doc_count"]
+        memo[cityKey] = rval[cityKey.to_s]["since"]["buckets"][0]["doc_count"]
         memo
       end
     end
