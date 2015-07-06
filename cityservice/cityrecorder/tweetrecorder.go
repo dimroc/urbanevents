@@ -3,7 +3,7 @@ package cityrecorder
 import (
 	"errors"
 	"fmt"
-	"github.com/azr/anaconda"
+	"github.com/dimroc/anaconda"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net/url"
@@ -138,6 +138,15 @@ func getInstagramUrl(t anaconda.Tweet) string {
 	return ""
 }
 
+func getMediaUrl(t anaconda.Tweet) string {
+	switch getMediaType(t) {
+	case "video":
+		return t.ExtendedEntities.Media[0].VideoInfo.Variants[0].Url
+	default:
+		return getImageUrl(t)
+	}
+}
+
 func getImageUrl(t anaconda.Tweet) string {
 	if len(t.Entities.Media) > 0 && t.Entities.Media[0].Type == "photo" {
 		return t.Entities.Media[0].Media_url
@@ -147,15 +156,25 @@ func getImageUrl(t anaconda.Tweet) string {
 }
 
 func getThumbnailUrl(t anaconda.Tweet) string {
-	imageUrl := getImageUrl(t)
-	if len(imageUrl) > 0 {
-		return imageUrl + ":thumb"
-	} else {
-		return ""
+	switch getMediaType(t) {
+	case "video":
+		return t.ExtendedEntities.Media[0].Media_url
+	default:
+		imageUrl := getImageUrl(t)
+		if len(imageUrl) > 0 {
+			return imageUrl + ":thumb"
+		} else {
+			return ""
+		}
 	}
 }
 
 func getMediaType(t anaconda.Tweet) string {
+	if len(t.ExtendedEntities.Media) > 0 &&
+		len(t.ExtendedEntities.Media[0].VideoInfo.Variants) > 0 {
+		return "video"
+	}
+
 	if len(t.Entities.Media) > 0 {
 		current := t.Entities.Media[0].Type
 		if current == "photo" {
@@ -200,7 +219,7 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			GeoJson:      geoJsonFromTweet(t),
 			Hashtags:     getHashtagTexts(t),
 			Id:           t.IdStr,
-			MediaUrl:     getImageUrl(t),
+			MediaUrl:     getMediaUrl(t),
 			Link:         generateLink(t),
 			LocationType: getLocationType(t),
 			MediaType:    getMediaType(t),

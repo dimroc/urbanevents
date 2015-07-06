@@ -2,6 +2,7 @@ package cityrecorder_test
 
 import (
 	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	//. "github.com/dimroc/urbanevents/cityservice/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
@@ -31,6 +32,19 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(geoevent.LocationType, ShouldEqual, "coordinate")
 				So(geoevent.GeoJson.Type, ShouldEqual, "point")
+			})
+		})
+
+		Convey("and an anaconda.Tweet with a video", func() {
+			tweet := Fixture.GetVideoTweet()
+
+			Convey("it should create a geoevent", func() {
+				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+
+				So(err, ShouldBeNil)
+				So(geoevent.MediaType, ShouldEqual, "video")
+				So(geoevent.ThumbnailUrl, ShouldContainSubstring, "thumb")
+				So(geoevent.MediaUrl, ShouldEndWith, "mp4")
 			})
 		})
 	})
