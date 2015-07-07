@@ -8,7 +8,7 @@ namespace :es do
       paris: "assets/neighborhoods/paris.geojson",
       losangeles: "assets/neighborhoods/los-angeles-county.geojson",
       chicago: "assets/neighborhoods/chicago.geojson",
-      miami: "assets/neighborhoods/miami.geojson",
+      miami: "assets/neighborhoods/miami-custom.geojson",
     }
 
     assignments.each do |city, glob_path|
@@ -41,7 +41,7 @@ namespace :es do
     @repository ||= GeoeventRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
-  def hood_repositor(options={log: false})
+  def hood_repository(options={log: false})
     @hood_repository ||= HoodRepository.new({url: ENV['ELASTICSEARCH_URL']}.merge(options))
   end
 
@@ -54,7 +54,11 @@ namespace :es do
   end
 
   task :destroy_test_indices do
-    repository.client.indices.delete index: 'test-geo*'
+    repository.client.indices.delete index: 'test-geoevent*'
+  end
+
+  task :destroy_all => [:destroy_test_indices] do
+    repository.client.indices.delete index: 'development-geoevent*'
   end
 
   task :bootstrap => [:create_index_and_alias, :seed_percolators]

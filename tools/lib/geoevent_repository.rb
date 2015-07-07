@@ -27,7 +27,7 @@ class GeoeventRepository
 
       indexes :hashtags, type: 'string', index: 'not_analyzed'
 
-      indexes :geojson, type: 'geo_shape', "tree": "quadtree", "precision": "1m"
+      indexes :geojson, type: 'geo_shape'
       indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'
 
       indexes :neighborhoods, type: 'string', index: 'not_analyzed'
