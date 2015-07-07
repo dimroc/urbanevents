@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -22,8 +23,11 @@ func ToJsonStringUnsafe(value interface{}) string {
 
 func GetBaseUrl() string {
 	baseUrl := os.Getenv("BASEURL")
-	if len(baseUrl) == 0 {
-		baseUrl = os.Getenv("TUTUM_SERVICE_FQDN")
+	if len(baseUrl) == 0 && len(os.Getenv("TUTUM_SERVICE_FQDN")) > 0 {
+		baseUrl = fmt.Sprintf("http://%s", os.Getenv("TUTUM_SERVICE_FQDN"))
+		if len(os.Getenv("PORT")) > 0 {
+			baseUrl = fmt.Sprintf("%s:%s", baseUrl, os.Getenv("PORT"))
+		}
 	}
 
 	return baseUrl
