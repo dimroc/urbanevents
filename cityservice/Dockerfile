@@ -11,7 +11,11 @@ ADD . /go/src/github.com/dimroc/urbanevents/cityservice
 
 WORKDIR /go/src/github.com/dimroc/urbanevents/cityservice
 
-RUN go get
+RUN wget https://raw.githubusercontent.com/pote/gpm/v1.3.2/bin/gpm && \
+      chmod +x gpm && \
+      mv gpm /usr/local/bin # GPM
+
+RUN gpm
 RUN go install github.com/dimroc/urbanevents/cityservice
 
 ENTRYPOINT /go/bin/cityservice
