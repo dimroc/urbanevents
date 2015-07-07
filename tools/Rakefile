@@ -7,7 +7,6 @@ namespace :es do
       london: "assets/neighborhoods/london.geojson",
       paris: "assets/neighborhoods/paris.geojson",
       losangeles: "assets/neighborhoods/los-angeles-county.geojson",
-      chicago: "assets/neighborhoods/chicago.geojson",
       miami: "assets/neighborhoods/miami-custom.geojson",
     }
 
