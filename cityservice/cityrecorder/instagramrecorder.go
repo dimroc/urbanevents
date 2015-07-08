@@ -173,6 +173,7 @@ func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 		Service:      "instagram",
 		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
 		Type:         "geoevent",
+		Place:        safelyRetrievePlace(media),
 		Username:     media.User.Username, // New to GeoEvent
 	}
 }
@@ -213,6 +214,14 @@ func safelyRetrieveImage(media ig.Media) string {
 func safelyRetrieveCaption(media ig.Media) string {
 	if media.Caption != nil {
 		return media.Caption.Text
+	} else {
+		return ""
+	}
+}
+
+func safelyRetrievePlace(media ig.Media) string {
+	if media.Location != nil {
+		return media.Location.Name
 	} else {
 		return ""
 	}

@@ -19,6 +19,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 
 				So(err, ShouldBeNil)
 				So(geoevent.LocationType, ShouldEqual, "poi")
+				So(geoevent.Place, ShouldEqual, "Hill Country Chicken")
 				So(geoevent.GeoJson.Type, ShouldEqual, "Polygon")
 			})
 		})

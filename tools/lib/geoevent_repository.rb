@@ -18,6 +18,7 @@ class GeoeventRepository
       indexes :city, type: 'string', index: 'not_analyzed'
       indexes :username, type: 'string', index: 'not_analyzed'
       indexes :fullName, type: 'string'
+      indexes :place, type: 'string'
       indexes :service, type: 'string', index: 'not_analyzed'
 
       indexes :mediaType, type: 'string', index: 'not_analyzed'

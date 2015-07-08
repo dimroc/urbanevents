@@ -26,6 +26,7 @@ type GeoEvent struct {
 	ThumbnailUrl  string     `json:"thumbnailUrl"`
 	Type          string     `json:"type"`
 	Username      string     `json:"username"`
+	Place         string     `json:"place"`
 	Neighborhoods []string   `json:"neighborhoods"`
 }
 

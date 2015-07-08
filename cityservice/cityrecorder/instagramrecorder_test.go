@@ -15,6 +15,7 @@ func TestCreateGeoEventFromInstagram(t *testing.T) {
 
 			So(geoevent.Id, ShouldEqual, media.ID)
 			So(geoevent.MediaUrl, ShouldEqual, media.Images.StandardResolution.URL)
+			So(geoevent.Place, ShouldEqual, "Hill Country Chicken")
 		})
 	})
 

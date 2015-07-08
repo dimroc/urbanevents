@@ -229,6 +229,7 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			ThumbnailUrl: getThumbnailUrl(t),
 			Type:         "geoevent",
 			Username:     t.User.ScreenName,
+			Place:        t.Place.Name,
 		}, nil
 	} else {
 		return GeoEvent{}, err
