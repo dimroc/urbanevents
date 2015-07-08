@@ -2,8 +2,8 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
-	"github.com/dimroc/anaconda"
 	ig "github.com/carbocation/go-instagram/instagram"
+	"github.com/dimroc/anaconda"
 	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
@@ -37,6 +37,10 @@ func (f *fixture) GetCoordinateTweet() anaconda.Tweet {
 
 func (f *fixture) GetVideoTweet() anaconda.Tweet {
 	return f.Tweets[2]
+}
+
+func (f *fixture) GetInstagramTweet() anaconda.Tweet {
+	return f.Tweets[3]
 }
 
 func (f *fixture) GetInstagramMedia() []ig.Media {
