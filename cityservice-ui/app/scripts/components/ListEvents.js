@@ -27,10 +27,11 @@ var PushedItems = React.createClass({
           <span>{geoevent.payload}</span>
           {img}
           <div className="location-info text text-muted">
-            <span className="type">{geoevent.locationType}</span>
+            <span className="location-type">{geoevent.locationType}</span>
             <span className="coordinates">{geoevent.point}</span>
             <span className="created-at">{geoevent.createdAt}</span>
-            <span className="neighborhoods">{geoevent.neighborhoods}</span>
+            <span className="place">Place: {geoevent.place}</span>
+            <span className="neighborhoods">Hoods: {geoevent.neighborhoods}</span>
             {icon}
           </div>
           <hr/>
