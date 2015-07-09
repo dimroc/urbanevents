@@ -59,6 +59,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 				So(geoevent.MediaType, ShouldEqual, "text")
 				So(geoevent.ThumbnailUrl, ShouldBeEmpty)
 				So(geoevent.MediaUrl, ShouldBeEmpty)
+				So(geoevent.ExpandedUrl, ShouldContainSubstring, "instagram")
 
 				// This geoevent is later enriched by the InstagramTweetEnricher
 			})

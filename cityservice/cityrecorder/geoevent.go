@@ -28,6 +28,7 @@ type GeoEvent struct {
 	Username      string     `json:"username"`
 	Place         string     `json:"place"`
 	Neighborhoods []string   `json:"neighborhoods"`
+	ExpandedUrl   string     `json:"-"`
 }
 
 type GeoJson struct {

@@ -202,6 +202,18 @@ func getLocationType(t anaconda.Tweet) string {
 	}
 }
 
+func getExpandedUrl(t anaconda.Tweet) string {
+	if len(t.Entities.Urls) > 0 {
+		for _, url := range t.Entities.Urls {
+			if strings.Contains(url.Expanded_url, "instagram") {
+				return url.Expanded_url
+			}
+		}
+	}
+
+	return ""
+}
+
 func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 	point, err := pointFromTweet(t)
 
@@ -230,6 +242,7 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			Type:         "geoevent",
 			Username:     t.User.ScreenName,
 			Place:        t.Place.Name,
+			ExpandedUrl:  getExpandedUrl(t),
 		}, nil
 	} else {
 		return GeoEvent{}, err
