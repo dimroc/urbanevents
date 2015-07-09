@@ -15,7 +15,7 @@ type TwitterRecorder struct {
 	ConsumerSecret string
 	Token          string
 	TokenSecret    string
-	Enricher       *HoodEnricher
+	Enricher       Enricher
 }
 
 type tweetEntry struct {
@@ -35,7 +35,7 @@ func (p *TwitterRecorder) String() string {
 	return fmt.Sprintf("ConsumerKey: %s, ConsumerSecret: %s, Token: %s, TokenSecret: %s", p.ConsumerKey, p.ConsumerSecret, p.Token, p.TokenSecret)
 }
 
-func NewTwitterRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string, enricher *HoodEnricher) *TwitterRecorder {
+func NewTwitterRecorder(consumerKey string, consumerSecret string, token string, tokenSecret string, enricher Enricher) *TwitterRecorder {
 	recorder := &TwitterRecorder{
 		ConsumerKey:    consumerKey,
 		ConsumerSecret: consumerSecret,

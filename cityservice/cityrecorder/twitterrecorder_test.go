@@ -48,5 +48,20 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 				So(geoevent.MediaUrl, ShouldEndWith, "mp4")
 			})
 		})
+
+		Convey("and an anaconda.Tweet with an instagram link", func() {
+			tweet := Fixture.GetInstagramTweet()
+
+			Convey("it should create a text geoevent", func() {
+				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+
+				So(err, ShouldBeNil)
+				So(geoevent.MediaType, ShouldEqual, "text")
+				So(geoevent.ThumbnailUrl, ShouldBeEmpty)
+				So(geoevent.MediaUrl, ShouldBeEmpty)
+
+				// This geoevent is later enriched by the InstagramTweetEnricher
+			})
+		})
 	})
 }
