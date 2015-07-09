@@ -40,7 +40,6 @@ func NewInstagramLinkEnricherWithMediaRetriever(retriever MediaRetriever) Enrich
 func (enricher *instagramLinkEnricher) Enrich(g GeoEvent) GeoEvent {
 	Logger.Debug("Enriching geoevent with instagram media from url: %s", g.ExpandedUrl)
 	matches := mediaIdRegex.FindStringSubmatch(g.ExpandedUrl)
-	Logger.Debug("%s", matches)
 
 	if len(matches) == 2 {
 		mediaId := matches[1]
@@ -55,8 +54,6 @@ func (enricher *instagramLinkEnricher) Enrich(g GeoEvent) GeoEvent {
 			newGeo.MediaUrl = SafelyRetrieveInstagramMediaUrl(*media)
 			return newGeo
 		}
-	} else {
-		Logger.Warning("No media id found from url %s", g.ExpandedUrl)
 	}
 
 	return g
