@@ -7,6 +7,7 @@ github.com/dimroc/anaconda v0.1
 github.com/dimroc/elastigo v0.1.1
 github.com/dustin/go-jsonpointer 75939f54b39e7dafae879e61f65438dadc5f288c 
 github.com/dustin/gojson af16e0e771e2ed110f2785564ae33931de8829e4 
+github.com/golang/mock/gomock 15f8b22550555c0d3edf5afa97d74001bda2208b
 github.com/gorilla/context 215affda49addc4c8ef7e2534915df2c8c35c6cd 
 github.com/gorilla/mux 94903de8c98a68d8b4483c529b26a5d146e386a2 
 github.com/kellydunn/golang-geo v0.6.1

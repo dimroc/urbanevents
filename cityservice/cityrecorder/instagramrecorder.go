@@ -151,13 +151,6 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 }
 
 func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
-	var mediaUrl string
-	if media.Type == "video" {
-		mediaUrl = safelyRetrieveVideo(media)
-	} else {
-		mediaUrl = safelyRetrieveImage(media)
-	}
-
 	return GeoEvent{
 		CreatedAt:    time.Unix(media.CreatedTime, 0),
 		Id:           media.ID,
@@ -165,13 +158,13 @@ func CreateGeoEventFromInstagram(media ig.Media) GeoEvent {
 		Hashtags:     media.Tags,
 		Link:         media.Link, // New to GeoEvent
 		LocationType: "coordinate",
-		MediaType:    media.Type, // New to GeoEvent // Either image or video
-		MediaUrl:     mediaUrl,   // New to GeoEvent
+		MediaType:    media.Type,                             // New to GeoEvent // Either image or video
+		MediaUrl:     SafelyRetrieveInstagramMediaUrl(media), // New to GeoEvent
 		Payload:      safelyRetrieveCaption(media),
 		Point:        [2]float64{media.Location.Longitude, media.Location.Latitude},
 		GeoJson:      getGeoJson(media),
 		Service:      "instagram",
-		ThumbnailUrl: safelyRetrieveThumbnail(media), // New to GeoEvent
+		ThumbnailUrl: SafelyRetrieveInstagramThumbnail(media), // New to GeoEvent
 		Type:         "geoevent",
 		Place:        safelyRetrievePlace(media),
 		Username:     media.User.Username, // New to GeoEvent
@@ -195,11 +188,19 @@ func safelyRetrieveVideo(media ig.Media) string {
 	}
 }
 
-func safelyRetrieveThumbnail(media ig.Media) string {
+func SafelyRetrieveInstagramThumbnail(media ig.Media) string {
 	if media.Images != nil {
 		return media.Images.Thumbnail.URL
 	} else {
 		return ""
+	}
+}
+
+func SafelyRetrieveInstagramMediaUrl(media ig.Media) string {
+	if media.Type == "video" {
+		return safelyRetrieveVideo(media)
+	} else {
+		return safelyRetrieveImage(media)
 	}
 }
 
