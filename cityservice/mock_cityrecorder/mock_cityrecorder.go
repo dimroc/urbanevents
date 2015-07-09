@@ -4,8 +4,8 @@
 package mock_cityrecorder
 
 import (
-	instagram "github.com/carbocation/go-instagram/instagram"
 	gomock "github.com/golang/mock/gomock"
+	instagram "github.com/dimroc/go-instagram/instagram"
 )
 
 // Mock of MediaRetriever interface
@@ -29,13 +29,13 @@ func (_m *MockMediaRetriever) EXPECT() *_MockMediaRetrieverRecorder {
 	return _m.recorder
 }
 
-func (_m *MockMediaRetriever) Get(mediaID string) (*instagram.Media, error) {
-	ret := _m.ctrl.Call(_m, "Get", mediaID)
+func (_m *MockMediaRetriever) GetShortcode(shortcode string) (*instagram.Media, error) {
+	ret := _m.ctrl.Call(_m, "GetShortcode", shortcode)
 	ret0, _ := ret[0].(*instagram.Media)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockMediaRetrieverRecorder) Get(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Get", arg0)
+func (_mr *_MockMediaRetrieverRecorder) GetShortcode(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetShortcode", arg0)
 }

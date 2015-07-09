@@ -9,6 +9,7 @@ export TWITTER_TOKEN_SECRET=
 
 export INSTAGRAM_CLIENT_ID=
 export INSTAGRAM_CLIENT_SECRET=
+export INSTAGRAM_ACCESS_TOKEN=
 
 export ELASTICSEARCH_URL=http://localhost:9200
 export GO_ENV=development

@@ -11,14 +11,14 @@ import (
 func TestInstagramLinkEnrich(t *testing.T) {
 	Convey("Given a GeoEvent with an instagram url", t, func() {
 		geoevent := Fixture.GeoEvents[0]
-		geoevent.ExpandedUrl = "https://instagram.com/p/44FkqdGP0A/"
+		geoevent.ExpandedUrl = "https://instagram.com/p/47N0xct3-P/"
 
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()
 
 		media := &Fixture.GetInstagramMedia()[0]
 		mediaRetriever := mock_cityrecorder.NewMockMediaRetriever(mockCtrl)
-		mediaRetriever.EXPECT().Get("44FkqdGP0A").Return(media, nil)
+		mediaRetriever.EXPECT().GetShortcode("47N0xct3-P").Return(media, nil)
 
 		Convey("there should be returned neighborhoods", func() {
 			enricher := cityrecorder.NewInstagramLinkEnricherWithMediaRetriever(mediaRetriever)

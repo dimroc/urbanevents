@@ -22,6 +22,7 @@ func main() {
 	gramEnricher := cityrecorder.NewInstagramLinkEnricher(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
+		os.Getenv("INSTAGRAM_CLIENT_ACCESS_TOKEN"),
 	)
 
 	broadcastEnricher := cityrecorder.NewBroadcastEnricher(hoodEnricher, gramEnricher)

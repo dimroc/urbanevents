@@ -3,7 +3,7 @@ package cityrecorder
 import (
 	"encoding/json"
 	"fmt"
-	ig "github.com/carbocation/go-instagram/instagram"
+	ig "github.com/dimroc/go-instagram/instagram"
 	"github.com/dimroc/urbanevents/cityservice/set"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gorilla/mux"

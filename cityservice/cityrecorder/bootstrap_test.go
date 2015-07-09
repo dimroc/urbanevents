@@ -2,7 +2,7 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
-	ig "github.com/carbocation/go-instagram/instagram"
+	ig "github.com/dimroc/go-instagram/instagram"
 	"github.com/dimroc/anaconda"
 	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"

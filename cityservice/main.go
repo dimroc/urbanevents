@@ -32,6 +32,13 @@ func main() {
 	eventpusher := cityrecorder.NewEventPusher()
 	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
+	gramEnricher := cityrecorder.NewInstagramLinkEnricher(
+		os.Getenv("INSTAGRAM_CLIENT_ID"),
+		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
+		os.Getenv("INSTAGRAM_CLIENT_ACCESS_TOKEN"),
+	)
+	broadcastEnricher := cityrecorder.NewBroadcastEnricher(hoodEnricher, gramEnricher)
+
 	defer eventpusher.Close()
 	defer elastic.Close()
 
@@ -40,7 +47,7 @@ func main() {
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),
 		os.Getenv("TWITTER_TOKEN_SECRET"),
-		hoodEnricher,
+		broadcastEnricher,
 	)
 
 	broadcaster := cityrecorder.NewBroadcastWriter(eventpusher, elastic)
