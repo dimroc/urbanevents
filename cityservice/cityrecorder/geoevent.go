@@ -20,7 +20,7 @@ type GeoEvent struct {
 	Link          string     `json:"link"`
 	LocationType  string     `json:"locationType"`
 	MediaType     string     `json:"mediaType"`
-	Payload       string     `json:"payload"`
+	Text          string     `json:"text"`
 	Point         [2]float64 `json:"point"`
 	Service       string     `json:"service"`
 	ThumbnailUrl  string     `json:"thumbnailUrl"`
@@ -78,7 +78,7 @@ func GeoJsonFrom(typeValue string, v interface{}) GeoJson {
 
 func (g *GeoEvent) String() string {
 	return fmt.Sprintf(
-		"{CreatedAt: %s, GeoJson: %s, Point: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Payload: %s}",
+		"{CreatedAt: %s, GeoJson: %s, Point: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Text: %s}",
 		g.CreatedAt,
 		g.GeoJson,
 		g.Point,
@@ -86,7 +86,7 @@ func (g *GeoEvent) String() string {
 		g.CityKey,
 		g.LocationType,
 		g.Type,
-		g.Payload,
+		g.Text,
 	)
 }
 

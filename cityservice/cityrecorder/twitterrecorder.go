@@ -235,7 +235,7 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			Link:         generateLink(t),
 			LocationType: getLocationType(t),
 			MediaType:    getMediaType(t),
-			Payload:      t.Text,
+			Text:         t.Text,
 			Point:        point,
 			Service:      "twitter",
 			ThumbnailUrl: getThumbnailUrl(t),

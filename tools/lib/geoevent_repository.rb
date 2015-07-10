@@ -14,7 +14,8 @@ class GeoeventRepository
   settings number_of_shards: 3 do
     mapping do
       indexes :createdAt, type: 'date'
-      indexes :payload, analyzer: 'snowball'
+      indexes :text, analyzer: 'snowball'
+      indexes :text_fr, analyzer: 'snowball', language: 'French'
       indexes :city, type: 'string', index: 'not_analyzed'
       indexes :username, type: 'string', index: 'not_analyzed'
       indexes :fullName, type: 'string'

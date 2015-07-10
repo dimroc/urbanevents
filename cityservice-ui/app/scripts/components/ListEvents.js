@@ -24,7 +24,7 @@ var PushedItems = React.createClass({
           <a href={geoevent.link} target="_blank">
             <label className="screenName label label-info">{geoevent.username}</label>
           </a>
-          <span>{geoevent.payload}</span>
+          <span>{geoevent.text}</span>
           {img}
           <div className="location-info text text-muted">
             <span className="location-type">{geoevent.locationType}</span>
