@@ -20,7 +20,8 @@ type GeoEvent struct {
 	Link          string     `json:"link"`
 	LocationType  string     `json:"locationType"`
 	MediaType     string     `json:"mediaType"`
-	Text          string     `json:"text"`
+	Text          string     `json:"text,omitempty"`
+	TextFrench    string     `json:"text_fr,omitempty"`
 	Point         [2]float64 `json:"point"`
 	Service       string     `json:"service"`
 	ThumbnailUrl  string     `json:"thumbnailUrl"`
