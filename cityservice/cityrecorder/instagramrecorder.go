@@ -73,6 +73,8 @@ func (recorder *InstagramRecorder) GetSubscriptions() []ig.Realtime {
 func (recorder *InstagramRecorder) Subscribe(baseUrl string, cities []City) {
 	//lat, lng string, radius int, callbackURL, verifyToken string
 	for _, city := range cities {
+		Logger.Notice("Subscribing to instagram for city: %s", city.Key)
+
 		for _, circle := range city.Circles {
 			// Using the circle packer generated circles, register each circle for that city via instagram.
 			response, err := recorder.client.Realtime.SubscribeToGeography(
@@ -104,7 +106,7 @@ func (recorder *InstagramRecorder) ServeHTTP(rw http.ResponseWriter, req *http.R
 			Logger.Warning("%s", err)
 		} else {
 			// Hand off all responses to another goroutine to fetch RecentMedia so we free up this POST call.
-			Logger.Debug(cityKey + ": " + ToJsonStringUnsafe(jsonResponses))
+			Logger.Info(cityKey + ": " + ToJsonStringUnsafe(jsonResponses))
 			for _, jsonResponse := range jsonResponses {
 				recorder.geographyIds.Add(jsonResponse.ObjectID, geographEntry{City: cityKey})
 			}
@@ -137,7 +139,6 @@ func (recorder *InstagramRecorder) retrieveMediaFor(geographyId, cityKey string)
 		recorder.geographyMinIds[geographyId] = medias[0].ID
 	}
 
-	Logger.Debug("%s", ToJsonStringUnsafe(medias))
 	for _, media := range medias {
 		Logger.Debug("CREATING GEOEVENT %s", ToJsonStringUnsafe(media))
 		geoevent := CreateGeoEventFromInstagram(media)

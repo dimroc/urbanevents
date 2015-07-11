@@ -61,7 +61,7 @@ func (t *TwitterRecorder) Record(city City, writer Writer) {
 	v.Set("locations", city.LocationString())
 	stream := api.PublicStreamFilter(v)
 
-	Logger.Debug("Listening to tweets from " + city.Key)
+	Logger.Notice("Listening to tweets from " + city.Key)
 	for {
 		select {
 		case <-stream.Quit:
