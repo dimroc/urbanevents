@@ -24,6 +24,10 @@ cityservice:
     - TWITTER_TOKEN=
     - TWITTER_TOKEN_SECRET=
 
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - INSTAGRAM_ACCESS_TOKEN=
+
   restart: always
 
 tools:
