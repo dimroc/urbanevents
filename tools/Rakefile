@@ -7,7 +7,7 @@ namespace :es do
       london: "assets/neighborhoods/london.geojson",
       paris: "assets/neighborhoods/paris.geojson",
       losangeles: "assets/neighborhoods/los-angeles-county.geojson",
-      miami: "assets/neighborhoods/miami-custom.geojson",
+      miami: "assets/neighborhoods/miami.geojson",
     }
 
     assignments.each do |city, glob_path|
@@ -45,7 +45,8 @@ namespace :es do
   end
 
   task :hello do
-    puts "FUCK OFF"
+    puts "Watching the following cities: "
+    puts cities
   end
 
   task :create_index do
