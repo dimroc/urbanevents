@@ -3,6 +3,7 @@ package cityrecorder
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 )
 
 var (
@@ -23,6 +24,21 @@ func (w stdoutWriter) Write(g GeoEvent) error {
 	jsonOut, err := json.Marshal(g)
 	if err == nil {
 		fmt.Println(string(jsonOut))
+	}
+
+	return err
+}
+
+type logWriter struct{}
+
+func NewLogWriter() Writer {
+	return &logWriter{}
+}
+
+func (l logWriter) Write(g GeoEvent) error {
+	val, err := ToJsonString(g)
+	if err == nil {
+		Logger.Info(val)
 	}
 
 	return err

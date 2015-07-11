@@ -13,7 +13,7 @@ var (
 func newLogger() *logging.Logger {
 	newLogger := logging.MustGetLogger("cityrecorder")
 	format := logging.MustStringFormatter(
-		"%{color}%{level} ▶ %{shortfunc} %{color:reset}%{message}",
+		"%{color}%{level} [%{shortfunc}] %{color:reset}%{message}",
 	)
 
 	backend := logging.NewLogBackend(os.Stderr, "", 0)

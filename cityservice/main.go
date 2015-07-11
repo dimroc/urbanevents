@@ -51,10 +51,8 @@ func main() {
 		broadcastEnricher,
 	)
 
-	broadcaster := cityrecorder.NewBroadcastWriter(eventpusher, elastic)
-	if GO_ENV == "development" {
-		broadcaster.Push(cityrecorder.StdoutWriter)
-	}
+	logWriter := cityrecorder.NewLogWriter()
+	broadcaster := cityrecorder.NewBroadcastWriter(eventpusher, elastic, logWriter)
 
 	instagramRecorder := cityrecorder.NewInstagramRecorder(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
