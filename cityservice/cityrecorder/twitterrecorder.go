@@ -7,6 +7,7 @@ import (
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -55,6 +56,9 @@ func NewTwitterRecorder(consumerKey string, consumerSecret string, token string,
 
 func (t *TwitterRecorder) Record(city City, writer Writer) {
 	api := anaconda.NewTwitterApi(t.Token, t.TokenSecret)
+	if len(os.Getenv("CITYSERVICE_VERBOSETWITTER")) > 0 {
+		api.SetLogger(anaconda.BasicLogger)
+	}
 	outbox := t.tweetWriter(writer)
 
 	v := url.Values{}
@@ -101,15 +105,20 @@ func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return se
 }
 
 func geoJsonFromTweet(t anaconda.Tweet) GeoJson {
-	if t.Place.PlaceType == "poi" {
-		return GeoJsonFrom(t.Place.BoundingBox.Type, t.Place.BoundingBox.Coordinates)
+	places := t.Place.Result.Places
+
+	if len(places) > 0 && places[0].PlaceType == "poi" {
+		place := places[0]
+		return GeoJsonFrom(place.BoundingBox.Type, place.BoundingBox.Coordinates)
 	} else {
 		return GeoJsonFrom("point", t.Coordinates.Coordinates)
 	}
 }
 
 func pointFromTweet(t anaconda.Tweet) ([2]float64, error) {
-	if t.Place.PlaceType == "poi" {
+	places := t.Place.Result.Places
+
+	if len(places) > 0 && places[0].PlaceType == "poi" {
 		return geoJsonFromTweet(t).Center(), nil
 	} else if t.Coordinates != nil {
 		return t.Coordinates.Coordinates, nil
@@ -195,7 +204,9 @@ func generateLink(t anaconda.Tweet) string {
 }
 
 func getLocationType(t anaconda.Tweet) string {
-	if t.Place.PlaceType == "poi" {
+	places := t.Place.Result.Places
+
+	if len(places) > 0 && places[0].PlaceType == "poi" {
 		return "poi"
 	} else {
 		return "coordinate"
@@ -224,6 +235,11 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			Logger.Warning("INSTAGRAM URL IN TWEET: %s", instagramUrl)
 		}
 
+		var placeName string
+		if len(t.Place.Result.Places) > 0 {
+			placeName = t.Place.Result.Places[0].Name
+		}
+
 		return GeoEvent{
 			CityKey:      city.Key,
 			CreatedAt:    createdAt,
@@ -241,7 +257,7 @@ func NewGeoEventFromTweet(city City, t anaconda.Tweet) (GeoEvent, error) {
 			ThumbnailUrl: getThumbnailUrl(t),
 			Type:         "geoevent",
 			Username:     t.User.ScreenName,
-			Place:        t.Place.Name,
+			Place:        placeName,
 			ExpandedUrl:  getInstagramLinkFromExpandedUrl(t),
 		}, nil
 	} else {

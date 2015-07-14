@@ -2,7 +2,7 @@ github.com/ChimeraCoder/tokenbucket c5a927568de7aad8a58127d80bcd36ca4e71e454
 github.com/araddon/gou cf9cf25f52be174c5878920a8021bd224cbe32c7 
 github.com/bitly/go-hostpool d0e59c22a56e8dadfed24f74f452cea5a52722d2 
 github.com/codegangsta/negroni c7477ad8e330bef55bf1ebe300cf8aa67c492d1b
-github.com/dimroc/anaconda v0.1
+github.com/dimroc/anaconda feature/support-extended-entities
 github.com/dimroc/elastigo v0.1.1
 github.com/dimroc/go-instagram/instagram
 github.com/dustin/go-jsonpointer 75939f54b39e7dafae879e61f65438dadc5f288c 
