@@ -57,9 +57,11 @@ func (b *BroadcastWriter) Write(g GeoEvent) error {
 	for _, writer := range b.Writers {
 		newErr := writer.Write(g)
 		if newErr != nil {
+			Logger.Warning("Encountered Error: %s", newErr)
 			err = newErr
 		}
 	}
+
 	return err
 }
 

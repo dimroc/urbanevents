@@ -69,7 +69,7 @@ func (t *TwitterRecorder) Record(city City, writer Writer) {
 	for {
 		select {
 		case <-stream.Quit:
-			Logger.Debug("%s Stream Quit", city.Key)
+			Logger.Warning("%s Stream Quit", city.Key)
 		case elem := <-stream.C:
 			t, ok := elem.(anaconda.Tweet)
 			if ok {
@@ -90,7 +90,7 @@ func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return se
 
 			g, err := NewGeoEventFromTweet(city, tweet)
 			if err != nil {
-				//Logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
+				Logger.Debug("Unable to create geoevent for city %s from tweet. %s", city.Key, err)
 				continue
 			}
 
@@ -99,6 +99,8 @@ func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return se
 				Logger.Warning("Failed to write geoevent: "+g.String(), err)
 			}
 		}
+
+		Logger.Critical("Tweet Writing Loop Finished")
 	}()
 
 	return outbox
