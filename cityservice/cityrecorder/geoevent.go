@@ -60,8 +60,9 @@ type BoundingBox struct {
 }
 
 func (bb *BoundingBox) Center() [2]float64 {
-	// TODO: Get average
-	center := [2]float64{bb.Coordinates[0][0][0], bb.Coordinates[0][0][1]}
+	long := (bb.Coordinates[0][0][0] + bb.Coordinates[0][1][0]) / 2.0
+	lat := (bb.Coordinates[0][0][1] + bb.Coordinates[0][1][1]) / 2.0
+	center := [2]float64{long, lat}
 	return center
 }
 
