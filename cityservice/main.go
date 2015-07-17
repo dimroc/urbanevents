@@ -30,7 +30,7 @@ func main() {
 
 	// Configure Geoevent Writers
 	eventpusher := cityrecorder.NewEventPusher()
-	elastic := cityrecorder.NewBulkElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
 	frenchEnricher := cityrecorder.NewFrenchEnricher()
 	gramEnricher := cityrecorder.NewInstagramLinkEnricher(
