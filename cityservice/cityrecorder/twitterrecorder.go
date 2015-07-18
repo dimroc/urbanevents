@@ -96,7 +96,7 @@ func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return se
 
 			err = w.Write(t.Enricher.Enrich(g))
 			if err != nil {
-				Logger.Warning("Failed to write geoevent: "+g.String(), err)
+				Logger.Warning("Failed to write geoevent: %s\n%s"+g.String(), err)
 			}
 		}
 
