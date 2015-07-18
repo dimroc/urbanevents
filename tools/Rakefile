@@ -27,6 +27,14 @@ namespace :es do
     cities.uniq.map(&:to_s)
   end
 
+  def geojson_filenames
+    filenames = []
+    each_city_and_geojson_filename do |city, filename|
+      filenames << filename
+    end
+    filenames
+  end
+
   def backup_repository_name
     "urbanevents"
   end
@@ -172,8 +180,9 @@ namespace :es do
 
   task :write_clean_geojson_files do
     FileUtils.mkdir_p "tmp/clean_geojson"
-    geojson_filenames do |filename|
+    geojson_filenames.each do |filename|
       File.open("tmp/clean_geojson/#{File.basename(filename)}", "w+") do |f|
+        puts "Writing #{f.path}"
         fc = FeatureCollection.new(filename)
         fc.clean_duplicate_coordinates!
         f.write JSON.pretty_generate(fc.as_json)
