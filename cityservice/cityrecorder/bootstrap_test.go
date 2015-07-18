@@ -2,8 +2,8 @@ package cityrecorder_test
 
 import (
 	"encoding/json"
-	ig "github.com/dimroc/go-instagram/instagram"
 	"github.com/dimroc/anaconda"
+	ig "github.com/dimroc/go-instagram/instagram"
 	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
@@ -47,15 +47,23 @@ func (f *fixture) GetInstagramMedia() []ig.Media {
 	return f.Media
 }
 
+func (f *fixture) GetZeroBbGeoEvent() GeoEvent {
+	return f.GeoEvents[4]
+}
+
 func newFixture() *fixture {
 	bounds := [4]float64{-74.3, 40.462, -73.65, 40.95}
 	cities := []City{{"nyc", "New York City", []string{}, bounds, PackCircles(bounds)}}
+
+	log.Println("Loading GeoEvents")
 	geoevents := []GeoEvent{}
 	loadFromFixtureFile("fixtures/geoevents.json", &geoevents)
 
+	log.Println("Loading Tweets")
 	tweets := []anaconda.Tweet{}
 	loadFromFixtureFile("fixtures/tweets.json", &tweets)
 
+	log.Println("Loading IG Media")
 	media := []ig.Media{}
 	loadFromFixtureFile("fixtures/media.json", &media)
 
@@ -70,12 +78,12 @@ func newFixture() *fixture {
 func loadFromFixtureFile(filename string, v interface{}) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Unable to loadFromFixtureFile: ", err)
 	}
 
 	jsonErr := json.Unmarshal(data, v)
 	if jsonErr != nil {
-		log.Fatalln("error:", jsonErr)
+		log.Fatalln("Unable to marshal in loadFromFixtureFile:", jsonErr)
 	}
 }
 

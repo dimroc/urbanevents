@@ -108,7 +108,9 @@ func (t *TwitterRecorder) tweetWriter(w Writer) chan<- tweetEntry { // return se
 
 func geoJsonFromTweet(t anaconda.Tweet) GeoJson {
 	if t.Place.PlaceType == "poi" {
-		return GeoJsonFrom(t.Place.BoundingBox.Type, t.Place.BoundingBox.Coordinates)
+		geojson := GeoJsonFrom(t.Place.BoundingBox.Type, t.Place.BoundingBox.Coordinates)
+		//return geojson.TryCollapseEmptyBoundingBox()
+		return geojson
 	} else {
 		return GeoJsonFrom("point", t.Coordinates.Coordinates)
 	}

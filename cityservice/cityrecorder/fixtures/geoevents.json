@@ -2,5 +2,35 @@
   {"createdAt":"2015-05-28T00:02:52Z","geojson":{"coordinates":[-73.998909,40.734593],"type":"point"},"point":[-73.998909,40.734593],"id":"603713009962352640","city":"nyc","locationType":"coordinate","type":"geoevent","service":"twitter","text":"This is the only thing on the menu I was able to order that is suitable for my diet 😔… https://t.co/DdI1omEbMI", "mediaType":"text"},
   {"createdAt":"2015-05-27T00:02:54Z","geojson":{"coordinates":[-78.616663,43.01013],"type":"point"},"point":[-78.616663,43.01013],"id":"603713016828428288","city":"nyc","locationType":"coordinate","type":"geoevent","service":"twitter","text":"no more contract 🍻 about to be a great summer @ Black Hammer https://t.co/7Ub9BnDKsN", "mediaType":"text"},
   {"createdAt":"2015-05-26T00:02:55Z","geojson":{"coordinates": [-73.996993,40.723642],"type": "point"},"point":[-73.996993,40.723642],"id":"603713022184554496","city":"nyc","locationType":"coordinate","type":"geoevent","service":"instagram","text":"Sometimes, you just have to set up a drum circle and have your clients make some noise! #TeamBuilding… https://t.co/YPm1qxJ93u", "mediaType":"text"},
-  {"city":"nyc","createdAt":"2015-07-06T14:22:10Z","fullName":"NYC Healthcare Jobs","geojson":{"coordinates":[-74.005973,40.714353],"type":"point"},"hashtags":["NewYork","job"],"id":"618062386142953472","mediaUrl":"","link":"https://twitter.com/tmj_nyc_health/status/618062386142953472","locationType":"coordinate","mediaType":"text","text":"See our latest #NewYork, New York #job and click to apply: Pharmacy Technician Trainee \\ Pharmacy Service... - http://t.co/LDQc8qQmFK","point":[-74.005973,40.714353],"service":"twitter","thumbnailUrl":"","type":"geoevent","username":"tmj_nyc_health","neighborhoods":null}
+  {"city":"nyc","createdAt":"2015-07-06T14:22:10Z","fullName":"NYC Healthcare Jobs","geojson":{"coordinates":[-74.005973,40.714353],"type":"point"},"hashtags":["NewYork","job"],"id":"618062386142953472","mediaUrl":"","link":"https://twitter.com/tmj_nyc_health/status/618062386142953472","locationType":"coordinate","mediaType":"text","text":"See our latest #NewYork, New York #job and click to apply: Pharmacy Technician Trainee \\ Pharmacy Service... - http://t.co/LDQc8qQmFK","point":[-74.005973,40.714353],"service":"twitter","thumbnailUrl":"","type":"geoevent","username":"tmj_nyc_health","neighborhoods":null},
+  {
+    "city": "nyc",
+    "createdAt": "2015-07-18T13:24:03Z",
+    "fullName": "Princess",
+    "geojson": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-74.00432554645808, 40.74185267627071],
+          [-74.00432554645808, 40.74185267627071],
+          [-74.00432554645808, 40.74185267627071],
+          [-74.00432554645808, 40.74185267627071]
+        ]
+      ]
+    },
+    "hashtags": [ ],
+    "id": "622396415944327168",
+    "mediaUrl": "",
+    "link": "https://twitter.com/__erikaalexis/status/622396415944327168",
+    "locationType": "poi",
+    "mediaType": "text",
+    "text": "He said why must you look so good ☺😂😍",
+    "point": [-74.00432554645808, 40.74185267627071],
+    "service": "twitter",
+    "thumbnailUrl": "",
+    "type": "geoevent",
+    "username": "__erikaalexis",
+    "place": "Google Creative Lab",
+    "neighborhoods": [ ]
+  }
 ]

@@ -54,6 +54,15 @@ func (g GeoJson) String() string {
 	)
 }
 
+func (g GeoJson) TryCollapseEmptyBoundingBox() GeoJson {
+	//if strings.ToLower(g.Type) == "polygon" {
+	//shape := g.GenerateShape()
+
+	//}
+
+	return g
+}
+
 type GeoShape interface {
 	Center() [2]float64
 }
