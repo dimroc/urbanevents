@@ -41,6 +41,19 @@ func (g GeoJson) Center() [2]float64 {
 	return g.GenerateShape().Center()
 }
 
+func (g GeoJson) String() string {
+	j, err := json.Marshal(&g.CoordinatesRaw)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return fmt.Sprintf(
+		"{Type: %s, Coordinates: %s}",
+		g.Type,
+		string(j),
+	)
+}
+
 type GeoShape interface {
 	Center() [2]float64
 }
@@ -80,10 +93,11 @@ func GeoJsonFrom(typeValue string, v interface{}) GeoJson {
 
 func (g *GeoEvent) String() string {
 	return fmt.Sprintf(
-		"{CreatedAt: %s, GeoJson: %s, Point: %s, Id: %s, CityKey: %s, LocationType: %s, Type: %s, Text: %s}",
+		"{CreatedAt: %s, GeoJson: %s, Point: [%s,%s], Id: %s, CityKey: %s, LocationType: %s, Type: %s, Text: %s}",
 		g.CreatedAt,
-		g.GeoJson,
-		g.Point,
+		g.GeoJson.String(),
+		g.Point[0],
+		g.Point[1],
 		g.Id,
 		g.CityKey,
 		g.LocationType,
