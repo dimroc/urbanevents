@@ -18,6 +18,8 @@ cityservice:
     - 58080:58080
   environment:
     - GO_ENV=qa
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_VERBOSETWITTER=
     - ELASTICSEARCH_URL=http://admin:password@elasticsearch:9200
     - TWITTER_CONSUMER_KEY=
     - TWITTER_CONSUMER_SECRET=
