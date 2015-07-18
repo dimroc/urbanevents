@@ -55,10 +55,15 @@ func (g GeoJson) String() string {
 }
 
 func (g GeoJson) TryCollapseEmptyBoundingBox() GeoJson {
-	//if strings.ToLower(g.Type) == "polygon" {
-	//shape := g.GenerateShape()
+	if strings.ToLower(g.Type) == "polygon" {
+		shape := g.GenerateShape()
+		bb := shape.(*BoundingBox)
 
-	//}
+		if bb.Collapsed() {
+			Logger.Debug("Collapsing %s: ", bb)
+			return GeoJsonFrom("Point", [2]float64{bb.Coordinates[0][0][0], bb.Coordinates[0][0][1]})
+		}
+	}
 
 	return g
 }
@@ -86,6 +91,12 @@ func (bb *BoundingBox) Center() [2]float64 {
 	lat := (bb.Coordinates[0][0][1] + bb.Coordinates[0][1][1]) / 2.0
 	center := [2]float64{long, lat}
 	return center
+}
+
+func (bb *BoundingBox) Collapsed() bool {
+	return bb.Coordinates[0][0][0] == bb.Coordinates[0][1][0] &&
+		bb.Coordinates[0][0][0] == bb.Coordinates[0][2][0] &&
+		bb.Coordinates[0][0][0] == bb.Coordinates[0][3][0]
 }
 
 func GeoJsonFrom(typeValue string, v interface{}) GeoJson {
@@ -122,7 +133,7 @@ func (geojson *GeoJson) GenerateShape() GeoShape {
 	switch strings.ToLower(geojson.Type) {
 	case "point":
 		point := &Point{GeoJson: *geojson}
-		coordinatesDestination = point.Coordinates
+		coordinatesDestination = &point.Coordinates
 		shape = point
 	case "polygon":
 		box := &BoundingBox{GeoJson: *geojson}
@@ -132,7 +143,8 @@ func (geojson *GeoJson) GenerateShape() GeoShape {
 
 	err := json.Unmarshal(*geojson.CoordinatesRaw, coordinatesDestination)
 	if err != nil {
-		log.Fatalln("error:", err)
+		Logger.Critical("%s", err)
+		panic(err)
 	}
 
 	return shape
