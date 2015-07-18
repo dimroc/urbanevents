@@ -3,6 +3,7 @@ require_relative 'lib/tools'
 namespace :es do
   def each_city_and_geojson_filename
     assignments = {
+      jerseycities: "assets/neighborhoods/jersey-cities.geojson",
       nyc: "assets/neighborhoods/nyc/*.geojson",
       london: "assets/neighborhoods/london.geojson",
       paris: "assets/neighborhoods/paris.geojson",
