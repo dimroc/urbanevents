@@ -28,4 +28,12 @@ class HoodRepository
       })
     end
   end
+
+  def update_mapping!
+    client.indices.put_mapping({
+      index: index,
+      type: type,
+      body: mappings.to_hash
+    })
+  end
 end
