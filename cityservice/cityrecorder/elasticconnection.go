@@ -110,6 +110,7 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 }
 
 // Bulk Elastic
+// Shit don't work. Silently fails after around a day of usage. gg BulkIndexer.
 type BulkElasticConnection struct {
 	*ElasticConnection
 	BulkIndexer *elastigo.BulkIndexer
