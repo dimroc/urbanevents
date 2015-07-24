@@ -10,7 +10,17 @@ elasticsearch:
   #volumes:
     #- tmp/elasticsearch-data:/usr/share/elasticsearch/data
 
+kibana:
+  image: 'kibana:latest'
+  environment:
+    - 'ELASTICSEARCH_URL=http://admin:password@elasticsearch:9200'
+  links:
+    - elasticsearch
+  ports:
+    - '5601:5601'
+
 cityservice:
+  #image: 'tutum.co/dimroc/cityservice:latest'
   build: cityservice
   links:
     - elasticsearch
@@ -18,17 +28,20 @@ cityservice:
     - 58080:58080
   environment:
     - GO_ENV=qa
+    - PORT=8080
     - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/nyc.json
+    - 'ELASTICSEARCH_URL=http://admin:password@elasticsearch:9200'
     - CITYSERVICE_VERBOSETWITTER=
-    - ELASTICSEARCH_URL=http://admin:password@elasticsearch:9200
+
+    - 'INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+
     - TWITTER_CONSUMER_KEY=
     - TWITTER_CONSUMER_SECRET=
     - TWITTER_TOKEN=
     - TWITTER_TOKEN_SECRET=
-
-    - INSTAGRAM_CLIENT_ID=
-    - INSTAGRAM_CLIENT_SECRET=
-    - INSTAGRAM_ACCESS_TOKEN=
 
   restart: always
 
