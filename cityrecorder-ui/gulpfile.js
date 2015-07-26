@@ -191,7 +191,7 @@ gulp.task('clearCityserviceUrlEnv', function() {
 
 gulp.task('copyToService', ['clearCityserviceUrlEnv', 'build'], function() {
   gulp.src('dist/**/*')
-    .pipe(gulp.dest('../cityservice/public'));
+    .pipe(gulp.dest('../cityservice/cityrecorder/public'));
 });
 
 gulp.task('deploy', ['clean', 'copyToService']);
