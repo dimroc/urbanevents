@@ -16,6 +16,7 @@ RUN wget https://raw.githubusercontent.com/pote/gpm/v1.3.2/bin/gpm && \
       mv gpm /usr/local/bin # GPM
 
 RUN gpm
-RUN go install github.com/dimroc/urbanevents/cityservice
+RUN go install github.com/dimroc/urbanevents/cityservice/cityrecorder
+#RUN go install github.com/dimroc/urbanevents/cityservice/city
 
-ENTRYPOINT /go/bin/cityservice
+ENTRYPOINT /go/bin/cityrecorder
