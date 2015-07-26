@@ -19,5 +19,3 @@ RUN gpm
 RUN go install github.com/dimroc/urbanevents/cityservice
 
 ENTRYPOINT /go/bin/cityservice
-
-EXPOSE 58080
