@@ -9,6 +9,7 @@ namespace :es do
       paris: "assets/neighborhoods/paris.geojson",
       losangeles: "assets/neighborhoods/los-angeles-county.geojson",
       miami: "assets/neighborhoods/miami.geojson",
+      austin: "assets/neighborhoods/austin.geojson",
     }
 
     assignments.each do |city, glob_path|
