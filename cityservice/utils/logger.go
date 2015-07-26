@@ -11,7 +11,7 @@ var (
 )
 
 func newLogger() *logging.Logger {
-	newLogger := logging.MustGetLogger("cityrecorder")
+	newLogger := logging.MustGetLogger("citylib")
 	format := logging.MustStringFormatter(
 		"%{color}%{level} [%{shortfunc}] %{color:reset}%{message}",
 	)

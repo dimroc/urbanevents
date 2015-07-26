@@ -1,8 +1,8 @@
-package cityrecorder_test
+package citylib_test
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
-	"github.com/dimroc/urbanevents/cityservice/mock_cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
+	"github.com/dimroc/urbanevents/cityservice/mock_citylib"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
@@ -17,11 +17,11 @@ func TestInstagramLinkEnrich(t *testing.T) {
 		defer mockCtrl.Finish()
 
 		media := &Fixture.GetInstagramMedia()[0]
-		mediaRetriever := mock_cityrecorder.NewMockMediaRetriever(mockCtrl)
+		mediaRetriever := mock_citylib.NewMockMediaRetriever(mockCtrl)
 		mediaRetriever.EXPECT().GetShortcode("47N0xct3-P").Return(media, nil)
 
 		Convey("there should be returned neighborhoods", func() {
-			enricher := cityrecorder.NewInstagramLinkEnricherWithMediaRetriever(mediaRetriever)
+			enricher := citylib.NewInstagramLinkEnricherWithMediaRetriever(mediaRetriever)
 			newGeo := enricher.Enrich(geoevent)
 
 			So(geoevent.MediaType, ShouldEqual, "text")

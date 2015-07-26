@@ -1,4 +1,4 @@
-package cityrecorder
+package citylib
 
 import (
 	ig "github.com/dimroc/go-instagram/instagram"

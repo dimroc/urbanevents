@@ -1,7 +1,7 @@
-package cityrecorder_test
+package citylib_test
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	//. "github.com/dimroc/urbanevents/cityservice/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
@@ -15,7 +15,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 			tweet := Fixture.GetPoiTweet()
 
 			Convey("it should create a geoevent", func() {
-				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+				geoevent, err := citylib.NewGeoEventFromTweet(city, tweet)
 
 				So(err, ShouldBeNil)
 				So(geoevent.LocationType, ShouldEqual, "poi")
@@ -28,7 +28,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 			tweet := Fixture.GetCoordinateTweet()
 
 			Convey("it should create a geoevent", func() {
-				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+				geoevent, err := citylib.NewGeoEventFromTweet(city, tweet)
 
 				So(err, ShouldBeNil)
 				So(geoevent.LocationType, ShouldEqual, "coordinate")
@@ -40,7 +40,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 			tweet := Fixture.GetVideoTweet()
 
 			Convey("it should create a geoevent", func() {
-				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+				geoevent, err := citylib.NewGeoEventFromTweet(city, tweet)
 
 				So(err, ShouldBeNil)
 				So(geoevent.MediaType, ShouldEqual, "video")
@@ -53,7 +53,7 @@ func TestNewGeoEventFromTweet(t *testing.T) {
 			tweet := Fixture.GetInstagramTweet()
 
 			Convey("it should create a text geoevent", func() {
-				geoevent, err := cityrecorder.NewGeoEventFromTweet(city, tweet)
+				geoevent, err := citylib.NewGeoEventFromTweet(city, tweet)
 
 				So(err, ShouldBeNil)
 				So(geoevent.MediaType, ShouldEqual, "text")

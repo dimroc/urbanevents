@@ -1,16 +1,16 @@
 package main
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"os"
 )
 
 func main() {
-	recorder := cityrecorder.NewInstagramRecorder(
+	recorder := citylib.NewInstagramRecorder(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
-		cityrecorder.StdoutWriter,
+		citylib.StdoutWriter,
 		nil,
 	)
 
@@ -19,7 +19,7 @@ func main() {
 	printExistingSubscriptions(recorder)
 }
 
-func printExistingSubscriptions(recorder *cityrecorder.InstagramRecorder) {
+func printExistingSubscriptions(recorder *citylib.InstagramRecorder) {
 	Logger.Debug("Existing Subscriptions:")
 	subscriptions := recorder.GetSubscriptions()
 	for _, subscription := range subscriptions {

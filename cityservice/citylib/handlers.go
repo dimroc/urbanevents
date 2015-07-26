@@ -1,7 +1,6 @@
-package main
+package citylib
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/unrolled/render"
@@ -33,25 +32,25 @@ func CityHandler(w http.ResponseWriter, req *http.Request) {
 	r.JSON(w, http.StatusOK, city.GetDetails(GetElasticConnection(req)))
 }
 
-func GetCity(req *http.Request) cityrecorder.City {
+func GetCity(req *http.Request) City {
 	vars := mux.Vars(req)
 	cityKey := vars["city"]
 	settings := GetSettings(req)
 	return settings.FindCity(cityKey)
 }
 
-func GetSettings(req *http.Request) cityrecorder.Settings {
+func GetSettings(req *http.Request) Settings {
 	if rv := context.Get(req, CTX_SETTINGS_KEY); rv != nil {
-		return rv.(cityrecorder.Settings)
+		return rv.(Settings)
 	}
 
 	log.Panic("Could not retrieve Settings")
-	return cityrecorder.Settings{}
+	return Settings{}
 }
 
-func GetElasticConnection(req *http.Request) cityrecorder.Elastic {
+func GetElasticConnection(req *http.Request) Elastic {
 	if rv := context.Get(req, CTX_ELASTIC_CONNECTION_KEY); rv != nil {
-		return rv.(cityrecorder.Elastic)
+		return rv.(Elastic)
 	}
 
 	log.Panic("Could not retrieve Elastic Connection")

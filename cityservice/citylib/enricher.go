@@ -1,4 +1,4 @@
-package cityrecorder
+package citylib
 
 type Enricher interface {
 	Enrich(g GeoEvent) GeoEvent

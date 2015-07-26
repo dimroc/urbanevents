@@ -1,10 +1,10 @@
-package cityrecorder_test
+package citylib_test
 
 import (
 	"encoding/json"
 	"github.com/dimroc/anaconda"
 	ig "github.com/dimroc/go-instagram/instagram"
-	. "github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	. "github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
 	"log"

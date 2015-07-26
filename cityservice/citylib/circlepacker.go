@@ -1,4 +1,4 @@
-package cityrecorder
+package citylib
 
 import (
 	geo "github.com/kellydunn/golang-geo"

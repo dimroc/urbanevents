@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	"github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"os"
@@ -17,18 +17,18 @@ func main() {
 	flag.Parse()
 	utils.ValidateFlags([]string{"settings"})
 
-	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
-	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
-	frenchEnricher := cityrecorder.NewFrenchEnricher()
-	gramEnricher := cityrecorder.NewInstagramLinkEnricher(
+	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	hoodEnricher := citylib.NewHoodEnricher(elastic)
+	frenchEnricher := citylib.NewFrenchEnricher()
+	gramEnricher := citylib.NewInstagramLinkEnricher(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
 		os.Getenv("INSTAGRAM_CLIENT_ACCESS_TOKEN"),
 	)
 
-	broadcastEnricher := cityrecorder.NewBroadcastEnricher(hoodEnricher, frenchEnricher, gramEnricher)
+	broadcastEnricher := citylib.NewBroadcastEnricher(hoodEnricher, frenchEnricher, gramEnricher)
 
-	recorder := cityrecorder.NewTwitterRecorder(
+	recorder := citylib.NewTwitterRecorder(
 		os.Getenv("TWITTER_CONSUMER_KEY"),
 		os.Getenv("TWITTER_CONSUMER_SECRET"),
 		os.Getenv("TWITTER_TOKEN"),
@@ -36,7 +36,7 @@ func main() {
 		broadcastEnricher,
 	)
 
-	settings, err := cityrecorder.LoadSettings(*settingsFilename)
+	settings, err := citylib.LoadSettings(*settingsFilename)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -45,7 +45,7 @@ func main() {
 	wg.Add(1)
 
 	for _, city := range settings.Cities {
-		go recorder.Record(city, cityrecorder.StdoutWriter)
+		go recorder.Record(city, citylib.StdoutWriter)
 	}
 
 	wg.Wait()

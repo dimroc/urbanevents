@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gorilla/mux"
 	"log"
@@ -19,12 +19,12 @@ var (
 func main() {
 	flag.Parse()
 	ValidateFlags([]string{"settings", "baseurl"})
-	elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
-	hoodEnricher := cityrecorder.NewHoodEnricher(elastic)
-	recorder := cityrecorder.NewInstagramRecorder(
+	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	hoodEnricher := citylib.NewHoodEnricher(elastic)
+	recorder := citylib.NewInstagramRecorder(
 		os.Getenv("INSTAGRAM_CLIENT_ID"),
 		os.Getenv("INSTAGRAM_CLIENT_SECRET"),
-		cityrecorder.StdoutWriter,
+		citylib.StdoutWriter,
 		hoodEnricher,
 	)
 
@@ -32,7 +32,7 @@ func main() {
 	recorder.DeleteAllSubscriptions()
 	printExistingSubscriptions(recorder)
 
-	settings, err := cityrecorder.LoadSettings(*settingsFilename)
+	settings, err := citylib.LoadSettings(*settingsFilename)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -52,7 +52,7 @@ func main() {
 	wg.Wait()
 }
 
-func printExistingSubscriptions(recorder *cityrecorder.InstagramRecorder) {
+func printExistingSubscriptions(recorder *citylib.InstagramRecorder) {
 	Logger.Debug("Existing Subscriptions:")
 	subscriptions := recorder.GetSubscriptions()
 	for _, subscription := range subscriptions {

@@ -1,4 +1,4 @@
-package cityrecorder
+package citylib
 
 import (
 	"fmt"
@@ -8,14 +8,6 @@ import (
 	"net"
 	"net/url"
 	"os"
-)
-
-var (
-	ES_IndexName = os.Getenv("GO_ENV") + "-geoevents-write"
-)
-
-const (
-	ES_TypeName string = "geoevent"
 )
 
 type Elastic interface {

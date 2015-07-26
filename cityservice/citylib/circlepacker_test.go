@@ -1,7 +1,7 @@
-package cityrecorder_test
+package citylib_test
 
 import (
-	cr "github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	cr "github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )

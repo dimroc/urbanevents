@@ -1,7 +1,7 @@
-package cityrecorder_test
+package citylib_test
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	//. "github.com/dimroc/urbanevents/cityservice/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
@@ -17,7 +17,7 @@ func TestTryCollapseEmptyBoundingBox(t *testing.T) {
 			So(newgeojson.Type, ShouldEqual, "Point")
 
 			shape := newgeojson.GenerateShape()
-			point := shape.(*cityrecorder.Point)
+			point := shape.(*citylib.Point)
 			expectation := [2]float64{-74.00432554645808, 40.74185267627071}
 			So(point.Coordinates, ShouldEqual, expectation)
 		})

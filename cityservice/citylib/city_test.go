@@ -1,7 +1,7 @@
-package cityrecorder_test
+package citylib_test
 
 import (
-	"github.com/dimroc/urbanevents/cityservice/cityrecorder"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
 	//. "github.com/dimroc/urbanevents/cityservice/utils"
 	. "github.com/smartystreets/goconvey/convey"
 	"os"
@@ -11,7 +11,7 @@ import (
 
 func TestIntegrationGetDetails(t *testing.T) {
 	Convey("Given a populated elasticsearch", t, func() {
-		elastic := cityrecorder.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 		defer elastic.Connection.Close()
 		for index, geoevent := range Fixture.GeoEvents {
 			geoevent.CreatedAt = time.Now().AddDate(0, 0, -index)
