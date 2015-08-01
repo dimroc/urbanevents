@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo 'starting web watcher'
-gulp watch
+CITYSERVICE_URL=http://localhost:58080 gulp watch
