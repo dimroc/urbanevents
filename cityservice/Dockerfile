@@ -19,4 +19,5 @@ RUN gpm
 RUN go install github.com/dimroc/urbanevents/cityservice/cityrecorder
 #RUN go install github.com/dimroc/urbanevents/cityservice/city
 
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityservice/cityrecorder
 ENTRYPOINT /go/bin/cityrecorder

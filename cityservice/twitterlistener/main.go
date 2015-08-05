@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	settingsFilename = flag.String("settings", "config/nyc.json", "Path to the settings file")
+	settingsFilename = flag.String("settings", "../config/nyc.json", "Path to the settings file")
 )
 
 func main() {
