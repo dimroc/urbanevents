@@ -30,6 +30,5 @@ func GetBaseUrl() string {
 		}
 	}
 
-	Logger.Debug("Returning Base URL: %s", baseUrl)
 	return baseUrl
 }

@@ -73,7 +73,7 @@ func (recorder *InstagramRecorder) GetSubscriptions() []ig.Realtime {
 func (recorder *InstagramRecorder) Subscribe(baseUrl string, cities []City) {
 	//lat, lng string, radius int, callbackURL, verifyToken string
 	for _, city := range cities {
-		Logger.Notice("Subscribing to instagram for city: %s", city.Key)
+		Logger.Notice("Subscribing to instagram for city %s with url %s", city.Key, baseUrl+city.Key)
 
 		for _, circle := range city.Circles {
 			// Using the circle packer generated circles, register each circle for that city via instagram.
