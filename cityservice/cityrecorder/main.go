@@ -19,7 +19,7 @@ var (
 )
 
 func main() {
-	Logger.Info("Running in " + GO_ENV + " with settings " + settingsFilename)
+	Logger.Info("Running in " + GO_ENV + " with settings " + settingsFilename + " and base url: " + GetBaseUrl())
 	settings, settingsErr := citylib.LoadSettings(settingsFilename)
 	Check(settingsErr)
 
@@ -72,7 +72,7 @@ func main() {
 	apiRoutes.HandleFunc("/cities/{city}", citylib.CityHandler).Methods("GET")
 	apiRoutes.Handle("/callbacks/instagram/{city}", instagramRecorder).Methods("GET", "POST")
 
-	if instagramEnabled() {
+	if instagramEnabled() && len(GetBaseUrl()) > 0 {
 		timer := time.NewTimer(time.Second)
 		go func() {
 			<-timer.C
@@ -81,6 +81,8 @@ func main() {
 			instagramRecorder.DeleteAllSubscriptions()
 			instagramRecorder.Subscribe(GetBaseUrl()+"/api/v1/callbacks/instagram/", settings.Cities)
 		}()
+	} else if len(GetBaseUrl()) == 0 {
+		Logger.Warning("Unable to subscribe to instagram, no base url for callback")
 	}
 
 	n := negroni.Classic()
