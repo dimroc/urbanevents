@@ -47,7 +47,7 @@ func (enricher *instagramLinkEnricher) Enrich(g GeoEvent) GeoEvent {
 		Logger.Debug("Retrieving IG media with shortcode: %s", shortcode)
 		media, err := enricher.mediaRetriever.GetShortcode(shortcode)
 		if err != nil {
-			Logger.Warning("Could not enrich geoevent with ig media from %s: %s", g.ExpandedUrl, err)
+			Logger.Warning("Could not enrich geoevent with ig media from %s: %s", g.ExpandedUrl, err.Error())
 		} else {
 			newGeo := g
 			newGeo.MediaType = media.Type
