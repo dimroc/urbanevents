@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export CITYSERVICE_INSTAGRAM=false
+cd cityservice/cityrecorder
+fresh
+
