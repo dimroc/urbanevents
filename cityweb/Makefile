@@ -1,17 +1,17 @@
 BIN = $(GOPATH)/bin
 NODE_BIN = $(shell npm bin)
 PID = .pid
-GO_FILES = $(filter-out src/app/server/bindata.go, $(shell find src/app -type f -name "*.go"))
-BINDATA = src/app/server/bindata.go
-BINDATA_FLAGS = -pkg=server -prefix=src/app/server/data
-BUNDLE = src/app/server/data/static/build/bundle.js
-APP = $(shell find src/app/client -type f)
+GO_FILES = $(filter-out app/server/bindata.go, $(shell find app -type f -name "*.go"))
+BINDATA = app/server/bindata.go
+BINDATA_FLAGS = -pkg=server -prefix=app/server/data
+BUNDLE = app/server/data/static/build/bundle.js
+APP = $(shell find app/client -type f)
 
 build: clean $(BIN)/app
 
 clean:
-	@rm -rf src/app/server/data/static/build/*
-	@rm -rf src/app/server/data/bundle.server.js
+	@rm -rf app/server/data/static/build/*
+	@rm -rf app/server/data/bundle.server.js
 	@rm -rf $(BINDATA)
 	@echo cleaned
 
@@ -39,9 +39,9 @@ restart: $(BINDATA)
 	@$(BIN)/app run & echo $$! > $(PID)
 
 $(BINDATA):
-	$(BIN)/go-bindata $(BINDATA_FLAGS) -o=$@ src/app/server/data/...
+	$(BIN)/go-bindata $(BINDATA_FLAGS) -o=$@ app/server/data/...
 
 lint:
-	@eslint src/app/client || true
-	@golint $(filter-out src/app/main.go, $(GO_FILES)) || true
+	@eslint app/client || true
+	@golint $(filter-out app/main.go, $(GO_FILES)) || true
 	@golint -min_confidence=1 app

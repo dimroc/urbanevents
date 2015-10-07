@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/server"
+	"github.com/dimroc/urbanevents/cityweb/app/server"
 	"fmt"
 	"os"
 	"runtime"
