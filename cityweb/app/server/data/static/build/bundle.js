@@ -30587,7 +30587,7 @@
 	          title: 'Home page',
 	          meta: [{
 	            property: 'og:title',
-	            content: 'Golang Isomorphic React/Hot Reloadable/Flummox/Css-Module Starter Kit'
+	            content: 'New Tweet City Media Search'
 	          }] }),
 	        _react2['default'].createElement(
 	          'h1',
