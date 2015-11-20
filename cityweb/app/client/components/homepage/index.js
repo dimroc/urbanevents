@@ -13,7 +13,7 @@ export default class Homepage extends Component {
   render() {
     return <div>
       <Helmet
-        title='Home page'
+        title='New Tweet City'
         meta={[
           {
             property: 'og:title',

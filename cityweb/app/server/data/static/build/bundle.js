@@ -30584,7 +30584,7 @@
 	        'div',
 	        null,
 	        _react2['default'].createElement(_reactHelmet2['default'], {
-	          title: 'Home page',
+	          title: 'New Tweet City',
 	          meta: [{
 	            property: 'og:title',
 	            content: 'New Tweet City Media Search'
