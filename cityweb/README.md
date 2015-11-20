@@ -1,6 +1,6 @@
-# CityWeb 
+# CityWeb
 
-Built off of go-starter-kit primarily to have an isomorphic react server out of the box.
+Built off of go-starter-kit primarily to have a hot reloadable isomorphic react server out of the box.
 
 Install fswatch:
 
@@ -8,8 +8,18 @@ Install fswatch:
 brew install fswatch
 ```
 
-See below for instructions on getting set up, especially `install`.
+Run server:
 
+``bash
+make serve
+```
+
+The following URLs are available:
+
+1. http://localhost:5000 - Directly hits Golang server.
+2. http://localhost:5001 - Navigates to webpack dev server that supports hot module reloading (HMR).
+
+See below for instructions on getting set up, especially `install`.
 
 
 # go-starter-kit
