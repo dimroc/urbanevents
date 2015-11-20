@@ -21,7 +21,6 @@ The following URLs are available:
 
 See below for instructions on getting set up, especially `install`.
 
-
 # go-starter-kit
 
 [![Join the chat at https://gitter.im/olebedev/go-starter-kit](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/olebedev/go-starter-kit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -86,12 +85,4 @@ that's it. Open [http://localhost:5001/](http://localhost:5001/) at your browser
 ## Build
 
 Install dependencies and just type `NODE_ENV=production make build`. This rule is producing webpack build and regular golang build after that. Result you can find at `$GOPATH/bin`.
-
-
-
-
-
-
-
-
 
