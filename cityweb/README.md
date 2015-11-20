@@ -17,7 +17,7 @@ make serve
 The following URLs are available:
 
 1. http://localhost:5000 - Directly hits Golang server.
-2. http://localhost:5001 - Navigates to webpack dev server that supports hot module reloading (HMR).
+2. http://localhost:5001 - Navigates to webpack dev server that supports [hot module reloading (HMR)](https://webpack.github.io/docs/hot-module-replacement-with-webpack.html).
 
 See below for instructions on getting set up, especially `install`.
 
