@@ -6,6 +6,8 @@ BINDATA = app/server/bindata.go
 BINDATA_FLAGS = -pkg=server -prefix=app/server/data
 BUNDLE = app/server/data/static/build/bundle.js
 APP = $(shell find app/client -type f)
+
+# Addition: Introduced GO_APP path
 GO_APP = github.com/dimroc/urbanevents/cityweb/app
 
 build: clean $(BIN)/app
@@ -20,10 +22,7 @@ $(BUNDLE): $(APP)
 	@$(NODE_BIN)/webpack --progress --colors
 
 $(BIN)/app: $(BUNDLE) $(BINDATA)
-	#echo $(GO_APP)
-	#@go install -ldflags "-w -X main.buildstamp `date -u '+%Y-%m-%d_%I:%M:%S%p'` -X main.gittag `git describe --tags || true` -X main.githash `git rev-parse HEAD || true`" $(GO_APP)
-	@go install $(GO_APP)
-	#echo done
+	@go install $(GO_APP) # Swapped in GO_APP instead of app
 
 kill:
 	@kill `cat $(PID)` || true
@@ -39,7 +38,7 @@ serve: clean $(BUNDLE)
 restart: BINDATA_FLAGS += -debug
 restart: $(BINDATA)
 	@make kill
-	@go install $(GO_APP)
+	@go install $(GO_APP) # Swapped in GO_APP instead of app
 	@$(BIN)/app run & echo $$! > $(PID)
 
 $(BINDATA):
