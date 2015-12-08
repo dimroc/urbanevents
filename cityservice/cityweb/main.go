@@ -12,10 +12,6 @@ import (
 	"os"
 )
 
-const (
-	CTX_ELASTIC_CONNECTION_KEY = "city.elasticconnection"
-)
-
 var (
 	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "../config/nyc.json")
 )
