@@ -2,7 +2,7 @@ package citylib
 
 import (
 	"fmt"
-	elastigo "github.com/dimroc/elastigo/lib"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net"
@@ -105,19 +105,20 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 
 // Bulk Elastic
 // Shit don't work. Silently fails after around a day of usage. gg BulkIndexer.
-type BulkElasticConnection struct {
-	*ElasticConnection
-	BulkIndexer *elastigo.BulkIndexer
-}
+// Probably related to: https://github.com/mattbaird/elastigo/commit/0c98885a2b2575c99882263dfc4bf6aae9079a63
+//type BulkElasticConnection struct {
+	//*ElasticConnection
+	//BulkIndexer *elastigo.BulkIndexer
+//}
 
-func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
-	elastic := NewElasticConnection(elasticsearchUrl)
-	bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
-	bulkIndexer.Start()
+//func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
+	//elastic := NewElasticConnection(elasticsearchUrl)
+	//bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
+	//bulkIndexer.Start()
 
-	return &BulkElasticConnection{elastic, bulkIndexer}
-}
+	//return &BulkElasticConnection{elastic, bulkIndexer}
+//}
 
-func (e *BulkElasticConnection) Write(g GeoEvent) error {
-	return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
-}
+//func (e *BulkElasticConnection) Write(g GeoEvent) error {
+	//return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
+//}
