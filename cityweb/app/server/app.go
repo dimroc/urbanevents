@@ -1,10 +1,17 @@
 package server
 
 import (
+  "os"
 	"github.com/elazarl/go-bindata-assetfs"
+  "github.com/dimroc/urbanevents/cityservice/citylib"
+  . "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/nu7hatch/gouuid"
 	"github.com/olebedev/config"
+)
+
+var (
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/nyc.json")
 )
 
 // App struct.
@@ -70,6 +77,19 @@ func NewApp(opts ...AppOptions) *App {
 	// and middlewares
 	app.Engine.Use(func(c *gin.Context) {
 		c.Set("app", app)
+	})
+
+  // Assign settings
+	settings, settingsErr := citylib.LoadSettings(settingsFilename)
+	Check(settingsErr)
+	app.Engine.Use(func(c *gin.Context) {
+		c.Set(citylib.CTX_SETTINGS_KEY, settings)
+	})
+
+  // Assign Elasticsearch Connection
+	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	app.Engine.Use(func(c *gin.Context) {
+		c.Set(citylib.CTX_ELASTIC_CONNECTION_KEY, elastic)
 	})
 
 	// Avoid favicon react handling
