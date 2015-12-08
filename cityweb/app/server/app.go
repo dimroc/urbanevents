@@ -1,13 +1,13 @@
 package server
 
 import (
-  "os"
+	"github.com/dimroc/urbanevents/cityservice/citylib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/elazarl/go-bindata-assetfs"
-  "github.com/dimroc/urbanevents/cityservice/citylib"
-  . "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/nu7hatch/gouuid"
 	"github.com/olebedev/config"
+	"os"
 )
 
 var (
@@ -79,15 +79,16 @@ func NewApp(opts ...AppOptions) *App {
 		c.Set("app", app)
 	})
 
-  // Assign settings
+	// Assign settings
 	settings, settingsErr := citylib.LoadSettings(settingsFilename)
 	Check(settingsErr)
 	app.Engine.Use(func(c *gin.Context) {
 		c.Set(citylib.CTX_SETTINGS_KEY, settings)
 	})
 
-  // Assign Elasticsearch Connection
+	// Assign Elasticsearch Connection
 	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	elastic.SetRequestTracer(RequestTracer)
 	app.Engine.Use(func(c *gin.Context) {
 		c.Set(citylib.CTX_ELASTIC_CONNECTION_KEY, elastic)
 	})

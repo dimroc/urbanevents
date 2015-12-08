@@ -14,6 +14,7 @@ type Elastic interface {
 	Writer
 	Close()
 	Search(query string) elastigo.SearchResult
+	SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult
 	Percolate(geojson GeoJson) []string
 }
 
@@ -33,9 +34,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	}
 
 	u, err := url.Parse(elasticsearchUrl)
-	if err != nil {
-		log.Panic(err)
-	}
+	Check(err)
 
 	connection := elastigo.NewConn()
 
@@ -77,10 +76,13 @@ func (e *ElasticConnection) Write(g GeoEvent) error {
 
 func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	out, err := e.Connection.Search(ES_IndexName, ES_TypeName, nil, query)
-	if err != nil {
-		log.Panic(err)
-	}
+	Check(err)
+	return out
+}
 
+func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult {
+	out, err := query.Result(e.Connection)
+	Check(err)
 	return out
 }
 
