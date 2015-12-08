@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/nyc.json")
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/cityweb.json")
 )
 
 // App struct.
