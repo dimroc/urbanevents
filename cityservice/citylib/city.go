@@ -3,9 +3,14 @@ package citylib
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	elastigo "github.com/mattbaird/elastigo/lib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"strings"
 	"time"
+)
+
+const (
+  CITY_QUERY_SIZE = "25"
 )
 
 type City struct {
@@ -42,6 +47,20 @@ type CityCounts struct {
 	TweetCounts     []int       `json:"tweetCounts"`
 	InstagramCounts []int       `json:"instagramCounts"`
 	Days            []time.Time `json:"days"`
+}
+
+func (c *City) Query(e Elastic, term string) []GeoEvent {
+	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
+		elastigo.Filter().Term("city", c.Key),
+	).Query(
+		elastigo.Query().Search("soccer"),
+  ).Sort(
+    elastigo.Sort("createdAt").Desc(),
+  )
+
+	out := e.SearchDsl(*dsl)
+
+	return GeoEventsFromElasticSearch(out)
 }
 
 func (c *City) GetDetails(e Elastic) CityDetails {
@@ -102,10 +121,7 @@ func (c *City) retrieveStats(e Elastic, daysBack int) ([]int, []int, []time.Time
 	response := aggregationResult{}
 
 	err := json.Unmarshal(out.Aggregations, &response)
-	if err != nil {
-		log.Panic(err)
-	}
-
+	Check(err)
 	return response.GetCountsAndDays()
 }
 

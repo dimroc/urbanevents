@@ -13,11 +13,11 @@ export default class Homepage extends Component {
   render() {
     return <div>
       <Helmet
-        title='Home page'
+        title='New Tweet City'
         meta={[
           {
             property: 'og:title',
-            content: 'Golang Isomorphic React/Hot Reloadable/Flummox/Css-Module Starter Kit'
+            content: 'New Tweet City Media Search'
           }
         ]} />
       <h1 className={example}>

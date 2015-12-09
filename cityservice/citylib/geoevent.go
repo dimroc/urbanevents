@@ -3,6 +3,7 @@ package citylib
 import (
 	"encoding/json"
 	"fmt"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"strings"
@@ -35,6 +36,22 @@ type GeoEvent struct {
 type GeoJson struct {
 	Type           string           `json:"type"`
 	CoordinatesRaw *json.RawMessage `json:"coordinates"` // Coordinate always has to have exactly 2 values
+}
+
+func GeoEventsFromElasticSearch(result *elastigo.SearchResult) []GeoEvent {
+	response := []GeoEvent{}
+
+	for _, hit := range result.Hits.Hits {
+		geoevent := GeoEvent{}
+		err := json.Unmarshal(*hit.Source, &geoevent)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		response = append(response, geoevent)
+	}
+
+	return response
 }
 
 func (g GeoJson) Center() [2]float64 {
