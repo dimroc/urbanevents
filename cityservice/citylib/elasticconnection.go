@@ -2,8 +2,8 @@ package citylib
 
 import (
 	"fmt"
-	elastigo "github.com/mattbaird/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	"log"
 	"net"
 	"net/url"
@@ -107,18 +107,18 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 // Shit don't work. Silently fails after around a day of usage. gg BulkIndexer.
 // Probably related to: https://github.com/mattbaird/elastigo/commit/0c98885a2b2575c99882263dfc4bf6aae9079a63
 //type BulkElasticConnection struct {
-	//*ElasticConnection
-	//BulkIndexer *elastigo.BulkIndexer
+//*ElasticConnection
+//BulkIndexer *elastigo.BulkIndexer
 //}
 
 //func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
-	//elastic := NewElasticConnection(elasticsearchUrl)
-	//bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
-	//bulkIndexer.Start()
+//elastic := NewElasticConnection(elasticsearchUrl)
+//bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
+//bulkIndexer.Start()
 
-	//return &BulkElasticConnection{elastic, bulkIndexer}
+//return &BulkElasticConnection{elastic, bulkIndexer}
 //}
 
 //func (e *BulkElasticConnection) Write(g GeoEvent) error {
-	//return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
+//return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
 //}

@@ -3,14 +3,14 @@ package citylib
 import (
 	"encoding/json"
 	"fmt"
-	elastigo "github.com/mattbaird/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	"strings"
 	"time"
 )
 
 const (
-  CITY_QUERY_SIZE = "25"
+	CITY_QUERY_SIZE = "25"
 )
 
 type City struct {
@@ -54,9 +54,9 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 		elastigo.Filter().Term("city", c.Key),
 	).Query(
 		elastigo.Query().Search("soccer"),
-  ).Sort(
-    elastigo.Sort("createdAt").Desc(),
-  )
+	).Sort(
+		elastigo.Sort("createdAt").Desc(),
+	)
 
 	out := e.SearchDsl(*dsl)
 
