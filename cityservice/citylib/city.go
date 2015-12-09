@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+  CITY_QUERY_SIZE = "25"
+)
+
 type City struct {
 	Key         string      `json:"key"`
 	Display     string      `json:"display"`
@@ -46,11 +50,13 @@ type CityCounts struct {
 }
 
 func (c *City) Query(e Elastic, term string) []GeoEvent {
-	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Pretty().Filter(
+	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
 		elastigo.Filter().Term("city", c.Key),
 	).Query(
 		elastigo.Query().Search("soccer"),
-	)
+  ).Sort(
+    elastigo.Sort("createdAt").Desc(),
+  )
 
 	out := e.SearchDsl(*dsl)
 
