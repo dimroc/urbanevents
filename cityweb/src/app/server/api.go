@@ -14,10 +14,10 @@ type API struct{}
 // Bind attaches api routes
 func (api *API) Bind(group *echo.Group) {
 	group.Get("/v1/conf", api.ConfHandler)
-	group.GET("/v1/settings", api.SettingsHandler)
-	group.GET("/v1/cities", api.CitiesHandler)
-	group.GET("/v1/cities/:city", api.CityHandler)
-	group.GET("/v1/cities/:city/search", api.CitySearchHandler)
+	group.Get("/v1/settings", api.SettingsHandler)
+	group.Get("/v1/cities", api.CitiesHandler)
+	group.Get("/v1/cities/:city", api.CityHandler)
+	group.Get("/v1/cities/:city/search", api.CitySearchHandler)
 }
 
 // ConfHandler handle the app config, for example
@@ -25,16 +25,19 @@ func (api *API) ConfHandler(c *echo.Context) error {
 	app := c.Get("app").(*App)
 	<-time.After(time.Millisecond * 500)
 	c.JSON(200, app.Conf.Root)
+	return nil
 }
 
 func (api *API) SettingsHandler(c *gin.Context) {
 	c.JSON(200, getSettings(c))
+	return nil
 }
 
 func (api *API) CitiesHandler(c *gin.Context) {
 	settings := getSettings(c)
 	elastic := getElasticConnection(c)
 	c.JSON(200, settings.GetCityDetails(elastic))
+	return nil
 }
 
 func (api *API) CityHandler(c *gin.Context) {
@@ -43,6 +46,7 @@ func (api *API) CityHandler(c *gin.Context) {
 	city := settings.FindCity(cityKey)
 	elastic := getElasticConnection(c)
 	c.JSON(200, city.GetDetails(elastic))
+	return nil
 }
 
 func (api *API) CitySearchHandler(c *gin.Context) {
@@ -54,6 +58,7 @@ func (api *API) CitySearchHandler(c *gin.Context) {
 
 	city := settings.FindCity(cityKey)
 	c.JSON(200, city.Query(elastic, query))
+	return nil
 }
 
 func getSettings(c *gin.Context) citylib.Settings {

@@ -90,18 +90,22 @@ func NewApp(opts ...AppOptions) *App {
 		id, _ := uuid.NewV4()
 		c.Set("uuid", id)
 		return nil
+  })
+
 	// Assign settings
 	settings, settingsErr := citylib.LoadSettings(settingsFilename)
 	Check(settingsErr)
-	app.Engine.Use(func(c *gin.Context) {
+	app.Engine.Use(func(c *echo.Context) {
 		c.Set(citylib.CTX_SETTINGS_KEY, settings)
+		return nil
 	})
 
 	// Assign Elasticsearch Connection
 	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	elastic.SetRequestTracer(RequestTracer)
-	app.Engine.Use(func(c *gin.Context) {
+	app.Engine.Use(func(c *echo.Context) {
 		c.Set(citylib.CTX_ELASTIC_CONNECTION_KEY, elastic)
+		return nil
 	})
 
 	// Avoid favicon react handling
