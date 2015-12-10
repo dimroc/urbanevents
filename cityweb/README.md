@@ -8,6 +8,21 @@ Install fswatch:
 brew install fswatch
 ```
 
+Install javascript dependencies:
+
+```
+$ npm i
+```
+
+Install golang dependencies
+
+```
+$ export GOPATH=`pwd` # the most important step, ensure that you do it
+$ export GOBIN=$GOPATH/bin # optional, redefine, if it already was defined
+$ go get app
+$ go get github.com/jteeuwen/go-bindata/...
+```
+
 Run server:
 
 ``bash

@@ -95,7 +95,7 @@ func NewApp(opts ...AppOptions) *App {
 	// Assign settings
 	settings, settingsErr := citylib.LoadSettings(settingsFilename)
 	Check(settingsErr)
-	app.Engine.Use(func(c *echo.Context) {
+	app.Engine.Use(func(c *echo.Context) error {
 		c.Set(citylib.CTX_SETTINGS_KEY, settings)
 		return nil
 	})
@@ -103,7 +103,7 @@ func NewApp(opts ...AppOptions) *App {
 	// Assign Elasticsearch Connection
 	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 	elastic.SetRequestTracer(RequestTracer)
-	app.Engine.Use(func(c *echo.Context) {
+	app.Engine.Use(func(c *echo.Context) error {
 		c.Set(citylib.CTX_ELASTIC_CONNECTION_KEY, elastic)
 		return nil
 	})

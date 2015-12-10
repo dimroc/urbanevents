@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/dimroc/urbanevents/cityweb/app/server"
+	"github.com/dimroc/urbanevents/cityweb/src/app/server"
 	"os"
 
 	"github.com/codegangsta/cli"

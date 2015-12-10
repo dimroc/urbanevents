@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+	"github.com/labstack/echo"
 	"github.com/dimroc/urbanevents/cityservice/citylib"
 	"log"
 	//. "github.com/dimroc/urbanevents/cityservice/utils"
@@ -28,19 +30,19 @@ func (api *API) ConfHandler(c *echo.Context) error {
 	return nil
 }
 
-func (api *API) SettingsHandler(c *gin.Context) {
+func (api *API) SettingsHandler(c *echo.Context) error {
 	c.JSON(200, getSettings(c))
 	return nil
 }
 
-func (api *API) CitiesHandler(c *gin.Context) {
+func (api *API) CitiesHandler(c *echo.Context) error {
 	settings := getSettings(c)
 	elastic := getElasticConnection(c)
 	c.JSON(200, settings.GetCityDetails(elastic))
 	return nil
 }
 
-func (api *API) CityHandler(c *gin.Context) {
+func (api *API) CityHandler(c *echo.Context) error {
 	cityKey := c.Param("city")
 	settings := getSettings(c)
 	city := settings.FindCity(cityKey)
@@ -49,9 +51,9 @@ func (api *API) CityHandler(c *gin.Context) {
 	return nil
 }
 
-func (api *API) CitySearchHandler(c *gin.Context) {
+func (api *API) CitySearchHandler(c *echo.Context) error {
 	cityKey := c.Param("city")
-	query := c.DefaultQuery("q", "")
+	query := c.Query("q")
 
 	settings := getSettings(c)
 	elastic := getElasticConnection(c)
@@ -61,8 +63,8 @@ func (api *API) CitySearchHandler(c *gin.Context) {
 	return nil
 }
 
-func getSettings(c *gin.Context) citylib.Settings {
-	rv := c.MustGet(citylib.CTX_SETTINGS_KEY)
+func getSettings(c *echo.Context) citylib.Settings {
+	rv := c.Get(citylib.CTX_SETTINGS_KEY)
 	if rv == nil {
 		log.Panic("Could not retrieve Settings")
 		return citylib.Settings{}
@@ -71,8 +73,8 @@ func getSettings(c *gin.Context) citylib.Settings {
 	}
 }
 
-func getElasticConnection(c *gin.Context) *citylib.ElasticConnection {
-	rv := c.MustGet(citylib.CTX_ELASTIC_CONNECTION_KEY).(*citylib.ElasticConnection)
+func getElasticConnection(c *echo.Context) *citylib.ElasticConnection {
+	rv := c.Get(citylib.CTX_ELASTIC_CONNECTION_KEY).(*citylib.ElasticConnection)
 	if rv == nil {
 		log.Panic("Could not retrieve ElasticConnection")
 		return nil

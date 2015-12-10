@@ -53,7 +53,7 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
 		elastigo.Filter().Term("city", c.Key),
 	).Query(
-		elastigo.Query().Search("soccer"),
+		elastigo.Query().Search(term),
 	).Sort(
 		elastigo.Sort("createdAt").Desc(),
 	)
