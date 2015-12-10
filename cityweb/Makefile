@@ -7,8 +7,11 @@ BINDATA = src/app/server/bindata.go
 BINDATA_FLAGS = -pkg=server -prefix=src/app/server/data
 BUNDLE = src/app/server/data/static/build/bundle.js
 APP = $(shell find src/app/client -type f)
+
 # Addition: Introduced GO_APP path
 GO_APP = github.com/dimroc/urbanevents/cityweb/src/app
+# Addition: go files in cityservice
+MORE_GO_FILES = $(shell find ../cityservice -type f -name "*.go")
 
 build: clean $(BIN)/app
 
@@ -32,7 +35,7 @@ serve: clean $(BUNDLE)
 	@make restart
 	@BABEL_ENV=dev node hot.proxy &
 	@$(NODE_BIN)/webpack --watch &
-	@fswatch $(GO_FILES) $(TEMPLATES) | xargs -n1 -I{} make restart || make kill
+	@fswatch $(GO_FILES) $(MORE_GO_FILES) $(TEMPLATES) | xargs -n1 -I{} make restart || make kill
 
 restart: BINDATA_FLAGS += -debug
 restart: $(BINDATA)
