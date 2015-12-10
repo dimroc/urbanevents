@@ -36,9 +36,9 @@ if (process.env.NODE_ENV === 'production') {
 
 var sassLoader = ExtractTextPlugin.extract(
   'style-loader',
-  'css-loader',
-  'autoprefixer-loader',
-  'sass-loader?indentedSyntax=sass&includePaths[]=' + path.resolve(__dirname, './src')
+  'css-loader?module&disableStructuralMinification' +
+  '!autoprefixer-loader' +
+  '!sass-loader?includePaths[]=' + path.resolve(__dirname, './src')
 );
 
 var config  = {
