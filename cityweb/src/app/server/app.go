@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/dimroc/urbanevents/cityservice/citylib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/itsjamie/go-bindata-templates"
 
@@ -12,6 +14,11 @@ import (
 	"github.com/labstack/echo/middleware"
 	"github.com/nu7hatch/gouuid"
 	"github.com/olebedev/config"
+	"os"
+)
+
+var (
+	settingsFilename = GetenvOrDefault("CITYSERVICE_SETTINGS", "config/cityweb.json")
 )
 
 // App struct.
@@ -83,6 +90,18 @@ func NewApp(opts ...AppOptions) *App {
 		id, _ := uuid.NewV4()
 		c.Set("uuid", id)
 		return nil
+	// Assign settings
+	settings, settingsErr := citylib.LoadSettings(settingsFilename)
+	Check(settingsErr)
+	app.Engine.Use(func(c *gin.Context) {
+		c.Set(citylib.CTX_SETTINGS_KEY, settings)
+	})
+
+	// Assign Elasticsearch Connection
+	elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+	elastic.SetRequestTracer(RequestTracer)
+	app.Engine.Use(func(c *gin.Context) {
+		c.Set(citylib.CTX_ELASTIC_CONNECTION_KEY, elastic)
 	})
 
 	// Avoid favicon react handling

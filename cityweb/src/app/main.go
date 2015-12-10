@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app/server"
 	"fmt"
+	"github.com/dimroc/urbanevents/cityweb/app/server"
 	"os"
 
 	"github.com/codegangsta/cli"
