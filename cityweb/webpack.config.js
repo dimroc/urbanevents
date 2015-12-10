@@ -7,7 +7,7 @@ var cssLoader = ExtractTextPlugin.extract(
   'css-loader?module&localIdentName=[name]__[local]___[hash:base64:5]' +
     '&disableStructuralMinification' +
   '!autoprefixer-loader!' +
-  'stylus-loader?paths=app/client/styles/&import=./ctx'
+  'stylus-loader?paths=src/app/client/css/&import=./ctx'
 );
 
 var plugins = [
@@ -30,16 +30,16 @@ if (process.env.NODE_ENV === 'production') {
     'style-loader',
     'css-loader?module&disableStructuralMinification' +
       '!autoprefixer-loader' +
-      '!stylus-loader?paths=app/client/styles/&import=./ctx'
+      '!stylus-loader?paths=src/app/client/css/&import=./ctx'
   );
 };
 
 var config  = {
   entry: {
-    bundle: path.join(__dirname, 'app/client/entry.js')
+    bundle: path.join(__dirname, 'src/app/client/index.js')
   },
   output: {
-    path: path.join(__dirname, 'app/server/data/static/build'),
+    path: path.join(__dirname, 'src/app/server/data/static/build'),
     publicPath: "/static/build/",
     filename: '[name].js'
   },
@@ -51,11 +51,9 @@ var config  = {
       {test: /\.svg$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000!svgo-loader?useConfig=svgo1'},
       {test: /\.(pdf|ico|jpg|eot|otf|woff|ttf|mp4|webm)$/, loader: 'file-loader?name=[name]@[hash].[ext]'},
       {test: /\.json$/, loader: 'json-loader'},
-      // Keep this loader as last, to inject
-      // hot-loader before. See `webpack.hot.config.js`.
       {
         test: /\.jsx?$/,
-        include: path.join(__dirname, 'app/client'),
+        include: path.join(__dirname, 'src/app/client'),
         loaders: ['babel']
       }
     ]
@@ -63,10 +61,9 @@ var config  = {
   resolve: {
     extensions: ['', '.js', '.jsx', '.styl'],
     alias: {
-      '#app': path.join(__dirname, '/app/client'),
-      '#c': path.join(__dirname, '/app/client/components'),
-      '#s': path.join(__dirname, '/app/client/stores'),
-      '#a': path.join(__dirname, '/app/client/actions')
+      '#app': path.join(__dirname, '/src/app/client'),
+      '#c': path.join(__dirname, '/src/app/client/components'),
+      '#css': path.join(__dirname, '/src/app/client/css')
     }
   },
   svgo1: {
