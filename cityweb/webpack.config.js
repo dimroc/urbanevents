@@ -46,6 +46,7 @@ var config  = {
   plugins: plugins,
   module: {
     loaders: [
+      {test: /\.scss$/, loaders: ["style", "css", "sass"] },
       {test: /\.styl$/, loader: cssLoader},
       {test: /\.(png|gif)$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000'},
       {test: /\.svg$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000!svgo-loader?useConfig=svgo1'},
@@ -59,7 +60,7 @@ var config  = {
     ]
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.styl'],
+    extensions: ['', '.js', '.jsx', '.styl', '.scss'],
     alias: {
       '#app': path.join(__dirname, '/src/app/client'),
       '#c': path.join(__dirname, '/src/app/client/components'),
