@@ -50,6 +50,10 @@ type CityCounts struct {
 }
 
 func (c *City) Query(e Elastic, term string) []GeoEvent {
+	if len(term) == 0 {
+		return []GeoEvent{}
+	}
+
 	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
 		elastigo.Filter().Term("city", c.Key),
 	).Query(
