@@ -3,7 +3,7 @@
     "type": "git",
     "name": "github.com/codegangsta/cli",
     "remote": "https://github.com/codegangsta/cli",
-    "commit": "a65b733b303f0055f8d324d805f393cd3e7a7904"
+    "commit": "70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13"
   },
   "github.com/elazarl/go-bindata-assetfs": {
     "type": "git",
@@ -11,17 +11,23 @@
     "remote": "https://github.com/elazarl/go-bindata-assetfs",
     "commit": "d5cac425555ca5cf00694df246e04f05e6a55150"
   },
-  "github.com/gin-gonic/gin": {
+  "github.com/labstack/echo": {
     "type": "git",
-    "name": "github.com/gin-gonic/gin",
-    "remote": "https://github.com/gin-gonic/gin",
-    "commit": "704d690ac0e25fcd060ff82f75f913e879e65a3c"
+    "name": "github.com/labstack/echo",
+    "remote": "https://github.com/labstack/echo.git",
+    "commit": "e48ebd342145c453437176624ea05424585473ce"
+  },
+  "github.com/itsjamie/go-bindata-templates": {
+    "type": "git",
+    "name": "github.com/itsjamie/go-bindata-templates",
+    "remote": "https://github.com/itsjamie/go-bindata-templates",
+    "commit": "65d795d0c74021e19b2ebadf3c83c01a8290a405"
   },
   "github.com/jteeuwen/go-bindata": {
     "type": "git",
     "name": "github.com/jteeuwen/go-bindata",
     "remote": "https://github.com/jteeuwen/go-bindata",
-    "commit": "bfe36d3254337b7cc18024805dfab2106613abdf"
+    "commit": "a0ff2567cfb70903282db057e799fd826784d41d"
   },
   "github.com/manucorporat/sse": {
     "type": "git",
@@ -47,40 +53,40 @@
     "remote": "https://github.com/olebedev/config",
     "commit": "ed583f7fafbccbd73013b0379ab29943ab0da34b"
   },
-  "github.com/olebedev/go-duktape": {
-    "type": "git",
-    "name": "github.com/olebedev/go-duktape",
-    "remote": "https://github.com/olebedev/go-duktape",
-    "commit": "2766ef48563457e8d269036bb7e2f3a02472a15b"
-  },
-  "github.com/olebedev/go-duktape-fetch": {
-    "type": "git",
-    "name": "github.com/olebedev/go-duktape-fetch",
-    "remote": "https://github.com/olebedev/go-duktape-fetch",
-    "commit": "169731eb855e3839585d2cf44711c9dac3434a73"
-  },
   "github.com/parnurzeal/gorequest": {
     "type": "git",
     "name": "github.com/parnurzeal/gorequest",
     "remote": "https://github.com/parnurzeal/gorequest",
-    "commit": "1f4e8242ff000cfd0614a19da3b655be4e347f92"
+    "commit": "8fe8e16b3c50b6cc37399ee385b15f62a20bf584"
   },
   "golang.org/x/net": {
     "type": "git",
     "name": "golang.org/x/net",
     "remote": "https://go.googlesource.com/net",
-    "commit": "db8e4de5b2d6653f66aea53094624468caad15d2"
+    "commit": "c95266fa704a83c2716406ae957772a273e1380d"
   },
   "gopkg.in/bluesuncorp/validator.v5": {
     "type": "git",
     "name": "gopkg.in/bluesuncorp/validator.v5",
     "remote": "https://gopkg.in/bluesuncorp/validator.v5",
-    "commit": "98121ac23ff3d764f525d18d8de944d150e3c0fe"
+    "commit": "d5acf1dac43705f8bfbb71d878e290e2bed3950b"
+  },
+  "gopkg.in/olebedev/go-duktape-fetch.v2": {
+    "type": "git",
+    "name": "gopkg.in/olebedev/go-duktape-fetch.v2",
+    "remote": "https://gopkg.in/olebedev/go-duktape-fetch.v2",
+    "commit": "8a8e07b00d129d7b0875ae65948d4677b4f93902"
+  },
+  "gopkg.in/olebedev/go-duktape.v2": {
+    "type": "git",
+    "name": "gopkg.in/olebedev/go-duktape.v2",
+    "remote": "https://gopkg.in/olebedev/go-duktape.v2",
+    "commit": "de3e8f7b4117bcfbced956b0b6dd2d4fccf1f7c5"
   },
   "gopkg.in/yaml.v2": {
     "type": "git",
     "name": "gopkg.in/yaml.v2",
     "remote": "https://gopkg.in/yaml.v2",
-    "commit": "7ad95dd0798a40da1ccdff6dff35fd177b5edf40"
+    "commit": "53feefa2559fb8dfa8d81baad31be332c97d6c77"
   }
 }
