@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-var cssLoader = ExtractTextPlugin.extract(
+var stylusLoader = ExtractTextPlugin.extract(
   'style-loader',
   'css-loader?module&localIdentName=[name]__[local]___[hash:base64:5]' +
     '&disableStructuralMinification' +
@@ -26,13 +26,20 @@ if (process.env.NODE_ENV === 'production') {
       'process.env': {NODE_ENV: JSON.stringify('production')}
     })
   ]);
-  var cssLoader = ExtractTextPlugin.extract(
+  var stylusLoader = ExtractTextPlugin.extract(
     'style-loader',
     'css-loader?module&disableStructuralMinification' +
       '!autoprefixer-loader' +
       '!stylus-loader?paths=src/app/client/css/&import=./ctx'
   );
 };
+
+var sassLoader = ExtractTextPlugin.extract(
+  'style-loader',
+  'css-loader',
+  'autoprefixer-loader',
+  'sass-loader?indentedSyntax=sass&includePaths[]=' + path.resolve(__dirname, './src')
+);
 
 var config  = {
   entry: {
@@ -46,8 +53,8 @@ var config  = {
   plugins: plugins,
   module: {
     loaders: [
-      {test: /\.scss$/, loaders: ["style", "css", "sass"] },
-      {test: /\.styl$/, loader: cssLoader},
+      {test: /\.scss$/, loader: sassLoader},
+      {test: /\.styl$/, loader: stylusLoader},
       {test: /\.(png|gif)$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000'},
       {test: /\.svg$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000!svgo-loader?useConfig=svgo1'},
       {test: /\.(pdf|ico|jpg|eot|otf|woff|ttf|mp4|webm)$/, loader: 'file-loader?name=[name]@[hash].[ext]'},
