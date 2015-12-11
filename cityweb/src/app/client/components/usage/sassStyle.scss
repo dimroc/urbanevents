@@ -1,7 +1,13 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
 .sassexample {
   color: #096;
   font-size: 40px;
   font-weight: 500;
   max-width: 500;
   margin: 0 auto;
+
+  @media(max-width: $screen-sm-min) {
+    font-size: 20px;
+  }
 }
