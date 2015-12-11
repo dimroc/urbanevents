@@ -5,6 +5,7 @@ import { IndexLink } from 'react-router';
 import { usage, todo } from './styles';
 import { example, p, link } from '../homepage/styles';
 import { setConfig } from '../../actions';
+import { sassexample } from './sassStyle';
 
 class Usage extends Component {
 
@@ -23,7 +24,7 @@ class Usage extends Component {
   render() {
     return <div className={usage}>
       <Helmet title='Usage' />
-      <h2 className={example}>Usage:</h2>
+      <h2 className={sassexample}>Usage:</h2>
       <div className={p}>
         <span className={todo}>// TODO: write an article</span>
         <pre className={todo}>config:

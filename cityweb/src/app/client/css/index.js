@@ -10,4 +10,5 @@ require('./global');
 require('#app/components/app/styles');
 require('#app/components/homepage/styles');
 require('#app/components/usage/styles');
+require('#app/components/usage/sassStyle');
 require('#app/components/not-found/styles');
