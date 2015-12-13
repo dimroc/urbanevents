@@ -8,5 +8,4 @@ require('./global');
  * use `webpack.optimize.DedupePlugin`
  */
 require('#app/components/app/styles');
-require('#app/components/homepage/styles');
 require('#app/components/not-found/styles');

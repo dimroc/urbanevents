@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import { Link } from 'react-router';
-import { example, p, link } from './styles';
 import TopBanner from '#app/components/topbanner';
+import NeighborhoodMap from '#app/components/neighborhoodmap';
+import ResultsGrid from '#app/components/resultsgrid';
 
 export default class Homepage extends Component {
   /*eslint-disable */
@@ -23,9 +24,8 @@ export default class Homepage extends Component {
           }
         ]} />
       <TopBanner />
-      <h1 className={example}>
-        Media Search
-      </h1>
+      <NeighborhoodMap />
+      <ResultsGrid />
     </div>;
   }
 
