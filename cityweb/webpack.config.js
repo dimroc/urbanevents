@@ -59,6 +59,7 @@ var config  = {
       {test: /\.svg$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000!svgo-loader?useConfig=svgo1'},
       {test: /\.(pdf|ico|jpg|eot|otf|woff|ttf|mp4|webm)$/, loader: 'file-loader?name=[name]@[hash].[ext]'},
       {test: /\.json$/, loader: 'json-loader'},
+      {test: /\.js$/, loader:'imports?jQuery=jquery,$=jquery'},
       {
         test: /\.jsx?$/,
         include: path.join(__dirname, 'src/app/client'),
