@@ -59,7 +59,7 @@ export default class TopBanner extends Component {
           value={this.state.q}
           onChange={this.handleQueryChange.bind(this)}
         />
-        <input type="submit" />
+        <input type="submit" tabIndex="1"/>
       </form>
     </div>;
   }
