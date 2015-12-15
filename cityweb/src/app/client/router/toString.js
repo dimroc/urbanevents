@@ -5,6 +5,7 @@ import { match, RoutingContext } from 'react-router';
 import Helmet from 'react-helmet';
 import createRoutes from './routes';
 import { createStore } from '../store';
+import { syncReduxAndRouter } from 'redux-simple-router'
 
 /**
  * Handle HTTP request at Golang server

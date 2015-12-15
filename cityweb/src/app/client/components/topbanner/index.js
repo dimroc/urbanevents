@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { topbanner } from './styles';
 import { createHistory } from 'history';
 import urlParameters from '#app/utils/urlParameters';
+import * as actions from '#app/actions';
 
 export default class TopBanner extends Component {
   /*eslint-disable */
