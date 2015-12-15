@@ -1,10 +1,10 @@
 package server
 
 import (
-	"time"
-	"github.com/labstack/echo"
 	"github.com/dimroc/urbanevents/cityservice/citylib"
+	"github.com/labstack/echo"
 	"log"
+	"time"
 	//. "github.com/dimroc/urbanevents/cityservice/utils"
 )
 

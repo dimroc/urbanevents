@@ -12,7 +12,6 @@ function config(state = {}, action) {
   }
 }
 
-//export default combineReducers({config, geoevents});
 export default combineReducers(Object.assign({}, config, geoevents, {
                                             routing: routeReducer
 }));
