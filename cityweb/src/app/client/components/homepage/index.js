@@ -13,6 +13,10 @@ export default class Homepage extends Component {
   }
   /*eslint-enable */
 
+  /* Change this landing page to a list of cities?
+   * Show a few tiles showing the hearts of the city perhaps as
+   * a jpg or a leaflet map?
+   */
   render() {
     return <div>
       <Helmet
@@ -23,7 +27,7 @@ export default class Homepage extends Component {
             content: 'New Tweet City Media Search'
           }
         ]} />
-      <TopBanner name="nyc"/>
+      <TopBanner cityKey="nyc"/>
       <NeighborhoodMap />
       <ResultsGrid />
     </div>;

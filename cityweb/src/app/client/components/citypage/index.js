@@ -24,7 +24,7 @@ export default class Citypage extends Component {
             content: 'New Tweet City Media Search'
           }
         ]} />
-      <TopBanner name={cityKey}/>
+      <TopBanner cityKey={cityKey}/>
       <NeighborhoodMap />
       <ResultsGrid />
     </div>;

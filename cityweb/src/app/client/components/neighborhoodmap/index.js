@@ -13,8 +13,13 @@ export default class NeighborhoodMap extends Component {
 
   render() {
     return <div className={neighborhoodmap}>
-      <h1>Some Map</h1>
+      <h1>Map for {this.props.cityKey}</h1>
     </div>;
   }
 }
 
+NeighborhoodMap.propTypes = {
+  cityKey: React.PropTypes.string.isRequired
+};
+
+NeighborhoodMap.defaultProps = { cityKey: 'nyc' };
