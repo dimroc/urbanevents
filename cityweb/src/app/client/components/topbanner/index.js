@@ -52,8 +52,9 @@ export default class TopBanner extends Component {
   }
 
   render() {
+    let name = this.props.name;
     return <div className={topbanner}>
-      <h1> New York City </h1>
+      <h1> {name} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
         <input type="text" name="q" placeholder="Enter your search query"
           tabIndex="0"
@@ -66,3 +67,8 @@ export default class TopBanner extends Component {
   }
 }
 
+TopBanner.propTypes = {
+  name: React.PropTypes.string.isRequired
+};
+
+TopBanner.defaultProps = { name: 'nyc' };

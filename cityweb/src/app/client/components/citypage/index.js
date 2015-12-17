@@ -5,7 +5,7 @@ import TopBanner from '#app/components/topbanner';
 import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
 
-export default class Homepage extends Component {
+export default class Citypage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
@@ -14,6 +14,7 @@ export default class Homepage extends Component {
   /*eslint-enable */
 
   render() {
+    let { cityKey } = this.props.params
     return <div>
       <Helmet
         title='New Tweet City'
@@ -23,9 +24,10 @@ export default class Homepage extends Component {
             content: 'New Tweet City Media Search'
           }
         ]} />
-      <TopBanner name="nyc"/>
+      <TopBanner name={cityKey}/>
       <NeighborhoodMap />
       <ResultsGrid />
     </div>;
   }
+
 }
