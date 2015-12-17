@@ -1,6 +1,6 @@
 import { compose, createStore as reduxCreateStore} from 'redux';
 import { devTools, persistState } from 'redux-devtools';
-import rootReducer from './reducers';
+import rootReducer from '#app/reducers/index.js';
 
 let finalCreateStore;
 if (process.env.NODE_ENV === 'production') {

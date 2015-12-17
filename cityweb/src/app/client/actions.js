@@ -15,9 +15,10 @@ export function setConfig(config) {
 
 /* CityWeb Action Types */
 var keyMirror = require('keymirror')
-var actionTypes = {
-  SET_GEOEVENTS: null
-}
+var actionTypes = keyMirror({
+  SET_GEOEVENTS: null,
+  GET_CITIES: null
+})
 
 export const ActionTypes = actionTypes
 
@@ -25,4 +26,8 @@ export const ActionTypes = actionTypes
 
 export function setGeoevents(geoevents) {
   return { type: actionTypes.SET_GEOEVENTS, geoevents };
+}
+
+export function getCities() {
+  return { type: actionTypes.GET_CITIES };
 }

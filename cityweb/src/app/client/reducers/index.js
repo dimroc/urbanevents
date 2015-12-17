@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { routeReducer } from 'redux-simple-router'
-import { SET_CONFIG } from './actions';
-import geoevents from './reducers/geoevents';
+import { SET_CONFIG } from '#app/actions';
+import geoevents from './geoevents';
+import cities from './cities';
 
 function config(state = {}, action) {
   switch (action.type) {
