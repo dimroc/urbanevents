@@ -8,8 +8,6 @@ const initialState = {
 export default function cities(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_CITIES:
-      console.log("Setting Cities", action.cities);
-
       return {
         ...state,
         cities: action.cities
