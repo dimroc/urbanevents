@@ -4,8 +4,8 @@
 package mock_citylib
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	instagram "github.com/dimroc/go-instagram/instagram"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // Mock of MediaRetriever interface

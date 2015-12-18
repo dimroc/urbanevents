@@ -38,7 +38,7 @@ func (api *API) SettingsHandler(c *echo.Context) error {
 func (api *API) CitiesHandler(c *echo.Context) error {
 	settings := getSettings(c)
 	elastic := getElasticConnection(c)
-	c.JSON(200, settings.GetCityDetails(elastic))
+	c.JSON(200, settings.GetCities(elastic))
 	return nil
 }
 

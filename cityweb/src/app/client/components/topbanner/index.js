@@ -5,8 +5,9 @@ import { topbanner } from './styles';
 import { createHistory } from 'history';
 import urlParameters from '#app/utils/urlParameters';
 import * as actions from '#app/actions';
+import { connect } from 'react-redux';
 
-export default class TopBanner extends Component {
+export class TopBanner extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
@@ -16,7 +17,9 @@ export default class TopBanner extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {q: urlParameters('q')};
+    this.state = {
+      q: urlParameters('q')
+    };
   }
 
   handleQueryChange(e) {
@@ -30,7 +33,7 @@ export default class TopBanner extends Component {
 
     // Send request to server
     $.ajax({
-      url: "/api/v1/cities/nyc/search",
+      url: "/api/v1/cities/" + this.props.city.key + "/search",
       data: {q: q},
       dataType: 'json',
       cache: false,
@@ -52,9 +55,9 @@ export default class TopBanner extends Component {
   }
 
   render() {
-    let cityKey = this.props.cityKey;
+    var label = this.props.city ? this.props.city.name : "Select a City";
     return <div className={topbanner}>
-      <h1> {cityKey} </h1>
+      <h1> {label} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
         <input type="text" name="q" placeholder="Enter your search query"
           tabIndex="0"
@@ -72,3 +75,11 @@ TopBanner.propTypes = {
 };
 
 TopBanner.defaultProps = { cityKey: 'nyc' };
+
+function select(state) {
+  return {
+    city: state.cities.current, // But cities is an array newb
+  }
+}
+
+export default connect(select)(TopBanner)

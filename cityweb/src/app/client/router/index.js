@@ -16,8 +16,8 @@ export function run() {
   // init fetch polyfill
   window.self = window;
   require('whatwg-fetch');
-
   const store = createStore(window['--app-initial']);
+  window.store = store;
 
   if (process.env.NODE_ENV !== 'production'){
     store.subscribe(() => {
@@ -41,7 +41,7 @@ export function run() {
     document.body.appendChild(node);
     render(
       <DebugPanel top right bottom>
-        <DevTools store={store} monitor={LogMonitor} visibleOnLoad={false}/>
+        <DevTools store={store} monitor={LogMonitor} visibleOnLoad={true}/>
       </DebugPanel>,
       node
     );

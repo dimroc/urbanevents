@@ -127,13 +127,13 @@ func NewApp(opts ...AppOptions) *App {
 		AssetDir: AssetDir,
 	})
 
-	noJsRender := func(c *echo.Context) error {
-		return c.Render(http.StatusOK, "react.html", resp{
-			UUID:  c.Get("uuid").(*uuid.UUID).String(),
-			Title: "New Tweet City",
-			//Meta: "my meta tags to add at the head of the page",
-		})
-	}
+	//noJsRender := func(c *echo.Context) error {
+	//return c.Render(http.StatusOK, "react.html", resp{
+	//UUID:  c.Get("uuid").(*uuid.UUID).String(),
+	//Title: "New Tweet City",
+	////Meta: "my meta tags to add at the head of the page",
+	//})
+	//}
 
 	// Serve static via bindata and handle via react app
 	// in case when static file was not found
@@ -150,8 +150,8 @@ func NewApp(opts ...AppOptions) *App {
 					return nil
 				}
 				// if static file not found handle request via react application
-				//return app.React.Handle(c)
-				return noJsRender(c)
+				return app.React.Handle(c)
+				//return noJsRender(c)
 			}
 			// Move further if err is not `Not Found`
 			return err

@@ -4,8 +4,10 @@ import { Link } from 'react-router';
 import TopBanner from '#app/components/topbanner';
 import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
+import { setCurrentCity } from '#app/actions';
+import { connect } from 'react-redux';
 
-export default class Homepage extends Component {
+export class Homepage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
@@ -26,10 +28,21 @@ export default class Homepage extends Component {
             property: 'og:title',
             content: 'New Tweet City Media Search'
           }
-        ]} />
-      <TopBanner cityKey="nyc"/>
-      <NeighborhoodMap />
-      <ResultsGrid />
+        ]}
+      />
+      <ul>
+        {this.props.cities.map(function(city) {
+          return <li key={city.key}>{city.display}</li>
+        })}
+      </ul>
     </div>;
   }
 }
+
+function select(state) {
+  return {
+    cities: state.cities.cities
+  }
+}
+
+export default connect(select)(Homepage);

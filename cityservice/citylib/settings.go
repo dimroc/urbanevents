@@ -11,6 +11,10 @@ type Settings struct {
 	lookup map[string]City
 }
 
+func (s *Settings) GetCities(e Elastic) []City {
+	return s.Cities
+}
+
 func (s *Settings) GetCityDetails(e Elastic) []CityDetails {
 	cities := make([]CityDetails, len(s.Cities))
 	for index, city := range s.Cities {

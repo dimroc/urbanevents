@@ -1,11 +1,8 @@
 import { ActionTypes } from '#app/actions'
 
-const initialState = {
-  cities: [],
-  current: null
-}
+const initialState = {}
 
-export default function cityweb(state = initialState, action) {
+export default function cities(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_CITIES:
       console.log("Setting Cities", action.cities);
@@ -16,8 +13,6 @@ export default function cityweb(state = initialState, action) {
       };
 
     case ActionTypes.SET_CURRENT_CITY:
-      if (!state.cities) { return state; }
-
       var city = $.grep(state.cities, function(city) {
         if(city.key == action.cityKey) {
           return city;
@@ -30,6 +25,6 @@ export default function cityweb(state = initialState, action) {
       };
 
     default:
-      return state;
+      return state
   }
 }
