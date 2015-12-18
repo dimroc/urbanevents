@@ -94,7 +94,7 @@ func (r *React) Handle(c *echo.Context) error {
 	return nil
 }
 
-// Resp is a struct for convinient
+// Resp is a struct for convenient
 // react app response parsing.
 // Feel free to add any other keys to this struct
 // and return value for this key at ecmascript side.

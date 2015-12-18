@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
-import { getCitiesAsync } from '#app/actions';
+import { setCities, getCitiesAsync } from '#app/actions';
 
 export default class App extends Component {
-  componentDidMount() {
-    store.dispatch(getCitiesAsync());
-    // todo: hydrate whole application based on URL.
-    // So AFTER getCities succeeds, create state tree based on url.
+  /*eslint-disable */
+  static onEnter({store, nextState, replaceState, callback}) {
+    // Load here any data.
+    fetch('/api/v1/cities').then(function(result) {
+      return result.json();
+    }).then((cities) => {
+      store.dispatch(setCities(cities));
+      callback(); // this call is important, don't forget it
+    });
   }
+  /*eslint-enable */
 
   render() {
     return <div>

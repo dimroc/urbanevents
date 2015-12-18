@@ -5,15 +5,14 @@ import { match, RoutingContext } from 'react-router';
 import Helmet from 'react-helmet';
 import createRoutes from './routes';
 import { createStore } from '../store';
-import { syncReduxAndRouter } from 'redux-simple-router'
 
 /**
  * Handle HTTP request at Golang server
  *
  * @param   {Object}   options  request options
- * @param   {Function} cbk      response callback
+ * @param   {Function} callback response callback
  */
-export default function (options, cbk) {
+export default function (options, callback) {
 
   let result = {
     uuid: options.uuid,
@@ -50,10 +49,10 @@ export default function (options, cbk) {
       } catch (e) {
         result.error = e;
       }
-      return cbk(JSON.stringify(result));
+      return callback(JSON.stringify(result));
     });
   } catch (e) {
     result.error = e;
-    return cbk(JSON.stringify(result));
+    return callback(JSON.stringify(result));
   }
 }

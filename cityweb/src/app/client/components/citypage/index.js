@@ -4,8 +4,10 @@ import { Link } from 'react-router';
 import TopBanner from '#app/components/topbanner';
 import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
+import { connect } from 'react-redux';
+import { setCurrentCity } from '#app/actions';
 
-export default class Citypage extends Component {
+export class Citypage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
@@ -13,8 +15,12 @@ export default class Citypage extends Component {
   }
   /*eslint-enable */
 
-  render() {
+  componentDidMount() {
     let { cityKey } = this.props.params
+    store.dispatch(setCurrentCity(cityKey));
+  }
+
+  render() {
     return <div>
       <Helmet
         title='New Tweet City'
@@ -24,10 +30,20 @@ export default class Citypage extends Component {
             content: 'New Tweet City Media Search'
           }
         ]} />
-      <TopBanner cityKey={cityKey}/>
-      <NeighborhoodMap />
-      <ResultsGrid />
+      <h1>{this.props.city.display}</h1>
     </div>;
   }
-
 }
+      /*
+      <TopBanner city={this.props.city}/>
+      <NeighborhoodMap city={this.props.city}/>
+      <ResultsGrid city={this.props.city}/>
+      */
+
+function select(state) {
+  return {
+    city: state.cities.current
+  }
+}
+
+export default connect(select)(Citypage)

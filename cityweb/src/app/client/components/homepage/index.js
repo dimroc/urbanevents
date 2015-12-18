@@ -6,6 +6,8 @@ import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
 import { setCurrentCity } from '#app/actions';
 import { connect } from 'react-redux';
+import { pushPath } from 'redux-simple-router';
+import { Button } from 'react-bootstrap';
 
 export class Homepage extends Component {
   /*eslint-disable */
@@ -32,7 +34,11 @@ export class Homepage extends Component {
       />
       <ul>
         {this.props.cities.map(function(city) {
-          return <li key={city.key}>{city.display}</li>
+          return <li key={city.key}>
+            <Button onClick={() => store.dispatch(pushPath(city.key))}>
+              {city.display}
+            </Button>
+          </li>
         })}
       </ul>
     </div>;

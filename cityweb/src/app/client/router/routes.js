@@ -25,7 +25,7 @@ export default ({store, first}) => {
     };
   }
 
-  return <Route path="/" component={App}>
+  return <Route path="/" component={App} onEnter={w(App.onEnter)}>
     <IndexRoute component={Homepage} onEnter={w(Homepage.onEnter)}/>
     <Route path=":cityKey" component={Citypage} onEnter={w(Citypage.onEnter)}/>
     {/* Server redirect in action */}
