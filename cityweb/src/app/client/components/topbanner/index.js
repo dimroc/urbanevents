@@ -55,7 +55,7 @@ export class TopBanner extends Component {
   }
 
   render() {
-    var label = this.props.city ? this.props.city.name : "Select a City";
+    var label = this.props.city ? this.props.city.display : "Select a City";
     return <div className={topbanner}>
       <h1> {label} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>

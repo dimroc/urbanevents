@@ -3,6 +3,7 @@ var keyMirror = require('keymirror')
 var actionTypes = keyMirror({
   SET_GEOEVENTS: null,
   SET_CITIES: null,
+  SET_CURRENT_CITY: null,
   GET_CITY: null
 })
 

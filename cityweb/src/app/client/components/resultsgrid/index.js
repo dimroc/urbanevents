@@ -13,13 +13,11 @@ export default class ResultsGrid extends Component {
 
   render() {
     return <div className={resultsgrid}>
-      <h1>Bunch of Results for {this.props.cityKey}</h1>
+      <h1>Bunch of Results for {this.props.city.display}</h1>
     </div>;
   }
 }
 
 ResultsGrid.propTypes = {
-  cityKey: React.PropTypes.string.isRequired
+  city: React.PropTypes.object.isRequired
 };
-
-ResultsGrid.defaultProps = { cityKey: 'nyc' };

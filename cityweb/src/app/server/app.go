@@ -121,6 +121,9 @@ func NewApp(opts ...AppOptions) *App {
 		),
 	)
 
+	// Bind static handling to static/
+	app.Engine.Group("/static").ServeDir("/images", "image")
+
 	// Create file http server from bindata
 	fileServerHandler := http.FileServer(&assetfs.AssetFS{
 		Asset:    Asset,

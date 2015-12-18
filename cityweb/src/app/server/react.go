@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"time"
 
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"github.com/labstack/echo"
 	"github.com/nu7hatch/gouuid"
 	"gopkg.in/olebedev/go-duktape-fetch.v2"
@@ -49,6 +50,7 @@ func NewReact(filePath string, debug bool, server http.Handler) *React {
 // handler or other middlewares.
 func (r *React) Handle(c *echo.Context) error {
 	UUID := c.Get("uuid").(*uuid.UUID)
+	Logger.Debug("## Start React Handling")
 	defer func() {
 		if r := recover(); r != nil {
 			c.Render(http.StatusInternalServerError, "react.html", resp{

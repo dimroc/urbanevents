@@ -14,6 +14,8 @@ import { createStore } from '../store';
  */
 export default function (options, callback) {
 
+  console.log("## Rendering JS Server Side");
+
   let result = {
     uuid: options.uuid,
     app: null,

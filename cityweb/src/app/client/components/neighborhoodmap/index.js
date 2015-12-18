@@ -7,19 +7,17 @@ export default class NeighborhoodMap extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
-    callback(); // this call is important, don't forget it
+    callback();
   }
   /*eslint-enable */
 
   render() {
     return <div className={neighborhoodmap}>
-      <h1>Map for {this.props.cityKey}</h1>
+      <h1>Map for {this.props.city.display}</h1>
     </div>;
   }
 }
 
 NeighborhoodMap.propTypes = {
-  cityKey: React.PropTypes.string.isRequired
+  city: React.PropTypes.object.isRequired
 };
-
-NeighborhoodMap.defaultProps = { cityKey: 'nyc' };

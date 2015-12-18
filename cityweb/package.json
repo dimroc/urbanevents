@@ -28,6 +28,7 @@
     "lodash": "^3.10.0",
     "node-sass": "^3.4.2",
     "proxy-middleware": "^0.15.0",
+    "query-string": "^3.0.0",
     "react": "^0.14.1",
     "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.1",

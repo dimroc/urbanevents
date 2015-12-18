@@ -14,12 +14,15 @@ export default function cities(state = initialState, action) {
       };
 
     case ActionTypes.SET_CURRENT_CITY:
-      var city = $.grep(state.cities, function(city) {
-        if(city.key == action.cityKey) {
-          return city;
+      var city = null;
+      var index = state.cities.forEach((cityEntry) => {
+        if(cityEntry.key === action.cityKey) {
+          city = cityEntry
+          return;
         }
-      })[0];
+      });
 
+      console.log("## Selected city", city.display);
       return {
         ...state,
         current: city

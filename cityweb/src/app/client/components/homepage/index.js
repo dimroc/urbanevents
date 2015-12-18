@@ -8,14 +8,19 @@ import { setCurrentCity } from '#app/actions';
 import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
 import { Button } from 'react-bootstrap';
+import { getCitiesAsync } from '#app/actions';
 
 export class Homepage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
-    callback(); // this call is important, don't forget it
+    callback();
   }
   /*eslint-enable */
+
+  componentDidMount() {
+    store.dispatch(getCitiesAsync())
+  }
 
   /* Change this landing page to a list of cities?
    * Show a few tiles showing the hearts of the city perhaps as

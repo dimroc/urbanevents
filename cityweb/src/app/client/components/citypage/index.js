@@ -5,13 +5,18 @@ import TopBanner from '#app/components/topbanner';
 import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
 import { connect } from 'react-redux';
-import { setCurrentCity } from '#app/actions';
+import { setCurrentCity, getCitiesAsync } from '#app/actions';
+import queryString from 'query-string';
 
 export class Citypage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
-    callback(); // this call is important, don't forget it
+    var cityKey = location.pathname.substr(1);
+    store.dispatch(getCitiesAsync()).then(() => {
+      store.dispatch(setCurrentCity(cityKey));
+      callback(); // this call is important, don't forget it
+    })
   }
   /*eslint-enable */
 
@@ -30,15 +35,12 @@ export class Citypage extends Component {
             content: 'New Tweet City Media Search'
           }
         ]} />
-      <h1>{this.props.city.display}</h1>
-    </div>;
-  }
-}
-      /*
       <TopBanner city={this.props.city}/>
       <NeighborhoodMap city={this.props.city}/>
       <ResultsGrid city={this.props.city}/>
-      */
+    </div>;
+  }
+}
 
 function select(state) {
   return {
