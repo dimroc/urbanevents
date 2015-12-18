@@ -15,10 +15,10 @@ export function setGeoevents(geoevents) {
 }
 
 export function getCitiesAsync() {
-  return (dispatch, getState) => {
-    fetch('/api/v1/cities').then(function(result) {
-      dispatch(setCities(result));
-    });
+  return (dispatch) => {
+    return fetch('/api/v1/cities').then(function(result) {
+      return result.json();
+    }).then(cities => { dispatch(setCities(cities)) });
   };
 }
 
