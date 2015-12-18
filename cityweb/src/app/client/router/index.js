@@ -41,7 +41,7 @@ export function run() {
     document.body.appendChild(node);
     render(
       <DebugPanel top right bottom>
-        <DevTools store={store} monitor={LogMonitor} visibleOnLoad={true}/>
+        <DevTools store={store} monitor={LogMonitor} visibleOnLoad={false}/>
       </DebugPanel>,
       node
     );
