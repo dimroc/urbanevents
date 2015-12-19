@@ -14,18 +14,19 @@ import NotFound from '#app/components/not-found';
  */
 export default ({store, first}) => {
 
-  // Make a closure to skip first request
+  // Make a closure to only make first request
   function w(loader) {
     return (nextState, replaceState, callback) => {
-      if (first.time) {
-        first.time = false;
+      if (!first.time) {
         return callback();
       }
+
+      first.time = false;
       return loader ? loader({store, nextState, replaceState, callback}) : callback();
     };
   }
 
-  return <Route path="/" component={App} onEnter={w(App.onEnter)}>
+  return <Route path="/" component={App}>
     <IndexRoute component={Homepage} onEnter={w(Homepage.onEnter)}/>
     <Route path=":cityKey" component={Citypage} onEnter={w(Citypage.onEnter)}/>
     {/* Server redirect in action */}

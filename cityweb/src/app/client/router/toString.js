@@ -29,7 +29,7 @@ export default function (options, callback) {
   const store = createStore();
 
   try {
-    match({ routes: createRoutes({store, first: { time: false }}), location: options.url }, (error, redirectLocation, renderProps) => {
+    match({ routes: createRoutes({store, first: { time: true }}), location: options.url }, (error, redirectLocation, renderProps) => {
       try {
         if (error) {
           result.error = error;
