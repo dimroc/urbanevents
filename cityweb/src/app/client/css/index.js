@@ -9,3 +9,5 @@ require('./global');
  */
 require('#app/components/app/styles');
 require('#app/components/not-found/styles');
+
+require('#bower/uikit/css/uikit.css');

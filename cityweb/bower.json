@@ -1,0 +1,25 @@
+{
+  "name": "new-tweet-city-search",
+  "description": "",
+  "main": "",
+  "authors": [
+    "dimroc"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/dimroc/urbanevents",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true,
+  "dependencies": {
+    "uikit": "~2.24.3"
+  }
+}

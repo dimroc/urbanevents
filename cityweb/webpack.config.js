@@ -1,3 +1,6 @@
+// For javascript minification see
+// http://stackoverflow.com/questions/25956937/how-to-build-minified-and-uncompressed-bundle-with-webpack
+
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -41,6 +44,11 @@ var sassLoader = ExtractTextPlugin.extract(
   '!sass-loader?includePaths[]=' + path.resolve(__dirname, './src')
 );
 
+var cssLoader = ExtractTextPlugin.extract(
+  'style-loader',
+  'css-loader?module&disableStructuralMinification'
+);
+
 var config  = {
   entry: {
     bundle: path.join(__dirname, 'src/app/client/index.js')
@@ -55,6 +63,7 @@ var config  = {
     loaders: [
       {test: /\.scss$/, loader: sassLoader},
       {test: /\.styl$/, loader: stylusLoader},
+      {test: /\.css$/, loader: cssLoader},
       {test: /\.(png|gif)$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000'},
       {test: /\.svg$/, loader: 'url-loader?name=[name]@[hash].[ext]&limit=5000!svgo-loader?useConfig=svgo1'},
       {test: /\.(pdf|ico|jpg|eot|otf|woff|ttf|mp4|webm)$/, loader: 'file-loader?name=[name]@[hash].[ext]'},
@@ -86,11 +95,13 @@ var config  = {
     ]
   },
   resolve: {
+    root: [path.join(__dirname, "bower_components")],
     extensions: ['', '.js', '.jsx', '.styl', '.scss'],
     alias: {
       '#app': path.join(__dirname, '/src/app/client'),
       '#c': path.join(__dirname, '/src/app/client/components'),
-      '#css': path.join(__dirname, '/src/app/client/css')
+      '#css': path.join(__dirname, '/src/app/client/css'),
+      '#bower': path.join(__dirname, '/bower_components')
     }
   },
   svgo1: {
@@ -108,7 +119,10 @@ var config  = {
       {moveGroupAttrsToElems: false},
       // by default disabled
       {removeTitle: true},
-      {removeDesc: true}
+      {removeDesc: true},
+      new webpack.ResolverPlugin(
+        new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("uikit/bower.json", ["main"])
+      )
     ]
   }
 };
