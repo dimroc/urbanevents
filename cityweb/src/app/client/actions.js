@@ -14,7 +14,7 @@ export const ActionTypes = actionTypes
 /* CityWeb Action Creators */
 
 export function getGeoeventsAsync(cityKey, q) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     if (!q || q.length == 0) {
       return (dispatch) => { dispatch(setGeoevents([])) }
     }
@@ -25,7 +25,7 @@ export function getGeoeventsAsync(cityKey, q) {
       return result.json();
     }).then(geoevents => {
       dispatch(setGeoevents(geoevents))
-      dispatch(pushPath('/' + cityKey + '?q=' + q));
+      dispatch(pushPath('/' + cityKey + '?q=' + q), getState());
     });
   }
 }
