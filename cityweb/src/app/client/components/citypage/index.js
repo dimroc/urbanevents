@@ -4,9 +4,9 @@ import { Link } from 'react-router';
 import TopBanner from '#app/components/topbanner';
 import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
+import Geoevent from '#app/components/geoevent';
 import { connect } from 'react-redux';
 import { setCurrentCity, getCitiesAsync } from '#app/actions';
-import queryString from 'query-string';
 
 export class Citypage extends Component {
   /*eslint-disable */

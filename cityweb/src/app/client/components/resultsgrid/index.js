@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 import { Link } from 'react-router';
 import { resultsgrid } from './styles';
 import { connect } from 'react-redux';
+import Geoevent from '#app/components/geoevent';
 
 export class ResultsGrid extends Component {
   /*eslint-disable */
@@ -15,18 +16,11 @@ export class ResultsGrid extends Component {
   render() {
     return <div className={resultsgrid}>
       <h1>Bunch of Results for {this.props.city.display}</h1>
-      <ul>
-        {this.props.geoevents.map(function(geoevent) {
-          return <li key={geoevent.id}>
-            <div className="full-name">{geoevent.fullName}</div>
-            <div className="text">{geoevent.text}</div>
-            <div className="media-url"><a href={geoevent.mediaUrl} target="_blank">{geoevent.mediaUrl}</a></div>
-            <div className="neighborhoods">{geoevent.neighborhoods}</div>
-            <div className="service">{geoevent.service}</div>
-            <div className="created-at">{geoevent.createdAt}</div>
-          </li>
+      <div>
+        {this.props.geoevents.map((geoevent) => {
+          return <Geoevent geoevent={geoevent}/>
         })}
-      </ul>
+      </div>
     </div>;
   }
 }
