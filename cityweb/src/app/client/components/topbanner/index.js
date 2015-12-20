@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
+import { IndexLink, Link } from 'react-router';
 import { topbanner } from './styles';
 import { createHistory } from 'history';
 import urlParameters from '#app/utils/urlParameters';
@@ -37,6 +37,7 @@ export class TopBanner extends Component {
   render() {
     var label = this.props.city ? this.props.city.display : "Select a City";
     return <div className={topbanner}>
+      <IndexLink to='/'>All Cities</IndexLink>
       <h1> {label} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
         <input type="text" name="q" placeholder="Enter your search query"
