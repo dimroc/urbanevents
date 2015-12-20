@@ -3,7 +3,17 @@ import { Link } from 'react-router';
 
 export default class Geoevent extends Component {
   render() {
-    return <div key={this.props.geoevent.id}>{this.props.geoevent.text}</div>
+    let geoevent = this.props.geoevent;
+    var image = null
+    console.log(geoevent.mediaUrl)
+    if (geoevent.mediaType != "text") {
+      image = <img src={geoevent.medaUrl}/>
+    }
+
+    return <div>
+      <div>{geoevent.text}</div>
+      {image}
+    </div>
   }
 }
 

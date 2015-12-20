@@ -1,3 +1,5 @@
+import { pushPath } from 'redux-simple-router'
+
 /* CityWeb Action Types */
 var keyMirror = require('keymirror')
 var actionTypes = keyMirror({
@@ -13,10 +15,18 @@ export const ActionTypes = actionTypes
 
 export function getGeoeventsAsync(cityKey, q) {
   return (dispatch) => {
+    if (!q || q.length == 0) {
+      return (dispatch) => { dispatch(setGeoevents([])) }
+    }
+
     let url = "/api/v1/cities/" + cityKey + "/search?q=" + q;
+
     return fetch(url).then((result) => {
       return result.json();
-    }).then(geoevents => { dispatch(setGeoevents(geoevents)) });
+    }).then(geoevents => {
+      dispatch(setGeoevents(geoevents))
+      dispatch(pushPath('/' + cityKey + '?q=' + q));
+    });
   }
 }
 

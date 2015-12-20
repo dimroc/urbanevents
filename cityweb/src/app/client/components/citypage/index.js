@@ -6,15 +6,20 @@ import NeighborhoodMap from '#app/components/neighborhoodmap';
 import ResultsGrid from '#app/components/resultsgrid';
 import Geoevent from '#app/components/geoevent';
 import { connect } from 'react-redux';
-import { setCurrentCity, getCitiesAsync } from '#app/actions';
+import { setCurrentCity, getCitiesAsync, getGeoeventsAsync } from '#app/actions';
+import urlParameters from '#app/utils/urlParameters';
 
 export class Citypage extends Component {
   /*eslint-disable */
   static onEnter({store, nextState, replaceState, callback}) {
     // Load here any data.
-    var cityKey = location.pathname.substr(1);
+    let cityKey = location.pathname.substr(1);
+    let q = urlParameters('q');
+
     store.dispatch(getCitiesAsync()).then(() => {
       store.dispatch(setCurrentCity(cityKey));
+      return store.dispatch(getGeoeventsAsync(cityKey, q));
+    }).then(() => {
       callback(); // this call is important, don't forget it
     })
   }
