@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { topbanner } from './styles';
 import { createHistory } from 'history';
 import urlParameters from '#app/utils/urlParameters';
-import * as actions from '#app/actions';
+import { getGeoeventsAsync } from '#app/actions';
 import { connect } from 'react-redux';
 
 export class TopBanner extends Component {
@@ -31,27 +31,7 @@ export class TopBanner extends Component {
     var q = this.state.q.trim();
     if(!q) { return; }
 
-    // Send request to server
-    $.ajax({
-      url: "/api/v1/cities/" + this.props.city.key + "/search",
-      data: {q: q},
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        console.log(data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.warn("Query for " + q + " failed", err);
-      }.bind(this),
-      complete: function() {
-        var history = createHistory();
-        history.push({
-          pathname: '/',
-          search: '?q='+q,
-          state: { q: q }
-        })
-      }.bind(this)
-    });
+    store.dispatch(getGeoeventsAsync(this.props.city.key, q));
   }
 
   render() {

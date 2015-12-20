@@ -1,13 +1,13 @@
-import React from 'react';
-import { render } from 'react-dom';
-import Router from 'react-router';
-import { Provider } from 'react-redux';
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import { createHistory } from 'history';
-import toString from './toString';
-import { Promise } from 'when';
-import createRoutes from './routes';
-import { createStore } from '../store';
+import React from 'react'
+import { render } from 'react-dom'
+import Router from 'react-router'
+import { Provider } from 'react-redux'
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react'
+import { createHistory } from 'history'
+import toString from './toString'
+import { Promise } from 'when'
+import createRoutes from './routes'
+import { createStore } from '../store'
 import { syncReduxAndRouter } from 'redux-simple-router'
 
 export function run() {

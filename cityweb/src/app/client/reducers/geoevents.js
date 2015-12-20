@@ -5,8 +5,7 @@ const initialState = []
 export default function geoevents(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_GEOEVENTS:
-      console.log(arguments);
-      return []
+      return action.geoevents
     default:
       return state
   }

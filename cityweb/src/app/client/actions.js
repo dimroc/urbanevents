@@ -11,6 +11,15 @@ export const ActionTypes = actionTypes
 
 /* CityWeb Action Creators */
 
+export function getGeoeventsAsync(cityKey, q) {
+  return (dispatch) => {
+    let url = "/api/v1/cities/" + cityKey + "/search?q=" + q;
+    return fetch(url).then((result) => {
+      return result.json();
+    }).then(geoevents => { dispatch(setGeoevents(geoevents)) });
+  }
+}
+
 export function setGeoevents(geoevents) {
   return { type: actionTypes.SET_GEOEVENTS, geoevents };
 }
