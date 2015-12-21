@@ -6,7 +6,7 @@ export default class Geoevent extends Component {
   render() {
     let geoevent = this.props.geoevent;
     var image = null
-    console.log(geoevent.mediaUrl)
+
     if (geoevent.mediaType != "text") {
       image = <img src={geoevent.mediaUrl}/>
     }
@@ -15,7 +15,7 @@ export default class Geoevent extends Component {
     className += " uk-width-1-1 uk-width-medium-1-3 uk-panel uk-panel-box uk-panel-box-secondary"
     return <div className={className}>
       {geoevent.neighborhoods.map((hood) => {
-        return <div className={styles.hood}>{hood}</div>
+        return <div key={ hood } className={styles.hood}>{hood}</div>
       })}
       <div className="uk-panel-title">{geoevent.fullName}</div>
       {image}

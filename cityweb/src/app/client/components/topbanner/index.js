@@ -29,9 +29,11 @@ export class TopBanner extends Component {
   handleSubmit(e) {
     e.preventDefault();
     var q = this.state.q.trim();
-    if(!q) { return; }
+    if(q) {
+      store.dispatch(getGeoeventsAsync(this.props.city.key, q));
+    }
 
-    store.dispatch(getGeoeventsAsync(this.props.city.key, q));
+    this.refs.q.blur();
   }
 
   render() {
@@ -40,7 +42,7 @@ export class TopBanner extends Component {
       <IndexLink to='/'>All Cities</IndexLink>
       <h1> {label} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text" name="q" placeholder="Enter your search query"
+        <input type="text" name="q" ref="q" placeholder="Enter your search query"
           tabIndex="0"
           value={this.state.q}
           onChange={this.handleQueryChange.bind(this)}
