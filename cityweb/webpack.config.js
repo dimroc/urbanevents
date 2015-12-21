@@ -46,7 +46,7 @@ var sassLoader = ExtractTextPlugin.extract(
 
 var cssLoader = ExtractTextPlugin.extract(
   'style-loader',
-  'css-loader?module&disableStructuralMinification'
+  'css-loader?disableStructuralMinification'
 );
 
 var config  = {

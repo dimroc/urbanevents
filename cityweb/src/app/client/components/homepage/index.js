@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
 import { Button } from 'react-bootstrap';
 import { getCitiesAsync } from '#app/actions';
+import { cities, citytile } from './styles';
 
 export class Homepage extends Component {
   /*eslint-disable */
@@ -27,7 +28,7 @@ export class Homepage extends Component {
    * a jpg or a leaflet map?
    */
   render() {
-    return <div>
+    return <div className={cities}>
       <Helmet
         title='New Tweet City'
         meta={[
@@ -37,15 +38,19 @@ export class Homepage extends Component {
           }
         ]}
       />
-      <ul>
-        {this.props.cities.map(function(city) {
-          return <li key={city.key}>
-            <Button onClick={() => store.dispatch(pushPath(city.key))}>
-              {city.display}
-            </Button>
-          </li>
-        })}
-      </ul>
+      <div className="uk-flex uk-flex-middle">
+        <div className="uk-width-1-1">
+          <div className="uk-flex uk-flex-center uk-flex-wrap">
+            {this.props.cities.map(function(city) {
+              return <div key={city.key} className={citytile + " uk-width-1-3 uk-margin-left uk-panel uk-panel-box"}>
+                <div>
+                  <Link to={city.key} >{city.display}</Link>
+                </div>
+              </div>
+            })}
+          </div>
+        </div>
+      </div>
     </div>;
   }
 }
