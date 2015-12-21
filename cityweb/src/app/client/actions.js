@@ -34,6 +34,10 @@ export function setGeoevents(geoevents) {
   return { type: actionTypes.SET_GEOEVENTS, geoevents };
 }
 
+export function clearGeoevents() {
+  return { type: actionTypes.SET_GEOEVENTS, geoevents: [] };
+}
+
 export function getCitiesAsync() {
   return (dispatch) => {
     return fetch('/api/v1/cities').then(function(result) {

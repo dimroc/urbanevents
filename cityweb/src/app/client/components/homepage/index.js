@@ -8,7 +8,7 @@ import { setCurrentCity } from '#app/actions';
 import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
 import { Button } from 'react-bootstrap';
-import { getCitiesAsync } from '#app/actions';
+import { getCitiesAsync, clearGeoevents } from '#app/actions';
 import { cities, citytile, citytileGrid } from './styles';
 
 export class Homepage extends Component {
@@ -21,6 +21,7 @@ export class Homepage extends Component {
 
   componentDidMount() {
     store.dispatch(getCitiesAsync())
+    store.dispatch(clearGeoevents())
   }
 
   /* Change this landing page to a list of cities?
