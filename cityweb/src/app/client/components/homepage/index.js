@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
 import { Button } from 'react-bootstrap';
 import { getCitiesAsync } from '#app/actions';
-import { cities, citytile } from './styles';
+import { cities, citytile, citytileGrid } from './styles';
 
 export class Homepage extends Component {
   /*eslint-disable */
@@ -38,18 +38,14 @@ export class Homepage extends Component {
           }
         ]}
       />
-      <div className="uk-flex uk-flex-middle">
-        <div className="uk-width-1-1">
-          <div className="uk-flex uk-flex-center uk-flex-wrap">
-            {this.props.cities.map(function(city) {
-              return <div key={city.key} className={citytile + " uk-width-1-3 uk-margin-left uk-panel uk-panel-box"}>
-                <div>
-                  <Link to={city.key} >{city.display}</Link>
-                </div>
-              </div>
-            })}
+      <div className={citytileGrid}>
+        {this.props.cities.map(function(city) {
+          return <div key={city.key} className={citytile + " uk-panel-box"}>
+            <div>
+              <Link to={city.key} >{city.display}</Link>
+            </div>
           </div>
-        </div>
+        })}
       </div>
     </div>;
   }
