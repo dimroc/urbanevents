@@ -10,7 +10,7 @@ export class ResultsGrid extends Component {
   render() {
     return <div className={resultsgrid}>
       <h1>Bunch of Results for {this.props.city.display}</h1>
-      <div className="uk-flex uk-flex-wrap uk-flex-wrap-top">
+      <div className="uk-flex uk-flex-wrap uk-flex-left">
         {this.props.geoevents.map((geoevent) => {
           return <Geoevent geoevent={geoevent} key={geoevent.id}/>
         })}
