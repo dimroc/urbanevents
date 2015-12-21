@@ -14,6 +14,9 @@ export default class Geoevent extends Component {
     let className = styles.geoevent + " " + geoevent.mediaType;
     className += " uk-width-1-1 uk-width-medium-1-3 uk-panel uk-panel-box uk-panel-box-secondary"
     return <div className={className}>
+      {geoevent.neighborhoods.map((hood) => {
+        return <div className={styles.hood}>{hood}</div>
+      })}
       <div className="uk-panel-title">{geoevent.fullName}</div>
       {image}
       <div>{geoevent.text}</div>
