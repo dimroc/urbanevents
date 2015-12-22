@@ -1,8 +1,8 @@
 {"Cities":[
   {"key":"nyc","display":"New York City","bbox":[-74.228877,40.518519,-73.771683,40.889306]},
   {"key":"austin","display":"Austin","bbox":[-97.92053,30.164578,-97.577346,30.452365]},
-  {"key":"losangeles","display":"Los Angeles Area","aliases":["Los Angeles", "Malibu", "Hollywood", "Santa Monica"], "bbox":[-118.507501,33.703692,-118.096238,34.099972]},
+  {"key":"losangeles","display":"Los Angeles","aliases":["Los Angeles", "Malibu", "Hollywood", "Santa Monica"], "bbox":[-118.507501,33.703692,-118.096238,34.099972]},
   {"key":"london","display":"London","bbox":[-0.351468,51.38494,0.148271,51.672343]},
   {"key":"paris","display":"Paris","bbox":[2.169267,48.775995,2.51009,48.94681]},
-  {"key":"miami","display":"Miami - Dade", "aliases": ["Dade County"], "bbox":[-80.42001,25.616824,-80.109441,26.008902]}
+  {"key":"miami","display":"Miami Dade", "aliases": ["Dade County"], "bbox":[-80.42001,25.616824,-80.109441,26.008902]}
 ]}
