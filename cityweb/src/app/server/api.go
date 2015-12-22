@@ -20,6 +20,8 @@ func (api *API) Bind(group *echo.Group) {
 	group.Get("/v1/cities", api.CitiesHandler)
 	group.Get("/v1/cities/:city", api.CityHandler)
 	group.Get("/v1/cities/:city/search", api.CitySearchHandler)
+
+	group.Get("/v1/across/search", api.AcrossSearchHandler)
 }
 
 // ConfHandler handle the app config, for example
@@ -60,6 +62,16 @@ func (api *API) CitySearchHandler(c *echo.Context) error {
 
 	city := settings.FindCity(cityKey)
 	c.JSON(200, city.Query(elastic, query))
+	return nil
+}
+
+func (api *API) AcrossSearchHandler(c *echo.Context) error {
+	query := c.Query("q")
+
+	settings := getSettings(c)
+	elastic := getElasticConnection(c)
+
+	c.JSON(200, settings.QueryCities(elastic, query))
 	return nil
 }
 

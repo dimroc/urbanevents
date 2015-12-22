@@ -2,8 +2,12 @@ package citylib
 
 import (
 	"encoding/json"
+	"fmt"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 type Settings struct {
@@ -13,6 +17,32 @@ type Settings struct {
 
 func (s *Settings) GetCities(e Elastic) []City {
 	return s.Cities
+}
+
+func (s *Settings) QueryCities(e Elastic, term string) []CityGeoEvents {
+	if len(term) == 0 {
+		return []CityGeoEvents{}
+	}
+
+	queryString := generateAcrossCityQuery(term, s.Cities)
+	out := e.Search(queryString)
+
+	result := cityAggregationResult{}
+	err := json.Unmarshal(out.Aggregations, &result)
+	Check(err)
+
+	cityEvents := make([]CityGeoEvents, len(result.Cities.Buckets))
+	for index, bucket := range result.Cities.Buckets {
+		events := GeoEventsFromHits(&bucket.TopCityHits.Hits)
+		cityBucket := CityGeoEvents{
+			Key:       bucket.Key,
+			GeoEvents: events,
+		}
+
+		cityEvents[index] = cityBucket
+	}
+
+	return cityEvents
 }
 
 func (s *Settings) GetCityDetails(e Elastic) []CityDetails {
@@ -71,4 +101,71 @@ func LoadSettings(settingsFilename string) (Settings, error) {
 
 func (s *Settings) FindCity(cityKey string) City {
 	return s.lookup[cityKey]
+}
+
+func generateAcrossCityQuery(term string, cities []City) string {
+	queryJson := `
+{
+  "size": 0,
+  "query": {
+    "filtered": {
+      "query": {
+        "simple_query_string": {
+          "query": "%s",
+          "fields": [
+            "text",
+            "fullName",
+            "hashtags",
+            "username",
+            "place"
+          ]
+        }
+      },
+      "filter": {
+        "terms": {
+          "city": ["%s"]
+        }
+      }
+    }
+  },
+  "aggs": {
+    "cities": {
+      "terms": {
+        "field": "city"
+      },
+      "aggs": {
+        "top_city_hits": {
+          "top_hits": {
+            "sort": [
+              {
+                "createdAt": {
+                  "order": "desc"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}`
+
+	cityKeys := make([]string, len(cities))
+	for index, city := range cities {
+		cityKeys[index] = city.Key
+	}
+
+	return fmt.Sprintf(queryJson, term, strings.Join(cityKeys, `","`))
+}
+
+type cityAggregationResult struct {
+	Cities struct {
+		Buckets []struct {
+			Key         string `json:"key"`
+			DocCount    int    `json:"doc_count"`
+			TopCityHits struct {
+				Hits elastigo.Hits `json:"hits"`
+			} `json:"top_city_hits"`
+		} `json:"buckets"`
+	} `json:"cities"`
 }

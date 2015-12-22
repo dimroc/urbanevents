@@ -26,6 +26,11 @@ type CityDetails struct {
 	Stats CityCounts `json:"stats"`
 }
 
+type CityGeoEvents struct {
+	Key       string     `json:"key"`
+	GeoEvents []GeoEvent `json:"geoevents"`
+}
+
 func (c *City) String() string {
 	return fmt.Sprintf("%s %s %s", c.Key, c.Display, c.LocationString())
 }
@@ -66,7 +71,6 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 	)
 
 	out := e.SearchDsl(*dsl)
-
 	return GeoEventsFromElasticSearch(out)
 }
 
