@@ -55,7 +55,10 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 	}
 
 	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
-		elastigo.Filter().Term("city", c.Key),
+		elastigo.Filter().And(
+			elastigo.Filter().Term("city", c.Key),
+			elastigo.Filter().Terms("mediaType", elastigo.TEMPlain, "image", "video"),
+		),
 	).Query(
 		elastigo.Query().Search(term),
 	).Sort(
