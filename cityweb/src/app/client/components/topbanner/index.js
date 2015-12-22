@@ -42,7 +42,7 @@ export class TopBanner extends Component {
       <IndexLink to='/'>All Cities</IndexLink>
       <h1> {label} </h1>
       <form onSubmit={this.handleSubmit.bind(this)}>
-        <input type="text" name="q" ref="q" placeholder="Enter your search query"
+        <input type="search" name="q" ref="q" placeholder="Enter a word"
           tabIndex="0"
           value={this.state.q}
           onChange={this.handleQueryChange.bind(this)}

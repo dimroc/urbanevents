@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router';
-import TopBanner from '#app/components/topbanner';
-import NeighborhoodMap from '#app/components/neighborhoodmap';
-import ResultsGrid from '#app/components/resultsgrid';
-import { setCurrentCity } from '#app/actions';
 import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
-import { Button } from 'react-bootstrap';
-import { getCitiesAsync, clearGeoevents } from '#app/actions';
-import { cities, citytile, citytileGrid } from './styles';
+import { getCitiesAsync, clearAcross, getAcrossAsync } from '#app/actions';
+import { cities, citytile, citytileGrid, searchBar } from './styles';
+import urlParameters from '#app/utils/urlParameters';
+import Geoevent from '#app/components/geoevent';
 
 export class Homepage extends Component {
   /*eslint-disable */
@@ -19,9 +15,30 @@ export class Homepage extends Component {
   }
   /*eslint-enable */
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      q: urlParameters('q')
+    };
+  }
+
   componentDidMount() {
     store.dispatch(getCitiesAsync())
-    store.dispatch(clearGeoevents())
+    //store.dispatch(clearAcross())
+  }
+
+  handleQueryChange(e) {
+    this.setState({q: e.target.value});
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    var q = this.state.q;
+    if(q) {
+      store.dispatch(getAcrossAsync(q.trim()));
+    }
+
+    this.refs.q.blur();
   }
 
   /* Change this landing page to a list of cities?
@@ -39,11 +56,24 @@ export class Homepage extends Component {
           }
         ]}
       />
+
+      <form onSubmit={this.handleSubmit.bind(this)} className={searchBar}>
+        <input type="search" name="q" ref="q" placeholder="Enter a word"
+          tabIndex="0"
+          value={this.state.q}
+          onChange={this.handleQueryChange.bind(this)}
+        />
+        <input type="submit" tabIndex="1"/>
+      </form>
+
       <div className={citytileGrid}>
         {this.props.cities.map(function(city) {
-          return <div key={city.key} className={citytile + " uk-panel-box"}>
-            <div>
-              <Link to={city.key} >{city.display}</Link>
+          return <div key={city.key} className={citytile}>
+            <h1>{city.display}</h1>
+            <div className="uk-flex uk-flex-column uk-flex-middle uk-flex-nowrap">
+              {(city.geoevents || []).map(function(geoevent) {
+                return <Geoevent geoevent={geoevent} key={geoevent.id}/>
+              })}
             </div>
           </div>
         })}

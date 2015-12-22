@@ -28,7 +28,6 @@ export default ({store, first}) => {
 
   return <Route path="/" component={App}>
     <IndexRoute component={Homepage} onEnter={w(Homepage.onEnter)}/>
-    <Route path=":cityKey" component={Citypage} onEnter={w(Citypage.onEnter)}/>
     {/* Server redirect in action */}
     <Route path="*" component={NotFound} onEnter={w(NotFound.onEnter)}/>
   </Route>;
