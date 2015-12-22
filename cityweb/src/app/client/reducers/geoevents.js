@@ -1,11 +1,17 @@
 import { ActionTypes } from '#app/actions'
 
-const initialState = []
+const initialState = {
+  q: null,
+  geoevents: []
+}
 
 export default function geoevents(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_GEOEVENTS:
-      return action.geoevents
+      return {
+        q: action.q,
+        geoevents: action.geoevents
+      }
     default:
       return state
   }

@@ -49,7 +49,8 @@ export class Citypage extends Component {
 
 function select(state) {
   return {
-    city: state.cities.current
+    city: state.cities.current,
+    q: state.query
   }
 }
 

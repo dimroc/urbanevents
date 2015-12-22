@@ -16,7 +16,7 @@ export const ActionTypes = actionTypes
 export function getGeoeventsAsync(cityKey, q) {
   return (dispatch, getState) => {
     if (!q || q.length == 0) {
-      return (dispatch) => { dispatch(setGeoevents([])) }
+      return (dispatch) => { dispatch(clearGeoevents()) }
     }
 
     let url = "/api/v1/cities/" + cityKey + "/search?q=" + q;
@@ -24,18 +24,18 @@ export function getGeoeventsAsync(cityKey, q) {
     return fetch(url).then((result) => {
       return result.json();
     }).then(geoevents => {
-      dispatch(setGeoevents(geoevents))
-      dispatch(pushPath('/' + cityKey + '?q=' + q), getState());
+      dispatch(setGeoevents(q, geoevents))
+      //dispatch(pushPath('/' + cityKey + '?q=' + q), getState());
     });
   }
 }
 
-export function setGeoevents(geoevents) {
-  return { type: actionTypes.SET_GEOEVENTS, geoevents };
+export function setGeoevents(q, geoevents) {
+  return { type: actionTypes.SET_GEOEVENTS, q, geoevents };
 }
 
 export function clearGeoevents() {
-  return { type: actionTypes.SET_GEOEVENTS, geoevents: [] };
+  return { type: actionTypes.SET_GEOEVENTS, q: null, geoevents: [] };
 }
 
 export function getCitiesAsync() {

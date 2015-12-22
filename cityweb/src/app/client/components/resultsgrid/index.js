@@ -25,7 +25,8 @@ ResultsGrid.propTypes = {
 
 function select(state) {
   return {
-    geoevents: state.geoevents
+    geoevents: state.geoevents.geoevents,
+    q: state.geoevents.q
   }
 }
 

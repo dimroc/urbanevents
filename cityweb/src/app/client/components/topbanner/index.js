@@ -53,15 +53,10 @@ export class TopBanner extends Component {
   }
 }
 
-TopBanner.propTypes = {
-  cityKey: React.PropTypes.string.isRequired
-};
-
-TopBanner.defaultProps = { cityKey: 'nyc' };
-
 function select(state) {
   return {
     city: state.cities.current, // But cities is an array newb
+    q: state.geoevents.q
   }
 }
 
