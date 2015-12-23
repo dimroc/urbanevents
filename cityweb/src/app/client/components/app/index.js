@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import { getCitiesAsync } from '#app/actions';
 
-export default class App extends Component {
+class App extends Component {
   render() {
     return <div>
       <Helmet title='New Tweet City Media Search' />
@@ -10,3 +10,9 @@ export default class App extends Component {
     </div>;
   }
 }
+
+App.contextTypes = {
+  history: React.PropTypes.object.isRequired
+};
+
+export default App

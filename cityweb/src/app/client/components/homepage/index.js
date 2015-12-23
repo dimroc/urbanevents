@@ -7,9 +7,9 @@ import { getCitiesAsync, getAcrossAsync } from '#app/actions';
 import { citytile, citytileGrid, searchBar } from './styles';
 import Geoevent from '#app/components/geoevent';
 
-export class Homepage extends Component {
-  constructor(props, context) {
-    super(props, context);
+class Homepage extends Component {
+  constructor(props) {
+    super(props);
 
     let { query } = this.props.location
     let q = query && query.q
@@ -35,10 +35,10 @@ export class Homepage extends Component {
 
   handleSearch(q) {
     if(q) {
-      //const { history } = this.context;
-      //const transitionTo = history.pushState.bind(history, null);
+      const { history } = this.props;
+      const transitionTo = history.pushState.bind(history, null);
       const { getAcrossAsync } = this.props;
-      getAcrossAsync(q.trim());
+      getAcrossAsync(q.trim(), transitionTo);
     }
   }
 
