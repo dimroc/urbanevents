@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
-	elastigo "github.com/mattbaird/elastigo/lib"
+	elastigo "github.com/dimroc/elastigo/lib"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -111,7 +111,7 @@ func generateAcrossCityQuery(term string, cities []City) string {
     "filtered": {
       "query": {
         "simple_query_string": {
-          "query": "%s",
+          "query": "\"%s\"",
           "fields": [
             "text",
             "fullName",
@@ -154,10 +154,10 @@ func generateAcrossCityQuery(term string, cities []City) string {
 
 	cityKeys := make([]string, len(cities))
 	for index, city := range cities {
-		cityKeys[index] = city.Key
+		cityKeys[index] = elastigo.Sanitize(city.Key)
 	}
 
-	return fmt.Sprintf(queryJson, term, strings.Join(cityKeys, `","`))
+	return fmt.Sprintf(queryJson, elastigo.Sanitize(term), strings.Join(cityKeys, `","`))
 }
 
 type cityAggregationResult struct {

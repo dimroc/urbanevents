@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
-	elastigo "github.com/mattbaird/elastigo/lib"
+	elastigo "github.com/dimroc/elastigo/lib"
 	"log"
 	"strings"
 	"time"
