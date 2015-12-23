@@ -1,13 +1,15 @@
-import { compose, applyMiddleware, createStore as reduxCreateStore} from 'redux';
-import thunk from 'redux-thunk'
-import { devTools, persistState } from 'redux-devtools';
-import rootReducer from '#app/reducers/index.js';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import createLogger from 'redux-logger';
+import rootReducer from '#app/reducers/index';
 
-const middleware = applyMiddleware(thunk);
+const logger = createLogger()
+const createStoreWithMiddleware = applyMiddleware(
+  thunkMiddleware,
+  logger
+)(createStore);
 
-let finalCreateStore = compose(
-  middleware,
-  devTools()
-)(reduxCreateStore).bind(null, rootReducer);
+export default function configureStore(initialState) {
+  return createStoreWithMiddleware(rootReducer, initialState);
+}
 
-export const createStore = finalCreateStore;

@@ -7,9 +7,6 @@ const initialState = {
 
 export default function cities(state = initialState, action) {
   switch (action.type) {
-    case UPDATE_PATH:
-      return state
-
     case ActionTypes.SET_ACROSS:
       let cityGeoevents = state.cities.map((city) => {
         city.geoevents = action.cityGeoevents[city.key] || []
