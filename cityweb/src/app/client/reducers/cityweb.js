@@ -3,15 +3,17 @@ import { UPDATE_PATH } from 'redux-simple-router'
 
 const initialState = {
   cities: [],
-  across: []
+  across: [],
+  cityQuery: null
 }
 
-export default function cities(state = initialState, action) {
+export default function cityweb(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_ACROSS:
       return {
         ...state,
-        across: action.cityGeoevents
+        across: action.cityGeoevents,
+        cityQuery: action.q
       }
 
     case ActionTypes.SET_CITIES:

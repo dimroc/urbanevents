@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 //import { routeReducer } from 'redux-simple-router'
-import cities from './cities';
+import cityweb from './cityweb';
 
 export default combineReducers({
-  cities
+  cityweb
 });

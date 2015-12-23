@@ -27,6 +27,22 @@ class Homepage extends Component {
     }
   }
 
+  componentWillReceiveProps(newState) {
+    const { getAcrossAsync, cityQuery } = this.props;
+
+    let { query } = newState.location
+    let newQ = query && query.q
+
+    // Used to manually manage when a user clicks the back
+    // button for queries.
+    // Crazy this has to be done by hand with Url Queries.
+    // Taken care of when using Url Params in React Router.
+    if (newQ && newQ != cityQuery) {
+      this.setState({q: newQ});
+      getAcrossAsync(newQ.trim());
+    }
+  }
+
   handleQueryChange(e) {
     this.setState({q: e.target.value});
   }
@@ -90,8 +106,7 @@ class Homepage extends Component {
 
 function mapStateToProps(state) {
   return {
-    cities: state.cities.cities,
-    across: state.cities.across
+    ...state.cityweb
   }
 }
 
