@@ -122,9 +122,10 @@ func generateAcrossCityQuery(term string, cities []City) string {
         }
       },
       "filter": {
-        "terms": {
-          "city": ["%s"]
-        }
+        "and": [
+          { "terms": { "city": ["%s"] } },
+          { "terms": { "mediaType": ["image","video"] } }
+        ]
       }
     }
   },
