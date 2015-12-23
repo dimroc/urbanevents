@@ -2,14 +2,12 @@ import { ActionTypes } from '#app/actions'
 import { UPDATE_PATH } from 'redux-simple-router'
 
 const initialState = {
-  cities: [],
-  current: {display: null}
+  cities: []
 }
 
 export default function cities(state = initialState, action) {
   switch (action.type) {
     case UPDATE_PATH:
-      console.log("Handling update path", arguments)
       return state
 
     case ActionTypes.SET_ACROSS:

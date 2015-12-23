@@ -26,6 +26,11 @@ export function run() {
   }
 
   const history = createHistory()
+  // Listen for changes to the current location. The
+  // listener is called once immediately.
+  let unlisten = history.listen(location => {
+    console.log("debug listen: ", location);
+  })
 
   syncReduxAndRouter(history, store)
 

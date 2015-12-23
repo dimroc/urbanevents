@@ -3,8 +3,7 @@ import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import { pushPath } from 'redux-simple-router';
 import { getCitiesAsync, clearAcross, getAcrossAsync } from '#app/actions';
-import { cities, citytile, citytileGrid, searchBar } from './styles';
-import urlParameters from '#app/utils/urlParameters';
+import { citytile, citytileGrid, searchBar } from './styles';
 import Geoevent from '#app/components/geoevent';
 
 export class Homepage extends Component {
@@ -17,18 +16,40 @@ export class Homepage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      q: urlParameters('q')
-    };
+    let { query } = this.props.location
+    let q = query && query.q
+    this.state = { q: q }
+  }
+
+  componentWillMount() {
+    console.log("will mount")
   }
 
   componentDidMount() {
+    console.log("did mount")
     store.dispatch(getCitiesAsync())
-    var q = urlParameters('q');
+    let { query } = this.props.location
+    let q = query && query.q
     if (q) {
       store.dispatch(getAcrossAsync(q.trim()));
     }
-    //store.dispatch(clearAcross())
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log("will receive props")
+  }
+
+  shouldComponentUpdate() {
+    console.log("should component update", arguments)
+    return true
+  }
+
+  componentWillUpdate() {
+    console.log("component will update", arguments)
+  }
+
+  componentDidUpdate() {
+    console.log("component did update", arguments)
   }
 
   handleQueryChange(e) {
@@ -51,7 +72,8 @@ export class Homepage extends Component {
    * a jpg or a leaflet map?
    */
   render() {
-    return <div className={cities}>
+    console.log("rendering");
+    return <div>
       <Helmet
         title='New Tweet City'
         meta={[
@@ -62,13 +84,13 @@ export class Homepage extends Component {
         ]}
       />
 
-      <form onSubmit={this.handleSubmit.bind(this)} className={searchBar}>
+      <form onSubmit={this.handleSubmit.bind(this)} className={searchBar + " uk-form"}>
         <input type="search" name="q" ref="q" placeholder="Enter a word"
-          tabIndex="0"
+          tabIndex="1"
           value={this.state.q}
           onChange={this.handleQueryChange.bind(this)}
         />
-        <input type="submit" tabIndex="1"/>
+        <input className="uk-button" type="submit" tabIndex="2"/>
       </form>
 
       <div className={citytileGrid}>
