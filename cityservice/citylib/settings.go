@@ -124,7 +124,8 @@ func generateAcrossCityQuery(term string, cities []City) string {
       "filter": {
         "and": [
           { "terms": { "city": ["%s"] } },
-          { "terms": { "mediaType": ["image","video"] } }
+          { "terms": { "mediaType": ["image","video"] } },
+          { "exists" : { "field" : "neighborhoods" } }
         ]
       }
     }
