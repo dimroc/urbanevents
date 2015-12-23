@@ -24,6 +24,10 @@ export class Homepage extends Component {
 
   componentDidMount() {
     store.dispatch(getCitiesAsync())
+    var q = urlParameters('q');
+    if (q) {
+      store.dispatch(getAcrossAsync(q.trim()));
+    }
     //store.dispatch(clearAcross())
   }
 
