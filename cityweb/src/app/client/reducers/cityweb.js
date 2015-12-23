@@ -1,5 +1,4 @@
 import { ActionTypes } from '#app/actions'
-import { UPDATE_PATH } from 'redux-simple-router'
 
 const initialState = {
   cities: [],

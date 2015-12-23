@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { pushPath } from 'redux-simple-router';
 import { getCitiesAsync, getAcrossAsync } from '#app/actions';
 import { citytile, citytileGrid, searchBar } from './styles';
 import Geoevent from '#app/components/geoevent';

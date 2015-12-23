@@ -8,7 +8,6 @@ import toString from './toString'
 import { Promise } from 'when'
 import createRoutes from './routes'
 import configureStore from '../store'
-import { syncReduxAndRouter } from 'redux-simple-router'
 
 export function run() {
   // init promise polyfill
@@ -20,7 +19,6 @@ export function run() {
   window.store = store;
 
   const history = createHistory()
-  //syncReduxAndRouter(history, store)
 
   render(
     <Provider store={store} >
