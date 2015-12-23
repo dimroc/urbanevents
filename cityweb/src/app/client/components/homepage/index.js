@@ -14,8 +14,6 @@ class Homepage extends Component {
     let { query } = this.props.location
     let q = query && query.q
     this.state = { q: q }
-
-    this.handleSearch = ::this.handleSearch;
   }
 
   componentDidMount() {
@@ -53,6 +51,7 @@ class Homepage extends Component {
    * a jpg or a leaflet map?
    */
   render() {
+    let { cities, across } = this.props;
     return <div>
       <Helmet
         title='New Tweet City'
@@ -74,11 +73,11 @@ class Homepage extends Component {
       </form>
 
       <div className={citytileGrid}>
-        {this.props.cities.map(function(city) {
+        {cities.map(function(city) {
           return <div key={city.key} className={citytile}>
             <h1>{city.display}</h1>
             <div className="uk-flex uk-flex-column uk-flex-middle uk-flex-nowrap">
-              {(city.geoevents || []).map(function(geoevent) {
+              {(across[city.key] || []).map(function(geoevent) {
                 return <Geoevent geoevent={geoevent} key={geoevent.id}/>
               })}
             </div>
@@ -90,7 +89,10 @@ class Homepage extends Component {
 }
 
 function mapStateToProps(state) {
-  return state.cities
+  return {
+    cities: state.cities.cities,
+    across: state.cities.across
+  }
 }
 
 function mapDispatchToProps(dispatch) {

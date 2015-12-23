@@ -20,7 +20,7 @@ export function run() {
   window.store = store;
 
   const history = createHistory()
-  syncReduxAndRouter(history, store)
+  //syncReduxAndRouter(history, store)
 
   render(
     <Provider store={store} >

@@ -10,7 +10,7 @@ export const ActionTypes = actionTypes
 
 /* CityWeb Action Creators */
 
-export function getAcrossAsync(q, transitionTo) {
+export function getAcrossAsync(q, transitionTo = null) {
   return (dispatch, getState) => {
     if (!q || q.length == 0) {
       return (dispatch) => { dispatch(clearAcross()) }
@@ -27,7 +27,7 @@ export function getAcrossAsync(q, transitionTo) {
       })
 
       dispatch(setAcross(q, moldedGeoevents))
-      transitionTo("/", {q: q})
+      if(transitionTo) { transitionTo("/", {q: q}) }
     });
   }
 }
