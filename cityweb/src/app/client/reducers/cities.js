@@ -1,4 +1,5 @@
 import { ActionTypes } from '#app/actions'
+import { UPDATE_PATH } from 'redux-simple-router'
 
 const initialState = {
   cities: [],
@@ -7,6 +8,10 @@ const initialState = {
 
 export default function cities(state = initialState, action) {
   switch (action.type) {
+    case UPDATE_PATH:
+      console.log("Handling update path", arguments)
+      return state
+
     case ActionTypes.SET_ACROSS:
       let cityGeoevents = state.cities.map((city) => {
         city.geoevents = action.cityGeoevents[city.key] || []
@@ -22,21 +27,6 @@ export default function cities(state = initialState, action) {
       return {
         ...state,
         cities: action.cities
-      };
-
-    case ActionTypes.SET_CURRENT_CITY:
-      var city = null;
-      var index = state.cities.forEach((cityEntry) => {
-        if(cityEntry.key === action.cityKey) {
-          city = cityEntry
-          return;
-        }
-      });
-
-      console.log("## Selected city", city.display);
-      return {
-        ...state,
-        current: city
       };
 
     default:

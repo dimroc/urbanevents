@@ -35,6 +35,7 @@ export class Homepage extends Component {
     e.preventDefault();
     var q = this.state.q;
     if(q) {
+      store.dispatch(pushPath('?q='+q));
       store.dispatch(getAcrossAsync(q.trim()));
     }
 

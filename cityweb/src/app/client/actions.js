@@ -4,10 +4,7 @@ import { pushPath } from 'redux-simple-router'
 var keyMirror = require('keymirror')
 var actionTypes = keyMirror({
   SET_ACROSS: null,
-  SET_GEOEVENTS: null,
   SET_CITIES: null,
-  SET_CURRENT_CITY: null,
-  GET_CITY: null
 })
 
 export const ActionTypes = actionTypes
@@ -60,14 +57,6 @@ export function getGeoeventsAsync(cityKey, q) {
   }
 }
 
-export function setGeoevents(q, geoevents) {
-  return { type: actionTypes.SET_GEOEVENTS, q, geoevents };
-}
-
-export function clearGeoevents() {
-  return { type: actionTypes.SET_GEOEVENTS, q: null, geoevents: [] };
-}
-
 export function getCitiesAsync() {
   return (dispatch) => {
     return fetch('/api/v1/cities').then(function(result) {
@@ -78,10 +67,6 @@ export function getCitiesAsync() {
 
 export function setCities(cities) {
   return { type: actionTypes.SET_CITIES, cities };
-}
-
-export function setCurrentCity(cityKey) {
-  return { type: actionTypes.SET_CURRENT_CITY, cityKey };
 }
 
 export function getCurrentCity() {

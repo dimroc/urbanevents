@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, IndexRoute, Redirect } from 'react-router';
 import App from '#app/components/app';
 import Homepage from '#app/components/homepage';
-import Citypage from '#app/components/citypage';
 import NotFound from '#app/components/not-found';
 
 /**
