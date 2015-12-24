@@ -9,9 +9,15 @@
   width 300px
   height 100px
 
+  transition all 0.2s ease-in
   > a
     position absolute
     right 0
+    opacity 0
+
+  &:hover
+    > a
+      opacity 1
 
   h1
     text-align center
@@ -21,7 +27,6 @@
     h1
       border-right 0
 
-  transition font-size 1s ease-in
   font-size 20px
   a
     transition all 0.2s ease-in
