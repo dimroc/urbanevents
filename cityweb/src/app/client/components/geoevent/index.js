@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import styles from './styles';
+import moment from 'moment';
 
 export default class Geoevent extends Component {
   render() {
@@ -13,14 +14,15 @@ export default class Geoevent extends Component {
 
     let className = styles.geoevent + " " + geoevent.mediaType;
     className += " uk-width-1-1"
-    return <div className={className}>
+    return <a className={className} href={geoevent.link} target="_blank">
       {geoevent.neighborhoods.map((hood) => {
         return <div key={ hood } className={styles.hood}>{hood}</div>
       })}
-      <h2>{geoevent.fullName}</h2>
+      <h3>{geoevent.fullName}</h3>
+      <label className="time uk-badge uk-badge-success">{moment(geoevent.createdAt).format('lll')}</label>
       {image}
       <div className={styles.text}>{geoevent.text}</div>
-    </div>
+    </a>
   }
 }
 

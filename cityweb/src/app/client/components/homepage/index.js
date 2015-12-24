@@ -3,8 +3,9 @@ import Helmet from 'react-helmet';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getCitiesAsync, getAcrossAsync } from '#app/actions';
-import { citytile, citytileGrid, searchBar } from './styles';
+import { citytile, citytileGrid, searchBar, hidden } from './styles';
 import Geoevent from '#app/components/geoevent';
+import classNames from 'classnames';
 
 class Homepage extends Component {
   constructor(props) {
@@ -61,12 +62,19 @@ class Homepage extends Component {
     this.refs.q.blur();
   }
 
+  hideCity(city, e) {
+    let cityDOM = this.refs["city-" + city.key]
+    cityDOM.className = classNames(citytile, hidden)
+  }
+
   /* Change this landing page to a list of cities?
    * Show a few tiles showing the hearts of the city perhaps as
    * a jpg or a leaflet map?
    */
   render() {
     let { cities, across } = this.props;
+    let component = this;
+
     return <div>
       <Helmet
         title='New Tweet City'
@@ -84,12 +92,13 @@ class Homepage extends Component {
           value={this.state.q}
           onChange={this.handleQueryChange.bind(this)}
         />
-        <input className="uk-button" type="submit" tabIndex="2"/>
+        <input className="uk-button" type="submit" tabIndex="2" value="Search Across Cities"/>
       </form>
 
       <div className={citytileGrid}>
         {cities.map(function(city) {
-          return <div key={city.key} className={citytile}>
+          return <div key={city.key} className={citytile} ref={"city-"+city.key}>
+            <a className="uk-close" onClick={(e) => { component.hideCity(city, e)}.bind(component)}></a>
             <h1>{city.display}</h1>
             <div className="uk-flex uk-flex-column uk-flex-middle uk-flex-nowrap">
               {(across[city.key] || []).map(function(geoevent) {
