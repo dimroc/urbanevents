@@ -52,7 +52,9 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 }
 
 func (e *ElasticConnection) Close() {
-	e.Connection.Close()
+  if(e.Connection != nil) {
+    e.Connection.Close()
+  }
 }
 
 func (e *ElasticConnection) SetRequestTracer(requestTracer func(string, string, string)) {
