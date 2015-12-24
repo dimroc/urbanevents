@@ -50,6 +50,10 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	connection.Domain = host
 	connection.Port = port
 
+	if len(host) == 0 {
+		log.Panic("host is empty. Did you add http:// ?")
+	}
+
 	return &ElasticConnection{Connection: connection}
 }
 

@@ -27,7 +27,8 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:        "elasticsearch",
-			Usage:       "Required. The name of the file to write to",
+			Value:       "http://localhost:9200",
+			Usage:       "The name of the file to write to",
 			EnvVar:      "ELASTICSEARCH_URL",
 			Destination: &elasticsearchUrl,
 		},
@@ -57,7 +58,7 @@ func main() {
 			return
 		}
 
-		fmt.Println("Dumping city " + citykey)
+		fmt.Println("Dumping city " + citykey + " from " + elasticsearchUrl)
 		elastic := citylib.NewElasticConnection(elasticsearchUrl)
 		elastic.SetRequestTracer(RequestTracer)
 		outputfile, err := os.Create(filename)
