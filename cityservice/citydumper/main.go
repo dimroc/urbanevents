@@ -17,11 +17,11 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
-	var citykey, after, before string
+	var citykey, after, before, filename string
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
-			Usage:       "The key for the city you are trying to dump (aka export)",
+			Usage:       "Required. The key for the city you are trying to dump (aka export)",
 			Destination: &citykey,
 			EnvVar:      "CITYKEY",
 		},
@@ -37,6 +37,12 @@ func main() {
 			Usage:       "The date string which geoevents must be before",
 			Destination: &before,
 		},
+		cli.StringFlag{
+			Name:        "output, o",
+			Value:       "/tmp/citydump.jsonl",
+			Usage:       "The name of the file to write to",
+			Destination: &filename,
+		},
 	}
 
 	app.Action = func(c *cli.Context) {
@@ -48,7 +54,7 @@ func main() {
 		fmt.Println("Dumping city " + citykey)
 		elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
 		elastic.SetRequestTracer(RequestTracer)
-		outputfile, err := os.Create("/tmp/citydump.jsonl")
+		outputfile, err := os.Create(filename)
 		Check(err)
 		defer outputfile.Close()
 		defer elastic.Close()
