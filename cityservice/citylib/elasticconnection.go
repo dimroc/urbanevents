@@ -2,8 +2,8 @@ package citylib
 
 import (
 	"fmt"
-	. "github.com/dimroc/urbanevents/cityservice/utils"
 	elastigo "github.com/dimroc/elastigo/lib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net"
 	"net/url"
@@ -52,9 +52,9 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 }
 
 func (e *ElasticConnection) Close() {
-  if(e.Connection != nil) {
-    e.Connection.Close()
-  }
+	if e.Connection != nil {
+		e.Connection.Close()
+	}
 }
 
 func (e *ElasticConnection) SetRequestTracer(requestTracer func(string, string, string)) {
@@ -82,10 +82,25 @@ func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	return out
 }
 
-func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult {
+func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) elastigo.SearchResult {
 	out, err := query.Result(e.Connection)
 	Check(err)
-	return out
+	return *out
+}
+
+func (e *ElasticConnection) ScanAndScrollDsl(query elastigo.SearchDsl) elastigo.SearchResult {
+	// Scan and scroll: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
+	decoratedQuery := query.SearchType("scan").Scroll("20s")
+	//scrollArgs := map[string]interface{}{"scroll": "20s"}
+	result := e.SearchDsl(*decoratedQuery)
+	return result
+}
+
+func (e *ElasticConnection) Scroll(scrollId string) elastigo.SearchResult {
+	scrollArgs := map[string]interface{}{"scroll": "20s"}
+	searchResult, err := e.Connection.Scroll(scrollArgs, scrollId)
+	Check(err)
+	return searchResult
 }
 
 func (e *ElasticConnection) Percolate(geojson GeoJson) []string {

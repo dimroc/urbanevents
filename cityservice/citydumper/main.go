@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/codegangsta/cli"
 	elastigo "github.com/dimroc/elastigo/lib"
@@ -13,7 +14,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "citydumper"
 	app.Version = "0.0.1"
-	app.Usage = "Dump a city's geoevents from elasticsearch to CSV."
+	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
 	var citykey string
 	app.Flags = []cli.Flag{
@@ -31,30 +32,52 @@ func main() {
 			return
 		}
 
+		fmt.Println("Dumping city " + citykey)
 		elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		outputfile, err := os.Create("/tmp/citydump.jsonl")
+		Check(err)
+		defer outputfile.Close()
 		defer elastic.Close()
 
+		// Set up Output File
+		writer := bufio.NewWriter(outputfile)
+		defer writer.Flush()
+
+		// Set up Elasticsearch reading
+
 		dsl := elastigo.Search(citylib.ES_IndexName).Size("1000").
-			SearchType("scan").Scroll("20s"). // Scan and scroll: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
 			Type(citylib.ES_TypeName).Pretty().Filter(
 			elastigo.Filter().Term("city", citykey),
 		).Sort(
 			elastigo.Sort("createdAt").Desc(),
 		)
 
-		scrollResult := elastic.SearchDsl(*dsl)
-		Logger.Debug("Scroll ID: " + scrollResult.ScrollId)
+		searchResult := elastic.ScanAndScrollDsl(*dsl)
+		Logger.Debug("Scroll ID: " + searchResult.ScrollId)
 
-		scrollArgs := map[string]interface{}{"scroll": "20s"}
-		searchResult, err := elastic.Connection.Scroll(scrollArgs, scrollResult.ScrollId)
-		Check(err)
+		for {
+			searchResult = elastic.Scroll(searchResult.ScrollId)
 
-		Logger.Debug(searchResult.String())
-		geoevents := citylib.GeoEventsFromElasticSearch(&searchResult)
-		for _, geoevent := range geoevents {
-			Logger.Debug(geoevent.String())
+			Logger.Debug("Scroll ID: " + searchResult.ScrollId)
+			Logger.Debug(searchResult.String())
+
+			geoevents := citylib.GeoEventsFromElasticSearch(&searchResult)
+			for _, geoevent := range geoevents {
+				writeGeoevent(writer, geoevent)
+			}
+
+			if len(geoevents) == 0 {
+				break
+			}
 		}
+
+		fmt.Println("Output written to " + outputfile.Name())
 	}
 
 	app.Run(os.Args)
+}
+
+func writeGeoevent(writer *bufio.Writer, geoevent citylib.GeoEvent) {
+	_, err := writer.WriteString(ToJsonStringUnsafe(geoevent) + "\n")
+	Check(err)
 }

@@ -3,8 +3,8 @@ package citylib
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/dimroc/urbanevents/cityservice/utils"
 	elastigo "github.com/dimroc/elastigo/lib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"strings"
 	"time"
 )
