@@ -16,13 +16,19 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
-	var citykey string
+	var citykey, after string
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
 			Usage:       "The key for the city you are trying to dump (aka export)",
 			Destination: &citykey,
 			EnvVar:      "CITYKEY",
+		},
+		cli.StringFlag{
+			Name:        "after, a",
+			Value:       "1980-01-01",
+			Usage:       "The date string which geoevents must be after",
+			Destination: &after,
 		},
 	}
 
@@ -47,9 +53,10 @@ func main() {
 
 		dsl := elastigo.Search(citylib.ES_IndexName).Size("1000").
 			Type(citylib.ES_TypeName).Pretty().Filter(
-			elastigo.Filter().Term("city", citykey),
-		).Sort(
-			elastigo.Sort("createdAt").Desc(),
+			elastigo.Filter().And(
+				elastigo.Filter().Term("city", citykey),
+				elastigo.Filter().Range("createdAt", after, nil, nil, nil, ""),
+			),
 		)
 
 		searchResult := elastic.ScanAndScrollDsl(*dsl)
