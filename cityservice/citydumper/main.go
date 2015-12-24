@@ -8,6 +8,7 @@ import (
 	citylib "github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"os"
+	"time"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
-	var citykey, after string
+	var citykey, after, before string
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
@@ -30,6 +31,12 @@ func main() {
 			Usage:       "The date string which geoevents must be after",
 			Destination: &after,
 		},
+		cli.StringFlag{
+			Name:        "before, b",
+			Value:       time.Now().Format("2006-01-02 03:04:05 Z0700"),
+			Usage:       "The date string which geoevents must be before",
+			Destination: &before,
+		},
 	}
 
 	app.Action = func(c *cli.Context) {
@@ -40,6 +47,7 @@ func main() {
 
 		fmt.Println("Dumping city " + citykey)
 		elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		elastic.SetRequestTracer(RequestTracer)
 		outputfile, err := os.Create("/tmp/citydump.jsonl")
 		Check(err)
 		defer outputfile.Close()
@@ -55,7 +63,7 @@ func main() {
 			Type(citylib.ES_TypeName).Pretty().Filter(
 			elastigo.Filter().And(
 				elastigo.Filter().Term("city", citykey),
-				elastigo.Filter().Range("createdAt", after, nil, nil, nil, ""),
+				elastigo.Filter().Range("createdAt", after, nil, before, nil, ""),
 			),
 		)
 
