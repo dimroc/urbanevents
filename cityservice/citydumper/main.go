@@ -17,13 +17,19 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
-	var citykey, after, before, filename string
+	var citykey, after, before, filename, elasticsearchUrl string
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
 			Usage:       "Required. The key for the city you are trying to dump (aka export)",
 			Destination: &citykey,
 			EnvVar:      "CITYKEY",
+		},
+		cli.StringFlag{
+			Name:        "elasticsearch",
+			Usage:       "Required. The name of the file to write to",
+			EnvVar:      "ELASTICSEARCH_URL",
+			Destination: &elasticsearchUrl,
 		},
 		cli.StringFlag{
 			Name:        "after, a",
@@ -52,7 +58,7 @@ func main() {
 		}
 
 		fmt.Println("Dumping city " + citykey)
-		elastic := citylib.NewElasticConnection(os.Getenv("ELASTICSEARCH_URL"))
+		elastic := citylib.NewElasticConnection(elasticsearchUrl)
 		elastic.SetRequestTracer(RequestTracer)
 		outputfile, err := os.Create(filename)
 		Check(err)
@@ -64,13 +70,11 @@ func main() {
 		defer writer.Flush()
 
 		// Set up Elasticsearch reading
-
-		dsl := elastigo.Search(citylib.ES_IndexName).Size("1000").
-			Type(citylib.ES_TypeName).Pretty().Filter(
-			elastigo.Filter().And(
-				elastigo.Filter().Term("city", citykey),
-				elastigo.Filter().Range("createdAt", after, nil, before, nil, ""),
-			),
+		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
+			Pretty().Filter(elastigo.Filter().And(
+			elastigo.Filter().Term("city", citykey),
+			elastigo.Filter().Range("createdAt", after, nil, before, nil, ""),
+		),
 		)
 
 		searchResult := elastic.ScanAndScrollDsl(*dsl)

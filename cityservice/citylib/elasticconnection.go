@@ -14,7 +14,9 @@ type Elastic interface {
 	Writer
 	Close()
 	Search(query string) elastigo.SearchResult
-	SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult
+	SearchDsl(query elastigo.SearchDsl) elastigo.SearchResult
+	ScanAndScrollDsl(query elastigo.SearchDsl) elastigo.SearchResult
+	Scroll(scrollId string) elastigo.SearchResult
 	Percolate(geojson GeoJson) []string
 }
 
@@ -91,7 +93,7 @@ func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) elastigo.SearchR
 func (e *ElasticConnection) ScanAndScrollDsl(query elastigo.SearchDsl) elastigo.SearchResult {
 	// Scan and scroll: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
 	decoratedQuery := query.SearchType("scan").Scroll("20s")
-	//scrollArgs := map[string]interface{}{"scroll": "20s"}
+
 	result := e.SearchDsl(*decoratedQuery)
 	return result
 }
