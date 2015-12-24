@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
-	elastigo "github.com/mattbaird/elastigo/lib"
+	elastigo "github.com/dimroc/elastigo/lib"
 	"log"
 	"strings"
 	"time"
@@ -38,20 +38,22 @@ type GeoJson struct {
 	CoordinatesRaw *json.RawMessage `json:"coordinates"` // Coordinate always has to have exactly 2 values
 }
 
-func GeoEventsFromElasticSearch(result *elastigo.SearchResult) []GeoEvent {
+func GeoEventsFromHits(hits *elastigo.Hits) []GeoEvent {
 	response := []GeoEvent{}
 
-	for _, hit := range result.Hits.Hits {
+	for _, hit := range hits.Hits {
 		geoevent := GeoEvent{}
 		err := json.Unmarshal(*hit.Source, &geoevent)
-		if err != nil {
-			log.Panic(err)
-		}
+		Check(err)
 
 		response = append(response, geoevent)
 	}
 
 	return response
+}
+
+func GeoEventsFromElasticSearch(result *elastigo.SearchResult) []GeoEvent {
+	return GeoEventsFromHits(&result.Hits)
 }
 
 func (g GeoJson) Center() [2]float64 {

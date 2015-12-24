@@ -1,39 +1,50 @@
-.example
-  color mainColor
-  font-size px(40)
-  font-weight 500
-  max-width px(500)
-  margin 0 auto
-.link
-  color yellow
+.hidden
+  display none !important
+
+.citytile
   position relative
-  &:before
-    content ''
+  display inline-block
+  margin 0 20px
+
+  width 300px
+  height 100px
+
+  transition all 0.2s ease-in
+  > a
     position absolute
-    height px(2)
-    bottom px(0)
-    // transition 300ms
-    background-color yellow
-    right px(-1)
-    left @right
+    right 0
+    opacity 0
 
   &:hover
-    color red
-    &:before
-      background-color red // #ff897a
-    //   left px(-2)
-    //   right px(-2)
+    > a
+      opacity 1
 
-.p
-  color mainColor
+  h1
+    text-align center
+    vertical-align top
 
-.button
-  margin-top px(50)
-  width px(50)
-  height @width
-  color #333
-  font-size px(30)
-  text-align center
-  background-color mainColor
-  display inline-block
-  border-radius px(3)
+  &:last-child
+    h1
+      border-right 0
+
+  font-size 20px
+  a
+    transition all 0.2s ease-in
+    color #5C7094
+    &:hover
+      color #283959
+      background-color #eee
+      text-decoration none
+
+.citytileGrid
+  margin 40px 0px 20px
+  white-space nowrap
+
+.searchBar
+  margin 20px
+  input
+    font-size 26px !important
+    height 60px !important
+
+  input[type=search]
+    padding 10px 20px

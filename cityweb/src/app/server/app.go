@@ -90,7 +90,7 @@ func NewApp(opts ...AppOptions) *App {
 		id, _ := uuid.NewV4()
 		c.Set("uuid", id)
 		return nil
-  })
+	})
 
 	// Assign settings
 	settings, settingsErr := citylib.LoadSettings(settingsFilename)
@@ -121,11 +121,22 @@ func NewApp(opts ...AppOptions) *App {
 		),
 	)
 
+	// Bind static handling to static/
+	app.Engine.Group("/static").ServeDir("/images", "image")
+
 	// Create file http server from bindata
 	fileServerHandler := http.FileServer(&assetfs.AssetFS{
 		Asset:    Asset,
 		AssetDir: AssetDir,
 	})
+
+	//noJsRender := func(c *echo.Context) error {
+	//return c.Render(http.StatusOK, "react.html", resp{
+	//UUID:  c.Get("uuid").(*uuid.UUID).String(),
+	//Title: "New Tweet City",
+	////Meta: "my meta tags to add at the head of the page",
+	//})
+	//}
 
 	// Serve static via bindata and handle via react app
 	// in case when static file was not found
@@ -143,6 +154,7 @@ func NewApp(opts ...AppOptions) *App {
 				}
 				// if static file not found handle request via react application
 				return app.React.Handle(c)
+				//return noJsRender(c)
 			}
 			// Move further if err is not `Not Found`
 			return err

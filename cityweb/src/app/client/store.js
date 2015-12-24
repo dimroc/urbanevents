@@ -1,20 +1,15 @@
-import { compose, createStore as reduxCreateStore} from 'redux';
-import { devTools, persistState } from 'redux-devtools';
-import goStarterKit from './reducers';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import createLogger from 'redux-logger';
+import rootReducer from '#app/reducers/index';
 
-let finalCreateStore;
-if (process.env.NODE_ENV === 'production') {
-  finalCreateStore = reduxCreateStore.bind(null, goStarterKit);
-} else {
-  try {
-    finalCreateStore = compose(
-      devTools(),
-      persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
-    )(reduxCreateStore).bind(null, goStarterKit);
-    console.log('dev tools added');
-  } catch (e) {
-    finalCreateStore = reduxCreateStore.bind(null, goStarterKit);
-  }
+const logger = createLogger()
+const createStoreWithMiddleware = applyMiddleware(
+  thunkMiddleware,
+  logger
+)(createStore);
+
+export default function configureStore(initialState) {
+  return createStoreWithMiddleware(rootReducer, initialState);
 }
 
-export const createStore = finalCreateStore;

@@ -4,15 +4,17 @@ import { renderToString } from 'react-dom/server';
 import { match, RoutingContext } from 'react-router';
 import Helmet from 'react-helmet';
 import createRoutes from './routes';
-import { createStore } from '../store';
+import configureStore from '../store';
 
 /**
  * Handle HTTP request at Golang server
  *
  * @param   {Object}   options  request options
- * @param   {Function} cbk      response callback
+ * @param   {Function} callback response callback
  */
-export default function (options, cbk) {
+export default function (options, callback) {
+
+  console.log("## Rendering JS Server Side");
 
   let result = {
     uuid: options.uuid,
@@ -24,10 +26,10 @@ export default function (options, cbk) {
     redirect: null
   };
 
-  const store = createStore();
+  const store = configureStore();
 
   try {
-    match({ routes: createRoutes({store, first: { time: false }}), location: options.url }, (error, redirectLocation, renderProps) => {
+    match({ routes: createRoutes({store}), location: options.url }, (error, redirectLocation, renderProps) => {
       try {
         if (error) {
           result.error = error;
@@ -49,10 +51,10 @@ export default function (options, cbk) {
       } catch (e) {
         result.error = e;
       }
-      return cbk(JSON.stringify(result));
+      return callback(JSON.stringify(result));
     });
   } catch (e) {
     result.error = e;
-    return cbk(JSON.stringify(result));
+    return callback(JSON.stringify(result));
   }
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
-	elastigo "github.com/mattbaird/elastigo/lib"
+	elastigo "github.com/dimroc/elastigo/lib"
 	"strings"
 	"time"
 )
@@ -24,6 +24,11 @@ type City struct {
 type CityDetails struct {
 	City
 	Stats CityCounts `json:"stats"`
+}
+
+type CityGeoEvents struct {
+	Key       string     `json:"key"`
+	GeoEvents []GeoEvent `json:"geoevents"`
 }
 
 func (c *City) String() string {
@@ -55,7 +60,10 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 	}
 
 	dsl := elastigo.Search(ES_IndexName).Type(ES_TypeName).Size(CITY_QUERY_SIZE).Pretty().Filter(
-		elastigo.Filter().Term("city", c.Key),
+		elastigo.Filter().And(
+			elastigo.Filter().Term("city", c.Key),
+			elastigo.Filter().Terms("mediaType", elastigo.TEMPlain, "image", "video"),
+		),
 	).Query(
 		elastigo.Query().Search(term),
 	).Sort(
@@ -63,7 +71,6 @@ func (c *City) Query(e Elastic, term string) []GeoEvent {
 	)
 
 	out := e.SearchDsl(*dsl)
-
 	return GeoEventsFromElasticSearch(out)
 }
 

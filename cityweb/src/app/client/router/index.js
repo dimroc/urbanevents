@@ -1,13 +1,13 @@
-import React from 'react';
-import { render } from 'react-dom';
-import Router from 'react-router';
-import { Provider } from 'react-redux';
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import { createHistory } from 'history';
-import toString from './toString';
-import { Promise } from 'when';
-import createRoutes from './routes';
-import { createStore } from '../store';
+import React from 'react'
+import { render } from 'react-dom'
+import Router from 'react-router'
+import { Provider } from 'react-redux'
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react'
+import { createHistory } from 'history'
+import toString from './toString'
+import { Promise } from 'when'
+import createRoutes from './routes'
+import configureStore from '../store'
 
 export function run() {
   // init promise polyfill
@@ -15,32 +15,17 @@ export function run() {
   // init fetch polyfill
   window.self = window;
   require('whatwg-fetch');
+  const store = configureStore(window['--app-initial']);
+  window.store = store;
 
-  const store = createStore(window['--app-initial']);
-
-  if (process.env.NODE_ENV !== 'production'){
-    store.subscribe(() => {
-      console.log('%c[STORE]', 'color: green', store.getState());
-    });
-  }
+  const history = createHistory()
 
   render(
     <Provider store={store} >
-      <Router history={createHistory()}>{createRoutes({store, first: { time: true }})}</Router>
+      <Router history={history}>{createRoutes({store})}</Router>
     </Provider>,
     document.getElementById('app')
   );
-
-  if (process.env.NODE_ENV !== 'production'){
-    const node = document.createElement('div');
-    document.body.appendChild(node);
-    render(
-      <DebugPanel top right bottom>
-        <DevTools store={store} monitor={LogMonitor} visibleOnLoad={false}/>
-      </DebugPanel>,
-      node
-    );
-  }
 }
 
 // Export it to render on the Golang sever, keep the name sync with -
