@@ -25,11 +25,11 @@ func main() {
 }
 
 func addDumpCommand() cli.Command {
-	var citykey, after, before, filename, neighborhoods, elasticsearchUrl string
+	var citykey, after, before, neighborhoods, elasticsearchUrl string
 	command := cli.Command{
 		Name:    "dump",
 		Aliases: []string{"d"},
-		Usage:   "Export geoevents from a Cityservice Elasticsearch store",
+		Usage:   "dump <flags> <filename> Export geoevents from a Cityservice Elasticsearch store to JSONL.",
 	}
 
 	command.Flags = []cli.Flag{
@@ -42,7 +42,7 @@ func addDumpCommand() cli.Command {
 		cli.StringFlag{
 			Name:        "elasticsearch",
 			Value:       "http://localhost:9200",
-			Usage:       "The name of the file to write to",
+			Usage:       "The URL of the Elasticsearch server to read from",
 			EnvVar:      "ELASTICSEARCH_URL",
 			Destination: &elasticsearchUrl,
 		},
@@ -63,15 +63,16 @@ func addDumpCommand() cli.Command {
 			Usage:       "A comma separated string specifying neighborhoods to filter for",
 			Destination: &neighborhoods,
 		},
-		cli.StringFlag{
-			Name:        "output, o",
-			Value:       "/tmp/citydump.jsonl",
-			Usage:       "The name of the file to write to",
-			Destination: &filename,
-		},
 	}
 
 	command.Action = func(c *cli.Context) {
+		if len(c.Args()) == 0 {
+			fmt.Println("Must pass output filename as argument. See help.")
+			return
+		}
+
+		filename := c.Args()[0]
+
 		if len(citykey) == 0 {
 			fmt.Println("Must set citykey flag. See help")
 			return
