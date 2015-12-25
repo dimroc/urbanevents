@@ -18,8 +18,21 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
+	commands := []cli.Command{}
+	commands = append(commands, addDumpCommand())
+	app.Commands = commands
+	app.Run(os.Args)
+}
+
+func addDumpCommand() cli.Command {
 	var citykey, after, before, filename, neighborhoods, elasticsearchUrl string
-	app.Flags = []cli.Flag{
+	command := cli.Command{
+		Name:    "dump",
+		Aliases: []string{"d"},
+		Usage:   "Export geoevents from a Cityservice Elasticsearch store",
+	}
+
+	command.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
 			Usage:       "Required. The key for the city you are trying to dump (aka export)",
@@ -58,7 +71,7 @@ func main() {
 		},
 	}
 
-	app.Action = func(c *cli.Context) {
+	command.Action = func(c *cli.Context) {
 		if len(citykey) == 0 {
 			fmt.Println("Must set citykey flag. See help")
 			return
@@ -112,7 +125,7 @@ func main() {
 		fmt.Println("Output written to " + outputfile.Name())
 	}
 
-	app.Run(os.Args)
+	return command
 }
 
 func writeGeoevent(writer *bufio.Writer, geoevent citylib.GeoEvent) {
