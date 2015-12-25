@@ -59,6 +59,7 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 
 func (e *ElasticConnection) Close() {
 	if e.Connection != nil {
+		e.Connection.Flush()
 		e.Connection.Close()
 	}
 }
@@ -128,20 +129,21 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 
 // Bulk Elastic
 // Shit don't work. Silently fails after around a day of usage. gg BulkIndexer.
+// Still used for fast bulk importing from JSONL files.
 // Probably related to: https://github.com/mattbaird/elastigo/commit/0c98885a2b2575c99882263dfc4bf6aae9079a63
-//type BulkElasticConnection struct {
-//*ElasticConnection
-//BulkIndexer *elastigo.BulkIndexer
-//}
+type BulkElasticConnection struct {
+	*ElasticConnection
+	BulkIndexer *elastigo.BulkIndexer
+}
 
-//func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
-//elastic := NewElasticConnection(elasticsearchUrl)
-//bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
-//bulkIndexer.Start()
+func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
+	elastic := NewElasticConnection(elasticsearchUrl)
+	bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
+	bulkIndexer.Start()
 
-//return &BulkElasticConnection{elastic, bulkIndexer}
-//}
+	return &BulkElasticConnection{elastic, bulkIndexer}
+}
 
-//func (e *BulkElasticConnection) Write(g GeoEvent) error {
-//return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
-//}
+func (e *BulkElasticConnection) Write(g GeoEvent) error {
+	return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", "", &g.CreatedAt, g)
+}
