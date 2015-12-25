@@ -8,6 +8,7 @@ import (
 	citylib "github.com/dimroc/urbanevents/cityservice/citylib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -17,7 +18,7 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
 
-	var citykey, after, before, filename, elasticsearchUrl string
+	var citykey, after, before, filename, neighborhoods, elasticsearchUrl string
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "citykey, c",
@@ -45,6 +46,11 @@ func main() {
 			Destination: &before,
 		},
 		cli.StringFlag{
+			Name:        "neighborhoods, n",
+			Usage:       "A comma separated string specifying neighborhoods to filter for",
+			Destination: &neighborhoods,
+		},
+		cli.StringFlag{
 			Name:        "output, o",
 			Value:       "/tmp/citydump.jsonl",
 			Usage:       "The name of the file to write to",
@@ -70,13 +76,19 @@ func main() {
 		writer := bufio.NewWriter(outputfile)
 		defer writer.Flush()
 
-		// Set up Elasticsearch reading
-		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
-			Pretty().Filter(elastigo.Filter().And(
+		filters := []*elastigo.FilterOp{
 			elastigo.Filter().Term("city", citykey),
 			elastigo.Filter().Range("createdAt", after, nil, before, nil, ""),
-		),
-		)
+		}
+
+		neighborhoodArray := removeEmptyEntries(strings.Split(neighborhoods, ","))
+		if len(neighborhoodArray) > 0 {
+			filters = append(filters, elastigo.Filter().Terms("neighborhoods", "", neighborhoodArray))
+		}
+
+		// Set up Elasticsearch reading
+		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
+			Pretty().Filter(elastigo.Filter().And(filters...))
 
 		searchResult := elastic.ScanAndScrollDsl(*dsl)
 		Logger.Debug("Scroll ID: " + searchResult.ScrollId)
@@ -106,4 +118,15 @@ func main() {
 func writeGeoevent(writer *bufio.Writer, geoevent citylib.GeoEvent) {
 	_, err := writer.WriteString(ToJsonStringUnsafe(geoevent) + "\n")
 	Check(err)
+}
+
+func removeEmptyEntries(array []string) []string {
+	cleaned := []string{}
+	for _, entry := range array {
+		if len(entry) > 0 {
+			cleaned = append(cleaned, entry)
+		}
+	}
+
+	return cleaned
 }
