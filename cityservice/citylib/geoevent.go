@@ -38,14 +38,18 @@ type GeoJson struct {
 	CoordinatesRaw *json.RawMessage `json:"coordinates"` // Coordinate always has to have exactly 2 values
 }
 
+func GeoEventFromRawMessage(rawMessage *json.RawMessage) GeoEvent {
+	geoevent := GeoEvent{}
+	err := json.Unmarshal(*rawMessage, &geoevent)
+	Check(err)
+	return geoevent
+}
+
 func GeoEventsFromHits(hits *elastigo.Hits) []GeoEvent {
 	response := []GeoEvent{}
 
 	for _, hit := range hits.Hits {
-		geoevent := GeoEvent{}
-		err := json.Unmarshal(*hit.Source, &geoevent)
-		Check(err)
-
+		geoevent := GeoEventFromRawMessage(hit.Source)
 		response = append(response, geoevent)
 	}
 
