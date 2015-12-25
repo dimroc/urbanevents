@@ -51,7 +51,7 @@ func addImportCommand() cli.Command {
 		}
 
 		elastic := citylib.NewBulkElasticConnection(elasticsearchUrl)
-		elastic.SetRequestTracer(RequestTracer)
+		//elastic.SetRequestTracer(RequestTracer)
 
 		filename := c.Args()[0]
 		file, err := os.Open(filename)
