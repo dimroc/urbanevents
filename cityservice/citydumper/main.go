@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/cli"
 	elastigo "github.com/dimroc/elastigo/lib"
@@ -16,12 +17,58 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "citydumper"
 	app.Version = "0.0.1"
-	app.Usage = "Dump a city's geoevents from elasticsearch to JSONL."
+	app.Usage = "Manage a city's Elasticsearch Geoevent store. See subcommands (help dump)."
+	app.Commands = []cli.Command{
+		addDumpCommand(),
+		addImportCommand(),
+	}
 
-	commands := []cli.Command{}
-	commands = append(commands, addDumpCommand())
-	app.Commands = commands
 	app.Run(os.Args)
+}
+
+func addImportCommand() cli.Command {
+	var elasticsearchUrl string
+	command := cli.Command{
+		Name:    "import",
+		Aliases: []string{"i"},
+		Usage:   "Import geoevents from a Cityservice JSONL file.",
+	}
+
+	command.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:        "elasticsearch",
+			Value:       "http://localhost:9200",
+			Usage:       "The URL of the Elasticsearch server to write to",
+			EnvVar:      "ELASTICSEARCH_URL",
+			Destination: &elasticsearchUrl,
+		},
+	}
+
+	command.Action = func(c *cli.Context) {
+		if len(c.Args()) == 0 {
+			fmt.Println("Must pass input filename as argument. See help.")
+			return
+		}
+
+		elastic := citylib.NewBulkElasticConnection(elasticsearchUrl)
+		elastic.SetRequestTracer(RequestTracer)
+
+		filename := c.Args()[0]
+		file, err := os.Open(filename)
+		Check(err)
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			rawMessage := json.RawMessage(scanner.Bytes())
+			geoevent := citylib.GeoEventFromRawMessage(&rawMessage)
+			elastic.Write(geoevent)
+		}
+
+		if err := scanner.Err(); err != nil {
+			Logger.Warning("reading standard input:", err)
+		}
+	}
+
+	return command
 }
 
 func addDumpCommand() cli.Command {
