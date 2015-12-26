@@ -83,6 +83,27 @@ func (e *ElasticConnection) Write(g GeoEvent) error {
 	return err
 }
 
+func (e *ElasticConnection) ScanAndScrollGeoEvents(dsl *elastigo.SearchDsl, callback func(geoevent GeoEvent)) {
+	searchResult := e.ScanAndScrollDsl(*dsl)
+	Logger.Debug("Scroll ID: " + searchResult.ScrollId)
+
+	for {
+		searchResult = e.Scroll(searchResult.ScrollId)
+
+		Logger.Debug("Scroll ID: " + searchResult.ScrollId)
+		Logger.Debug(searchResult.String())
+
+		geoevents := GeoEventsFromElasticSearch(&searchResult)
+		for _, geoevent := range geoevents {
+			callback(geoevent)
+		}
+
+		if len(geoevents) == 0 {
+			break
+		}
+	}
+}
+
 func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	out, err := e.Connection.Search(ES_IndexName, ES_TypeName, nil, query)
 	Check(err)
