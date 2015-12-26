@@ -21,9 +21,52 @@ func main() {
 	app.Commands = []cli.Command{
 		addDumpCommand(),
 		addImportCommand(),
+		addPruneCommand(),
 	}
 
 	app.Run(os.Args)
+}
+
+func addPruneCommand() cli.Command {
+	var elasticsearchUrl string
+	command := cli.Command{
+		Name:  "prune",
+		Usage: "prune <datestring>. Delete geoevents that are before a certain date",
+	}
+
+	command.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:        "elasticsearch",
+			Value:       "http://localhost:9200",
+			Usage:       "The URL of the Elasticsearch server to write to",
+			EnvVar:      "ELASTICSEARCH_URL",
+			Destination: &elasticsearchUrl,
+		},
+	}
+
+	command.Action = func(c *cli.Context) {
+		if len(c.Args()) == 0 {
+			fmt.Println("Must pass date string. See help.")
+			return
+		}
+
+		before := c.Args()[0]
+		println("Deleting all Geoevents before " + before)
+
+		elastic := citylib.NewBulkElasticConnection(elasticsearchUrl)
+		defer elastic.Close()
+
+		// Set up Elasticsearch reading
+		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
+			Pretty().Filter(
+			elastigo.Filter().Range("createdAt", nil, nil, before, nil, ""))
+
+		elastic.ScanAndScrollGeoEvents(dsl, func(geoevent citylib.GeoEvent) {
+			elastic.BulkIndexer.Delete(citylib.ES_IndexName, citylib.ES_TypeName, geoevent.Id)
+		})
+	}
+
+	return command
 }
 
 func addImportCommand() cli.Command {
@@ -31,7 +74,7 @@ func addImportCommand() cli.Command {
 	command := cli.Command{
 		Name:    "import",
 		Aliases: []string{"i"},
-		Usage:   "Import geoevents from a Cityservice JSONL file.",
+		Usage:   "import <flags> <filename> Import geoevents from a Cityservice JSONL file.",
 	}
 
 	command.Flags = []cli.Flag{
@@ -151,24 +194,9 @@ func addDumpCommand() cli.Command {
 		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
 			Pretty().Filter(elastigo.Filter().And(filters...))
 
-		searchResult := elastic.ScanAndScrollDsl(*dsl)
-		Logger.Debug("Scroll ID: " + searchResult.ScrollId)
-
-		for {
-			searchResult = elastic.Scroll(searchResult.ScrollId)
-
-			Logger.Debug("Scroll ID: " + searchResult.ScrollId)
-			Logger.Debug(searchResult.String())
-
-			geoevents := citylib.GeoEventsFromElasticSearch(&searchResult)
-			for _, geoevent := range geoevents {
-				writeGeoevent(writer, geoevent)
-			}
-
-			if len(geoevents) == 0 {
-				break
-			}
-		}
+		elastic.ScanAndScrollGeoEvents(dsl, func(geoevent citylib.GeoEvent) {
+			writeGeoevent(writer, geoevent)
+		})
 
 		fmt.Println("Output written to " + outputfile.Name())
 	}
