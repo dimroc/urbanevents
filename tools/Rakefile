@@ -71,7 +71,7 @@ namespace :es do
     repository.client.indices.delete index: 'development-geoevent*'
   end
 
-  task :bootstrap => [:create_index_and_alias, :seed_percolators]
+  task :bootstrap => [:create_index_and_alias, :seed_percolators, :set_geoevent_ttl]
   task :create_index_and_alias do
     repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias
