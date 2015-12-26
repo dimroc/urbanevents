@@ -2,8 +2,8 @@ package citylib
 
 import (
 	"fmt"
-	. "github.com/dimroc/urbanevents/cityservice/utils"
 	elastigo "github.com/dimroc/elastigo/lib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"log"
 	"net"
 	"net/url"
@@ -14,7 +14,9 @@ type Elastic interface {
 	Writer
 	Close()
 	Search(query string) elastigo.SearchResult
-	SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult
+	SearchDsl(query elastigo.SearchDsl) elastigo.SearchResult
+	ScanAndScrollDsl(query elastigo.SearchDsl) elastigo.SearchResult
+	Scroll(scrollId string) elastigo.SearchResult
 	Percolate(geojson GeoJson) []string
 }
 
@@ -48,11 +50,18 @@ func NewElasticConnection(elasticsearchUrl string) *ElasticConnection {
 	connection.Domain = host
 	connection.Port = port
 
+	if len(host) == 0 {
+		log.Panic("host is empty. Did you add http:// ?")
+	}
+
 	return &ElasticConnection{Connection: connection}
 }
 
 func (e *ElasticConnection) Close() {
-	e.Connection.Close()
+	if e.Connection != nil {
+		e.Connection.Flush()
+		e.Connection.Close()
+	}
 }
 
 func (e *ElasticConnection) SetRequestTracer(requestTracer func(string, string, string)) {
@@ -74,16 +83,52 @@ func (e *ElasticConnection) Write(g GeoEvent) error {
 	return err
 }
 
+func (e *ElasticConnection) ScanAndScrollGeoEvents(dsl *elastigo.SearchDsl, callback func(geoevent GeoEvent)) {
+	searchResult := e.ScanAndScrollDsl(*dsl)
+	Logger.Debug("Scroll ID: " + searchResult.ScrollId)
+
+	for {
+		searchResult = e.Scroll(searchResult.ScrollId)
+
+		Logger.Debug("Scroll ID: " + searchResult.ScrollId)
+		Logger.Debug(searchResult.String())
+
+		geoevents := GeoEventsFromElasticSearch(&searchResult)
+		for _, geoevent := range geoevents {
+			callback(geoevent)
+		}
+
+		if len(geoevents) == 0 {
+			break
+		}
+	}
+}
+
 func (e *ElasticConnection) Search(query string) elastigo.SearchResult {
 	out, err := e.Connection.Search(ES_IndexName, ES_TypeName, nil, query)
 	Check(err)
 	return out
 }
 
-func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) *elastigo.SearchResult {
+func (e *ElasticConnection) SearchDsl(query elastigo.SearchDsl) elastigo.SearchResult {
 	out, err := query.Result(e.Connection)
 	Check(err)
-	return out
+	return *out
+}
+
+func (e *ElasticConnection) ScanAndScrollDsl(query elastigo.SearchDsl) elastigo.SearchResult {
+	// Scan and scroll: https://www.elastic.co/guide/en/elasticsearch/guide/current/scan-scroll.html
+	decoratedQuery := query.SearchType("scan").Scroll("20s")
+
+	result := e.SearchDsl(*decoratedQuery)
+	return result
+}
+
+func (e *ElasticConnection) Scroll(scrollId string) elastigo.SearchResult {
+	scrollArgs := map[string]interface{}{"scroll": "20s"}
+	searchResult, err := e.Connection.Scroll(scrollArgs, scrollId)
+	Check(err)
+	return searchResult
 }
 
 func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
@@ -105,20 +150,21 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 
 // Bulk Elastic
 // Shit don't work. Silently fails after around a day of usage. gg BulkIndexer.
+// Still used for fast bulk importing from JSONL files.
 // Probably related to: https://github.com/mattbaird/elastigo/commit/0c98885a2b2575c99882263dfc4bf6aae9079a63
-//type BulkElasticConnection struct {
-//*ElasticConnection
-//BulkIndexer *elastigo.BulkIndexer
-//}
+type BulkElasticConnection struct {
+	*ElasticConnection
+	BulkIndexer *elastigo.BulkIndexer
+}
 
-//func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
-//elastic := NewElasticConnection(elasticsearchUrl)
-//bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
-//bulkIndexer.Start()
+func NewBulkElasticConnection(elasticsearchUrl string) *BulkElasticConnection {
+	elastic := NewElasticConnection(elasticsearchUrl)
+	bulkIndexer := elastic.Connection.NewBulkIndexerErrors(5, 10)
+	bulkIndexer.Start()
 
-//return &BulkElasticConnection{elastic, bulkIndexer}
-//}
+	return &BulkElasticConnection{elastic, bulkIndexer}
+}
 
-//func (e *BulkElasticConnection) Write(g GeoEvent) error {
-//return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", &g.CreatedAt, g, false)
-//}
+func (e *BulkElasticConnection) Write(g GeoEvent) error {
+	return e.BulkIndexer.Index(ES_IndexName, ES_TypeName, g.Id, "", "", &g.CreatedAt, g)
+}

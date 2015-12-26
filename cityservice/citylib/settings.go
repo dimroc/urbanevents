@@ -3,8 +3,8 @@ package citylib
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/dimroc/urbanevents/cityservice/utils"
 	elastigo "github.com/dimroc/elastigo/lib"
+	. "github.com/dimroc/urbanevents/cityservice/utils"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -113,7 +113,7 @@ func generateAcrossCityQuery(term string, cities []City) string {
         "simple_query_string": {
           "query": "\"%s\"",
           "fields": [
-            "text",
+            "text^1.5",
             "fullName",
             "hashtags",
             "username",
@@ -144,7 +144,8 @@ func generateAcrossCityQuery(term string, cities []City) string {
                   "order": "desc"
                 }
               }
-            ]
+            ],
+            "size": 10
           }
         }
       }

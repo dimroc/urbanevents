@@ -71,11 +71,21 @@ namespace :es do
     repository.client.indices.delete index: 'development-geoevent*'
   end
 
-  task :bootstrap => [:create_index_and_alias, :seed_percolators]
+  task :bootstrap => [:create_index_and_alias, :seed_percolators, :set_geoevent_ttl]
   task :create_index_and_alias do
     repository.create_index!
     repository.client.indices.put_alias index: repository.index, name: es_alias
     hood_repository(index: es_alias).update_mapping!
+  end
+
+  task :set_geoevent_ttl do
+    repository.client.indices.put_mapping({
+      index: es_alias,
+      type: :geoevent,
+      body: {
+        _ttl: { enabled: true, default: "100d" }
+      }
+    })
   end
 
   task :set_alias do
