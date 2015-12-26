@@ -78,6 +78,16 @@ namespace :es do
     hood_repository(index: es_alias).update_mapping!
   end
 
+  task :set_geoevent_ttl do
+    repository.client.indices.put_mapping({
+      index: es_alias,
+      type: :geoevent,
+      body: {
+        _ttl: { enabled: true, default: "100d" }
+      }
+    })
+  end
+
   task :set_alias do
     old_index = ENV['OLD_INDEX']
     new_index = ENV['NEW_INDEX']
