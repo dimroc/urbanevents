@@ -1,0 +1,4 @@
+tmp/
+.envrc
+.git
+*/node_modules

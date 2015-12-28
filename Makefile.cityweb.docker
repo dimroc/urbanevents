@@ -1,16 +1,15 @@
 DOCKER = docker
 REPO = tutum.co/dimroc/cityweb
 OUTPUT=tmp/cityweb-deployment
-
-TAG = $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
-ifeq ($(TAG), master)
-	TAG = latest
-else ifeq ($(TAG), HEAD)
-	TAG = latest
-endif
+TAG = latest
 
 build:
-	@echo No build steps
+	@echo "**"
+	@echo Makefile for CityWeb deployment is top level because it requires city/lib
+	@echo and cross compilation isn\'t available because duktape is a native c lib.
+	@echo Building CityWeb static assets locally using NPM...
+	@echo "**"
+	cd cityweb && make build
 
 docker: build
 	$(DOCKER) build -t $(REPO):$(TAG) -f Dockerfile.cityweb .
@@ -20,7 +19,16 @@ run: docker
 		-e "ELASTICSEARCH_URL=$(ELASTICSEARCH_URL)" \
 		-e "CITYSERVICE_SETTINGS=config/cityweb.json" \
 		-e "GO_ENV=development" \
+		-p 80:5000 \
 		$(REPO)
+
+run_sh: docker
+	$(DOCKER) run -i -t \
+		-e "ELASTICSEARCH_URL=$(ELASTICSEARCH_URL)" \
+		-e "CITYSERVICE_SETTINGS=config/cityweb.json" \
+		-e "GO_ENV=development" \
+		-p 80:5000 \
+		--entrypoint bash $(REPO)
 
 push: docker
 	$(DOCKER) push $(REPO):$(TAG)

@@ -1,18 +1,20 @@
 github.com/ChimeraCoder/tokenbucket c5a927568de7aad8a58127d80bcd36ca4e71e454 
 github.com/araddon/gou cf9cf25f52be174c5878920a8021bd224cbe32c7 
 github.com/bitly/go-hostpool d0e59c22a56e8dadfed24f74f452cea5a52722d2 
+github.com/codegangsta/cli
 github.com/codegangsta/negroni c7477ad8e330bef55bf1ebe300cf8aa67c492d1b
 github.com/dimroc/anaconda master
 github.com/dimroc/elastigo 51b1b8bec965c2e25fdcde2cfa0f5f01dff201f7
 github.com/dimroc/go-instagram/instagram
 github.com/dustin/go-jsonpointer 75939f54b39e7dafae879e61f65438dadc5f288c 
 github.com/dustin/gojson af16e0e771e2ed110f2785564ae33931de8829e4 
+github.com/elazarl/go-bindata-assetfs d5cac425555ca5cf00694df246e04f05e6a55150
 github.com/golang/mock/gomock 15f8b22550555c0d3edf5afa97d74001bda2208b
 github.com/gorilla/context 215affda49addc4c8ef7e2534915df2c8c35c6cd 
 github.com/gorilla/mux 94903de8c98a68d8b4483c529b26a5d146e386a2 
+github.com/jteeuwen/go-bindata bfe36d3254337b7cc18024805dfab2106613abdf
 github.com/kellydunn/golang-geo v0.6.1
 github.com/op/go-logging e8d5414f0947014548c2334044a0fac13187dfee 
 github.com/rs/cors 5e4ce6bc0ecd3472f6f943666d84876691be2ced 
 github.com/unrolled/render 83f2ba57c12cec399ef137457b1957e41ef0bbe8 
 gopkg.in/antage/eventsource.v1 803f4c5af2259daa9225c72732b23e1e65ee794e 
-github.com/codegangsta/cli

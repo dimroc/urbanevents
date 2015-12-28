@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.5
 
 # Copy the local package files to the container's workspace.
 ADD . /go/src/github.com/dimroc/urbanevents
@@ -15,7 +15,19 @@ RUN wget https://raw.githubusercontent.com/pote/gpm/v1.3.2/bin/gpm && \
 
 RUN gpm
 
-WORKDIR /go/src/github.com/dimroc/urbanevents/cityservice/citylib/src/app
-RUN go install
+# Node and NPM
+RUN apt-get update
+RUN apt-get install -yq nodejs-legacy npm
+RUN alias node=nodejs
 
-ENTRYPOINT /go/bin/app
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb/src/app
+RUN go get
+RUN go get github.com/jteeuwen/go-bindata/...
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb
+RUN npm install
+RUN make
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb
+EXPOSE 5000
+ENTRYPOINT /go/bin/app run
