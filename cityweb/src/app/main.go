@@ -18,7 +18,7 @@ func Run(args []string) {
 
 	app := cli.NewApp()
 	app.Name = "app"
-	app.Usage = "React server application"
+	app.Usage = "CityWeb React server application"
 
 	configFlag := cli.StringFlag{
 		Name:   "config, c",
@@ -30,7 +30,7 @@ func Run(args []string) {
 	app.Commands = []cli.Command{
 		{
 			Name:   "run",
-			Usage:  "Runs server",
+			Usage:  "Runs CityWeb web server",
 			Action: RunServer,
 			Flags:  []cli.Flag{configFlag},
 		},
