@@ -1,0 +1,29 @@
+DOCKER = docker
+REPO = tutum.co/dimroc/cityweb
+OUTPUT=tmp/cityweb-deployment
+
+TAG = $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
+ifeq ($(TAG), master)
+	TAG = latest
+else ifeq ($(TAG), HEAD)
+	TAG = latest
+endif
+
+build:
+	@echo No build steps
+
+docker: build
+	$(DOCKER) build -t $(REPO):$(TAG) -f Dockerfile.cityweb .
+
+run: docker
+	$(DOCKER) run -i -t \
+		-e "ELASTICSEARCH_URL=$(ELASTICSEARCH_URL)" \
+		-e "CITYSERVICE_SETTINGS=config/cityweb.json" \
+		-e "GO_ENV=development" \
+		$(REPO)
+
+push: docker
+	$(DOCKER) push $(REPO):$(TAG)
+
+all: build docker push
+
