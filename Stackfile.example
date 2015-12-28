@@ -1,0 +1,169 @@
+# A tutum stackfile for all the services.
+# Similar to a docker-compose file.
+
+cityservice-austin:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/austin.json
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8085
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8085:8085'
+  restart: always
+cityservice-london:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/london.json
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8081
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8081:8081'
+  restart: always
+cityservice-losangeles:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/losangeles.json
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8083
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8083:8083'
+  restart: always
+cityservice-miami:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/miami.json
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8084
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8084:8084'
+  restart: always
+cityservice-nyc:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=INFO
+    - CITYSERVICE_SETTINGS=config/nyc.json
+    - CITYSERVICE_VERBOSETWITTER=
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8080
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8080:8080'
+  restart: always
+cityservice-paris:
+  image: 'tutum.co/dimroc/cityrecorder:latest'
+  environment:
+    - CITYSERVICE_INSTAGRAM=false
+    - CITYSERVICE_LOGLEVEL=NOTICE
+    - CITYSERVICE_SETTINGS=config/paris.json
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+    - INSTAGRAM_ACCESS_TOKEN=
+    - INSTAGRAM_CLIENT_ID=
+    - INSTAGRAM_CLIENT_SECRET=
+    - PORT=8082
+    - TWITTER_CONSUMER_KEY=
+    - TWITTER_CONSUMER_SECRET=
+    - TWITTER_TOKEN=
+    - TWITTER_TOKEN_SECRET=
+  links:
+    - elasticsearch
+  ports:
+    - '8082:8082'
+  restart: always
+cityweb:
+  image: 'tutum.co/dimroc/cityweb:latest'
+  environment:
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+  links:
+    - elasticsearch
+  ports:
+    - '80:5000'
+elasticsearch:
+  image: 'dimroc/dockerfile-elasticsearch:latest'
+  environment:
+    - ELASTICSEARCH_PASS=notthepassword
+    - ELASTICSEARCH_USER=admin
+  ports:
+    - '9200:9200'
+    - '9300:9300'
+  restart: always
+  volumes:
+    - '/var/lib/docker/data:/usr/share/elasticsearch/data'
+kibana:
+  image: 'kibana:latest'
+  environment:
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+  links:
+    - elasticsearch
+  ports:
+    - '5601:5601'
+tools:
+  image: 'tutum.co/dimroc/urbanevents-tools:latest'
+  environment:
+    - AWS_ACCESS_KEY_ID=
+    - AWS_REGION=us-east-1
+    - AWS_SECRET_ACCESS_KEY=
+    - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
+    - GO_ENV=qa
+  links:
+    - elasticsearch
+
