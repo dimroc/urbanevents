@@ -11,7 +11,7 @@ var confString = `
 local:
   debug: true
   port: 5000
-  title: Go Starter Kit
+  title: CityWeb Development
   api:
     prefix: /api
   duktape:
@@ -20,7 +20,7 @@ local:
 production:
   debug: false
   port: 5000
-  title: Go Starter Kit
+  title: CityWeb Development
   api:
     prefix: /api
   duktape:

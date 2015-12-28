@@ -1,0 +1,33 @@
+FROM golang:1.5
+
+# Copy the local package files to the container's workspace.
+ADD . /go/src/github.com/dimroc/urbanevents
+
+# Build the outyet command inside the container.
+# (You may fetch or manage dependencies here,
+# either manually or with a tool like "godep".)
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityservice
+
+RUN wget https://raw.githubusercontent.com/pote/gpm/v1.3.2/bin/gpm && \
+      chmod +x gpm && \
+      mv gpm /usr/local/bin # GPM
+
+RUN gpm
+
+# Node and NPM
+RUN apt-get update
+RUN apt-get install -yq nodejs-legacy npm
+RUN alias node=nodejs
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb/src/app
+RUN go get
+RUN go get github.com/jteeuwen/go-bindata/...
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb
+RUN npm install
+RUN make
+
+WORKDIR /go/src/github.com/dimroc/urbanevents/cityweb
+EXPOSE 5000
+ENTRYPOINT /go/bin/app run

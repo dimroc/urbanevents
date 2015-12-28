@@ -54,3 +54,12 @@ tools:
     - GO_ENV=qa
     - ELASTICSEARCH_URL=http://elasticsearch:9200
 
+cityweb:
+  #image: 'tutum.co/dimroc/cityweb:latest'
+  build: cityweb
+  links:
+    - elasticsearch
+  environment:
+    - GO_ENV=qa
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
+
