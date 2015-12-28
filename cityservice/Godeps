@@ -3,7 +3,7 @@ github.com/araddon/gou cf9cf25f52be174c5878920a8021bd224cbe32c7
 github.com/bitly/go-hostpool d0e59c22a56e8dadfed24f74f452cea5a52722d2 
 github.com/codegangsta/negroni c7477ad8e330bef55bf1ebe300cf8aa67c492d1b
 github.com/dimroc/anaconda master
-github.com/dimroc/elastigo 80e670166351cfd838ddbbab3ddc1de1db33c3cb
+github.com/dimroc/elastigo 51b1b8bec965c2e25fdcde2cfa0f5f01dff201f7
 github.com/dimroc/go-instagram/instagram
 github.com/dustin/go-jsonpointer 75939f54b39e7dafae879e61f65438dadc5f288c 
 github.com/dustin/gojson af16e0e771e2ed110f2785564ae33931de8829e4 
