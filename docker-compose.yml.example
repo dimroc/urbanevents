@@ -9,6 +9,7 @@ elasticsearch:
     - ELASTICSEARCH_PASS=password
   #volumes:
     #- tmp/elasticsearch-data:/usr/share/elasticsearch/data
+    #- /var/lib/docker/data:/usr/share/elasticsearch/data # Tutum maps EBS drives to /var/lib/docker
 
 kibana:
   image: 'kibana:latest'
