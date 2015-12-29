@@ -10,6 +10,13 @@ server {
 }
 
 server {
+    server_name kibana.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://kibana:5601;
+    }
+}
+
+server {
     server_name nyc.urbanevents.dimroc.com;
     location / {
         # Hardcoded to NYC Recorder port
@@ -18,15 +25,37 @@ server {
 }
 
 server {
-    server_name austin.urbanevents.dimroc.com;
+    server_name miami.urbanevents.dimroc.com;
     location / {
-        proxy_pass http://localhost:8081;
+        proxy_pass http://cityservice-miami:8084;
     }
 }
 
 server {
-    server_name kibana.urbanevents.dimroc.com;
+    server_name losangeles.urbanevents.dimroc.com;
     location / {
-        proxy_pass http://localhost:5601;
+        proxy_pass http://cityservice-losangeles:8083;
     }
 }
+
+server {
+    server_name london.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://cityservice-london:8081;
+    }
+}
+
+server {
+    server_name paris.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://cityservice-paris:8082;
+    }
+}
+
+server {
+    server_name austin.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://cityservice-austin:8085;
+    }
+}
+
