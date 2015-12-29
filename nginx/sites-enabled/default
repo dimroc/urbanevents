@@ -1,0 +1,32 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name urbanevents.dimroc.com;
+    location / {
+        # Hardcoded to CityWeb port
+        proxy_pass http://cityweb:5000;
+    }
+}
+
+server {
+    server_name nyc.urbanevents.dimroc.com;
+    location / {
+        # Hardcoded to NYC Recorder port
+        proxy_pass http://cityservice-nyc:8080;
+    }
+}
+
+server {
+    server_name austin.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://localhost:8081;
+    }
+}
+
+server {
+    server_name kibana.urbanevents.dimroc.com;
+    location / {
+        proxy_pass http://localhost:5601;
+    }
+}
