@@ -57795,7 +57795,7 @@
 /* 571 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;var require;/* WEBPACK VAR INJECTION */(function(process) {/*** IMPORTS FROM imports-loader ***/
+	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process) {/*** IMPORTS FROM imports-loader ***/
 	var jQuery = __webpack_require__(1);
 	var $ = __webpack_require__(1);
 
