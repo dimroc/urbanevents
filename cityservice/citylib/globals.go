@@ -11,5 +11,6 @@ const (
 )
 
 var (
-	ES_IndexName = os.Getenv("GO_ENV") + "-geoevents-write"
+	ES_IndexName               = os.Getenv("GO_ENV") + "-geoevents-write"
+	ES_TrackedQueriesIndexName = os.Getenv("GO_ENV") + "-geoevents-tracked-queries"
 )

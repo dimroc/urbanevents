@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"os"
+	"time"
 )
 
 type Elastic interface {
@@ -146,6 +147,24 @@ func (e *ElasticConnection) Percolate(geojson GeoJson) []string {
 	}
 
 	return hoods
+}
+
+type TrackedQuery struct {
+	Query     string    `json:"query"`
+	Domain    string    `json:"domain"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+// Function just for logging and analytic purposes.
+// Domain being across all cities or across all boroughs
+func (e *ElasticConnection) TrackQuery(query string, domain string) {
+	trackedQuery := TrackedQuery{
+		Query:     query,
+		Domain:    domain,
+		CreatedAt: time.Now(),
+	}
+
+	e.Connection.Index(ES_TrackedQueriesIndexName, "query", "", nil, trackedQuery)
 }
 
 // Bulk Elastic

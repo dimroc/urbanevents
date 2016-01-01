@@ -70,6 +70,7 @@ func (api *API) AcrossSearchHandler(c *echo.Context) error {
 
 	settings := getSettings(c)
 	elastic := getElasticConnection(c)
+	elastic.TrackQuery(query, "cities")
 
 	c.JSON(200, settings.QueryCities(elastic, query))
 	return nil
