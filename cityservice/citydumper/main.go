@@ -103,6 +103,7 @@ func addImportCommand() cli.Command {
 		for scanner.Scan() {
 			rawMessage := json.RawMessage(scanner.Bytes())
 			geoevent := citylib.GeoEventFromRawMessage(&rawMessage)
+			geoevent = correctMediaOrigin(geoevent)
 			elastic.Write(geoevent)
 		}
 
@@ -112,6 +113,20 @@ func addImportCommand() cli.Command {
 	}
 
 	return command
+}
+
+func correctMediaOrigin(g citylib.GeoEvent) citylib.GeoEvent {
+	if len(g.MediaOrigin) > 0 {
+		return g
+	}
+
+	if len(g.MediaUrl) > 0 && strings.Contains(g.MediaUrl, "cdninstagram") {
+		g.MediaOrigin = "instagram"
+	} else {
+		g.MediaOrigin = "twitter"
+	}
+
+	return g
 }
 
 func addDumpCommand() cli.Command {

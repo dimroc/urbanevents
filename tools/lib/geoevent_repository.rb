@@ -15,22 +15,23 @@ class GeoeventRepository
     mapping do
       indexes :createdAt, type: 'date'
       indexes :text, analyzer: 'snowball'
-      indexes :text_fr, analyzer: 'snowball', language: 'French'
+      indexes :text_fr, analyzer: 'french'
       indexes :city, type: 'string', index: 'not_analyzed'
       indexes :username, type: 'string', index: 'not_analyzed'
       indexes :fullName, type: 'string'
       indexes :place, type: 'string'
       indexes :service, type: 'string', index: 'not_analyzed'
 
+      indexes :mediaOrigin, type: 'string', index: 'not_analyzed'
       indexes :mediaType, type: 'string', index: 'not_analyzed'
       indexes :thumbnailUrl, type: 'string', index: 'no'
-      indexes :mediaUrl, type: 'string', index: 'no'
+      indexes :mediaUrl, type: 'string'
       indexes :link, type: 'string', index: 'no'
 
       indexes :hashtags, type: 'string', index: 'not_analyzed'
 
       indexes :geojson, type: 'geo_shape'
-      indexes :point, type: 'geo_point', geo_hash: true, geohash_prefix: true, geohash_precision: '1m'
+      indexes :point, type: 'geo_point', geohash_prefix: true, geohash_precision: '1m'
 
       indexes :neighborhoods, type: 'string', index: 'not_analyzed'
 

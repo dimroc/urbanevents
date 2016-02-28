@@ -25,6 +25,7 @@ type GeoEvent struct {
 	TextFrench    string     `json:"text_fr,omitempty"`
 	Point         [2]float64 `json:"point"`
 	Service       string     `json:"service"`
+	MediaOrigin   string     `json:"mediaOrigin"`
 	ThumbnailUrl  string     `json:"thumbnailUrl"`
 	Type          string     `json:"type"`
 	Username      string     `json:"username"`

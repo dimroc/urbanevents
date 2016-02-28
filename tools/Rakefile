@@ -63,6 +63,14 @@ namespace :es do
     repository.create_index!
   end
 
+  # Creates index, seed percolators and set ttl for another index.
+  task :bootstrap_without_alias do
+    repository.create_index!
+    hood_repository(index: repository.index).update_mapping!
+    seed_percolator_for(repository.index)
+    Rake::Task["es:set_geoevent_ttl"].invoke
+  end
+
   task :destroy_test_indices do
     repository.client.indices.delete index: 'test-geoevent*'
   end
@@ -183,11 +191,15 @@ namespace :es do
     end
   end
 
-  task :seed_percolators do
+  def seed_percolator_for(index)
     each_city_and_geojson_filename do |city, filename|
       puts "Registering #{city}'s neighborhood percolator from #{filename}"
-      repository(index: es_alias).register_percolator(city, filename)
+      repository(index: index).register_percolator(city, filename)
     end
+  end
+
+  task :seed_percolators do
+    seed_percolator_for(es_alias)
   end
 
   task :write_clean_geojson_files do
