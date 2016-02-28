@@ -130,7 +130,7 @@ func correctMediaOrigin(g citylib.GeoEvent) citylib.GeoEvent {
 }
 
 func addDumpCommand() cli.Command {
-	var citykey, after, before, neighborhoods, elasticsearchUrl string
+	var citykey, after, before, neighborhoods, elasticsearchUrl, index string
 	command := cli.Command{
 		Name:    "dump",
 		Aliases: []string{"d"},
@@ -167,6 +167,12 @@ func addDumpCommand() cli.Command {
 			Name:        "neighborhoods, n",
 			Usage:       "A comma separated string specifying neighborhoods to filter for",
 			Destination: &neighborhoods,
+		},
+		cli.StringFlag{
+			Name:        "index, i",
+			Value:       citylib.ES_IndexName,
+			Usage:       "The specific index to run against.",
+			Destination: &index,
 		},
 	}
 
@@ -206,7 +212,7 @@ func addDumpCommand() cli.Command {
 		}
 
 		// Set up Elasticsearch reading
-		dsl := elastigo.Search(citylib.ES_IndexName).Type(citylib.ES_TypeName).Size("1000").
+		dsl := elastigo.Search(index).Type(citylib.ES_TypeName).Size("1000").
 			Pretty().Filter(elastigo.Filter().And(filters...))
 
 		elastic.ScanAndScrollGeoEvents(dsl, func(geoevent citylib.GeoEvent) {
