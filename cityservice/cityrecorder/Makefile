@@ -1,5 +1,5 @@
 DOCKER = docker
-REPO = tutum.co/dimroc/cityrecorder
+REPO = dimroc/cityrecorder
 
 TAG = $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 ifeq ($(TAG), master)

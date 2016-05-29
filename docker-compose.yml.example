@@ -21,7 +21,7 @@ kibana:
     - '5601:5601'
 
 cityservice:
-  #image: 'tutum.co/dimroc/cityservice:latest'
+  #image: 'dimroc/cityservice:latest'
   build: cityservice
   links:
     - elasticsearch
@@ -55,7 +55,7 @@ tools:
     - ELASTICSEARCH_URL=http://elasticsearch:9200
 
 cityweb:
-  #image: 'tutum.co/dimroc/cityweb:latest'
+  #image: 'dimroc/cityweb:latest'
   build: cityweb
   links:
     - elasticsearch

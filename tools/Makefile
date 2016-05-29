@@ -1,5 +1,5 @@
 DOCKER = docker
-REPO = tutum.co/dimroc/urbanevents-tools
+REPO = dimroc/urbanevents-tools
 
 TAG = $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null)
 ifeq ($(TAG), master)

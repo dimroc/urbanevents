@@ -2,7 +2,7 @@
 # Similar to a docker-compose file.
 
 cityservice-austin:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=NOTICE
@@ -23,7 +23,7 @@ cityservice-austin:
     - '8085:8085'
   restart: always
 cityservice-london:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=NOTICE
@@ -44,7 +44,7 @@ cityservice-london:
     - '8081:8081'
   restart: always
 cityservice-losangeles:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=NOTICE
@@ -65,7 +65,7 @@ cityservice-losangeles:
     - '8083:8083'
   restart: always
 cityservice-miami:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=NOTICE
@@ -86,7 +86,7 @@ cityservice-miami:
     - '8084:8084'
   restart: always
 cityservice-nyc:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=INFO
@@ -108,7 +108,7 @@ cityservice-nyc:
     - '8080:8080'
   restart: always
 cityservice-paris:
-  image: 'tutum.co/dimroc/cityrecorder:latest'
+  image: 'dimroc/cityrecorder:latest'
   environment:
     - CITYSERVICE_INSTAGRAM=false
     - CITYSERVICE_LOGLEVEL=NOTICE
@@ -129,7 +129,7 @@ cityservice-paris:
     - '8082:8082'
   restart: always
 cityweb:
-  image: 'tutum.co/dimroc/cityweb:latest'
+  image: 'dimroc/cityweb:latest'
   environment:
     - 'ELASTICSEARCH_URL=http://admin:notthepassword@elasticsearch:9200'
     - GO_ENV=qa
@@ -157,7 +157,7 @@ kibana:
   ports:
     - '5601:5601'
 tools:
-  image: 'tutum.co/dimroc/urbanevents-tools:latest'
+  image: 'dimroc/urbanevents-tools:latest'
   environment:
     - AWS_ACCESS_KEY_ID=
     - AWS_REGION=us-east-1
