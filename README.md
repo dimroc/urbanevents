@@ -36,7 +36,7 @@ with a neighborhood by running Elasticsearch (ES) Geospatial percolations agains
 
 * Docker all day
 * Links and Volumes all day
-* [tutum.co](http://www.tutum.co) to deploy and host all those docker containers
+* [Docker Cloud](http://cloud.docker.com) (formerly [tutum.co](http://www.tutum.co)) to deploy and host all those docker containers
 * Extensive use of [Stackfile](https://github.com/dimroc/urbanevents/blob/master/Stackfile.example).
 
 ## To Do
