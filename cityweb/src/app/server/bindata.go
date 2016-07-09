@@ -90,7 +90,7 @@ func staticBuildA35720c2fed2c7f043bc7e4ffb45e073Woff() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/a35720c2fed2c7f043bc7e4ffb45e073.woff", size: 83588, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/a35720c2fed2c7f043bc7e4ffb45e073.woff", size: 83588, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -110,7 +110,7 @@ func staticBuildA3de2170e4e9df77161ea5d3f31b2668Ttf() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/a3de2170e4e9df77161ea5d3f31b2668.ttf", size: 142072, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/a3de2170e4e9df77161ea5d3f31b2668.ttf", size: 142072, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -130,7 +130,7 @@ func staticBuildBundleCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/bundle.css", size: 176991, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/bundle.css", size: 176991, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -150,7 +150,7 @@ func staticBuildBundleJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/bundle.js", size: 2041533, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/bundle.js", size: 2041533, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -170,7 +170,7 @@ func staticBuildDb812d8a70a4e88e888744c1c9a27e89Woff2() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/db812d8a70a4e88e888744c1c9a27e89.woff2", size: 66624, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/db812d8a70a4e88e888744c1c9a27e89.woff2", size: 66624, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -190,7 +190,7 @@ func staticBuildFontawesomeWebfont47d1e9d863ede049fc6bb60f9171c7bbWoff() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/fontawesome-webfont@47d1e9d863ede049fc6bb60f9171c7bb.woff", size: 83, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/fontawesome-webfont@47d1e9d863ede049fc6bb60f9171c7bb.woff", size: 83, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -210,7 +210,7 @@ func staticBuildFontawesomeWebfontC6d86fb5287e204cb09836a8344e2b3bTtf() (*asset,
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/build/fontawesome-webfont@c6d86fb5287e204cb09836a8344e2b3b.ttf", size: 82, mode: os.FileMode(420), modTime: time.Unix(1468076513, 0)}
+	info := bindataFileInfo{name: "static/build/fontawesome-webfont@c6d86fb5287e204cb09836a8344e2b3b.ttf", size: 82, mode: os.FileMode(420), modTime: time.Unix(1468082095, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
