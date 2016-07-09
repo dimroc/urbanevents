@@ -11,7 +11,7 @@ class GeoeventRepository
   # Set a custom document type
   type :geoevent
 
-  settings number_of_shards: 3 do
+  settings number_of_shards: 3, number_of_replicas: 0 do
     mapping do
       indexes :createdAt, type: 'date'
       indexes :text, analyzer: 'snowball'
