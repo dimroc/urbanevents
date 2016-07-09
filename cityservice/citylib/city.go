@@ -5,6 +5,7 @@ import (
 	"fmt"
 	elastigo "github.com/dimroc/elastigo/lib"
 	. "github.com/dimroc/urbanevents/cityservice/utils"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -174,9 +175,9 @@ type aggregationResult struct {
 			DocCount int64 `json:"doc_count"`
 			Range    struct {
 				Buckets []struct {
-					Key      string    `json:"key"`
-					DocCount int       `json:"doc_count"`
-					To       time.Time `json:"to_as_string"`
+					Key      string        `json:"key"`
+					DocCount int           `json:"doc_count"`
+					To       safeParseTime `json:"to_as_string"`
 				} `json:"buckets"`
 			} `json:"range"`
 		} `json:"twitter"`
@@ -184,9 +185,9 @@ type aggregationResult struct {
 			DocCount int64 `json:"doc_count"`
 			Range    struct {
 				Buckets []struct {
-					Key      string    `json:"key"`
-					DocCount int       `json:"doc_count"`
-					To       time.Time `json:"to_as_string"`
+					Key      string        `json:"key"`
+					DocCount int           `json:"doc_count"`
+					To       safeParseTime `json:"to_as_string"`
 				} `json:"buckets"`
 			} `json:"range"`
 		} `json:"instagram"`
@@ -203,7 +204,7 @@ func (a *aggregationResult) GetCountsAndDays() ([]int, []int, []time.Time) {
 	for index, bucket := range buckets {
 		// Reverse order of tweets and days so it's descending
 		tweets[length-1-index] = bucket.DocCount
-		days[length-1-index] = bucket.To
+		days[length-1-index] = bucket.To.Time
 	}
 
 	buckets = a.Counts.Instagram.Range.Buckets
@@ -215,4 +216,25 @@ func (a *aggregationResult) GetCountsAndDays() ([]int, []int, []time.Time) {
 	}
 
 	return tweets, instagrams, days
+}
+
+type safeParseTime struct {
+	time.Time
+}
+
+func (spt *safeParseTime) UnmarshalJSON(b []byte) (err error) {
+	s := strings.Trim(string(b[:]), "\"")
+
+	t, e1 := time.Parse(time.RFC3339, s) // Try default RFC3339
+	if e1 == nil {
+		spt.Time = t
+	} else {
+		// We slice off the first 10 characters to assume
+		// int is milliseconds since Epoch
+		i, err := strconv.ParseInt(s[:10], 10, 64)
+		Check(err)
+		spt.Time = time.Unix(i, 0)
+	}
+
+	return
 }
