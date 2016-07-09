@@ -159,7 +159,7 @@ func addDumpCommand() cli.Command {
 		},
 		cli.StringFlag{
 			Name:        "before, b",
-			Value:       time.Now().Format("2006-01-02 03:04:05 Z0700"),
+			Value:       time.Now().Format(time.RFC3339),
 			Usage:       "The date string which geoevents must be before",
 			Destination: &before,
 		},

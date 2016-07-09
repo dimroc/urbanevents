@@ -160,9 +160,9 @@ func getDateRangeFor(daysBack int) string {
 		key = "now"
 		gte = "now/d"
 	} else {
-		lt = time.Now().UTC().AddDate(0, 0, -daysBack+1).String()[0:10] + "||/d"
+		lt = time.Now().UTC().AddDate(0, 0, -daysBack+1).Format(time.RFC3339) + "||/d"
 		key = lt[0:10]
-		gte = time.Now().UTC().AddDate(0, 0, -daysBack).String()[0:10] + "||/d"
+		gte = time.Now().UTC().AddDate(0, 0, -daysBack).Format(time.RFC3339) + "||/d"
 	}
 
 	return fmt.Sprintf(`{"key": "%s", "to": "%s", "from": "%s"}`, key, lt, gte)
