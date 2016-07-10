@@ -91,7 +91,7 @@ namespace :es do
       index: es_alias,
       type: :geoevent,
       body: {
-        _ttl: { enabled: true, default: "365d" }
+        _ttl: { enabled: true, default: "120d" }
       }
     })
   end
