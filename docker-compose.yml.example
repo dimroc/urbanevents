@@ -7,7 +7,7 @@ elasticsearch:
   environment:
     - ELASTICSEARCH_USER=admin
     - ELASTICSEARCH_PASS=password
-    - ES_HEAP_SIZE=3g
+    - ES_HEAP_SIZE=2g
   #volumes:
     #- tmp/elasticsearch-data:/usr/share/elasticsearch/data
     #- /var/lib/docker/data:/usr/share/elasticsearch/data # Tutum maps EBS drives to /var/lib/docker
